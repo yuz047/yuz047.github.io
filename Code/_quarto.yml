@@ -1,0 +1,21 @@
+project:
+  type: website
+  resources:
+    - resume.pdf
+
+website:
+  title: "Sirius Zhang"
+  navbar:
+    right:
+      - text: "Home"
+        href: index.html
+      - text: "Projects"
+        href: projects.html
+      - text: "Experience"
+        href: exp.html
+
+
+
+format:
+  html:
+    theme: [sandstone, _variables.scss]

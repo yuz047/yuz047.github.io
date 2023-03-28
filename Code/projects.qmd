@@ -1,0 +1,23 @@
+<html>
+<head><title>Projects</title></head>
+<body>
+    <h2>Selected Projects</h2>
+    As lead/presenting author:
+    <h3>2022</h3>
+    <p>
+        <div><strong>NLP Model Evaluation of Predicting S&P 500 Based on Updating Tweets</strong></div>
+        <div>With Kaiyue Wei, Ningyuan Zhou, and Qiaojuan Tu</div>
+        <div>Slides available at <a href="files/sp500.pptx">this link</a>.</div>
+    </p>
+    <p>
+        <div><strong>A Discussion of Common Models Applied on USDX Prediction</strong></div>
+        <div>Work available at <a href="http://yhzhang.georgetown.domains/anly501/docs/">this link</a>.</div>
+    </p>
+    <p>
+        <div><strong>Model Analysis of Stock Price Trend Predictions based on Financial News</strong></div>
+        <div> With Mingjia Zhu, Liuyang Zheng </div>
+        <div>Work available at <a href="files/FinBert.pdf">this link</a>.</div>
+    </p>
+   
+</body>
+</html>

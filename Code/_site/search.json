@@ -1,0 +1,58 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Sirius (Yunhan) Zhang",
+    "section": "",
+    "text": "Sirius Zhang is a data scientist specializing in the application of data science techniques to financial analysis and trading. He obtained a Bachelor’s degree from the University of California, San Diego with two majors: Data Science and the Joint Major of Mathematics and Economics. Currently, he is pursuing a Master’s degree in Data Science and Analytics at Georgetown University.\nHis research interests encompass utilizing the data science toolbox to facilitate financial analysis and trading. Presently, he is conducting research on the impact of federal fund rates on the general market. The objective of this research is to uncover valuable insights that can inform and improve financial decision-making processes.\nWith professional experience as a research assistant at UCSD Global Policy & Strategy, he has contributed to various research projects by applying strong analytical skills. Currently, he is working under the supervision of Prof. Cong and Prof. Dahiya at the McDonough School of Business in Georgetown University, further honing his expertise in finance and data analysis."
+  },
+  {
+    "objectID": "sample.html",
+    "href": "sample.html",
+    "title": "Sirius Zhang",
+    "section": "",
+    "text": "Projects\n\n\n\n\nProjects\n\nAs lead/presenting author:\n\n2022\n\n\n\nNLP Model Evaluation of Predicting S&P 500 Based on Updating Tweets\n\n\nWith Kaiyue Wei, Ningyuan Zhou, and Qiaojuan Tu\n\n\nSlides available at this link.\n\n\n\n\nA Discussion of Common Models Applied on USDX Prediction\n\n\nWork available at this link.\n\n\n\n\nModel Analysis of Stock Price Trend Predictions based on Financial News\n\n\nWith Mingjia Zhu, Liuyang Zheng\n\n\nWork available at this link."
+  },
+  {
+    "objectID": "project.html",
+    "href": "project.html",
+    "title": "Sirius Zhang",
+    "section": "",
+    "text": "Projects\n\n\n\n\nProjects\n\nAs lead/presenting author:\n\n2022\n\n\n\nNLP Model Evaluation of Predicting S&P 500 Based on Updating Tweets\n\n\nWith Kaiyue Wei, Ningyuan Zhou, and Qiaojuan Tu\n\n\nSlides available at this link.\n\n\n\n\nA Discussion of Common Models Applied on USDX Prediction\n\n\nWork available at this link.\n\n\n\n\nModel Analysis of Stock Price Trend Predictions based on Financial News\n\n\nWith Mingjia Zhu, Liuyang Zheng\n\n\nWork available at this link."
+  },
+  {
+    "objectID": "exp.html",
+    "href": "exp.html",
+    "title": "Sirius Zhang",
+    "section": "",
+    "text": "Georgetown University, 2024\n\n\n\nUniversity of California, San Diego, 2022"
+  },
+  {
+    "objectID": "exp.html#work-experience",
+    "href": "exp.html#work-experience",
+    "title": "Sirius Zhang",
+    "section": "Work Experience",
+    "text": "Work Experience\n\nResearch Assistant, Data Analyst\nMcDonough School of Business, Georgetown University\nResponsibilities include:\nClustering & Labeling: Assessed the DualCl model’s accuracy on training data; Translated the original dataset and labeled the dataset with modified DualCl model; Re-structured dataset for later A/B testing on market reformation analysis.\nData Processing: Developed an automated script to filter out unwanted data from over 100G files; Designed a new file management logistic; Cleaned filtered xml files and formulated for later regression analysis on companies’ cash flow quality.\n\n\nResearch Assistant, Data Analyst\nGlobal Policy & Strategy, UC San Diego\nResponsibilities include:\nAutomation: Developed an automated script utilizing logging and exception handling to efficiently scrape electricity trading data from multiple sources. Streamlined the data transformation pipeline, converting raw data into a clean and well-organized dataset within a structured folder system. Successfully accelerated the scraping process by 80%.\nProgramming: Developed a new algorithm to match and merge different datasets by comparing Chinese characters and English words; Enabled Dr. Davidson’s lab to combine spreadsheets from different languages and facilitated research progress.\nData Analysis: Incorporated 12-year data to analyze the correlation of electricity trade price and coal prices via Linear Regression model; Found recent abnormality with this model and proposed a new research topic.\n\n\nData Analyst Intern\nZhongtian Finance Group\nResponsibilities include:\nResearch: Investigated China’s A-share re-entry procedure of red chip companies with VIE structure and IPOs of Energy firms across the country to analyze major success reasons; examined eligibility and mapped client re-entry to the A-market.\n• Analytical: Facilitated an energy firm going public by utilizing previous research; Utilized 5+ years of retrieved financial data to validate the data and supported the team for such process."
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Sirius Zhang",
+    "section": "",
+    "text": "Projects\n\n\n\n\nSelected Projects\n\nAs lead/presenting author:\n\n2022\n\n\n\nNLP Model Evaluation of Predicting S&P 500 Based on Updating Tweets\n\n\nWith Kaiyue Wei, Ningyuan Zhou, and Qiaojuan Tu\n\n\nSlides available at this link.\n\n\n\n\nA Discussion of Common Models Applied on USDX Prediction\n\n\nWork available at this link.\n\n\n\n\nModel Analysis of Stock Price Trend Predictions based on Financial News\n\n\nWith Mingjia Zhu, Liuyang Zheng\n\n\nWork available at this link."
+  },
+  {
+    "objectID": "exp.html#familiar-programming-languagespacakgesapps-concepts",
+    "href": "exp.html#familiar-programming-languagespacakgesapps-concepts",
+    "title": "Sirius Zhang",
+    "section": "Familiar Programming Languages/Pacakges/Apps & Concepts",
+    "text": "Familiar Programming Languages/Pacakges/Apps & Concepts\nProgramming Languages/Packages/Apps: Python (SciPy, matplotlib, sklearn, webDriver, tensorflow, pyTorch,NLTK), R, Java, MATLAB, SQL, STATA,Tableau. Concepts: Time Series, Recommender Systems, Web Mining, Machine Learning, Deep Learning, Natural Language Processing."
+  },
+  {
+    "objectID": "exp.html#familiar-technologiesapps-concepts",
+    "href": "exp.html#familiar-technologiesapps-concepts",
+    "title": "Sirius Zhang",
+    "section": "Familiar Technologies/Apps & Concepts",
+    "text": "Familiar Technologies/Apps & Concepts\nProgramming Languages/Packages/Apps: Python (SciPy, matplotlib, sklearn, webDriver, tensorflow, pyTorch,NLTK), R, Java, MATLAB, SQL, STATA,Tableau.\nConcepts: Time Series, Recommender Systems, Web Mining, Machine Learning, Deep Learning, Natural Language Processing.\nSee full resume here."
+  }
+]

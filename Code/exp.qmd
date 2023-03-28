@@ -1,0 +1,33 @@
+## Education
+#### MS in Data Science & Analytics
+Georgetown University, 2024
+
+#### BS in Data Science, Joint Major of Mathematics & Econimics
+University of California, San Diego, 2022
+
+## Work Experience
+#### Research Assistant, Data Analyst
+**McDonough School of Business, Georgetown University**  
+Responsibilities include:  
+Clustering & Labeling: Assessed the DualCl model’s accuracy on training data; Translated the original dataset and labeled the dataset with modified DualCl model; Re-structured dataset for later A/B testing on market reformation analysis.    
+Data Processing: Developed an automated script to filter out unwanted data from over 100G files; Designed a new file management logistic; Cleaned filtered xml files and formulated for later regression analysis on companies’ cash flow quality.   
+
+#### Research Assistant, Data Analyst  
+**Global Policy & Strategy, UC San Diego**  
+Responsibilities include:   
+Automation: Developed an automated script utilizing logging and exception handling to efficiently scrape electricity trading data from multiple sources. Streamlined the data transformation pipeline, converting raw data into a clean and well-organized dataset within a structured folder system. Successfully accelerated the scraping process by 80%.  
+Programming: Developed a new algorithm to match and merge different datasets by comparing Chinese characters and English words; Enabled Dr. Davidson’s lab to combine spreadsheets from different languages and facilitated research progress.  
+Data Analysis: Incorporated 12-year data to analyze the correlation of electricity trade price and coal prices via Linear Regression model; Found recent abnormality with this model and proposed a new research topic.  
+
+#### Data Analyst Intern
+**Zhongtian Finance Group**  
+Responsibilities include:  
+ Research: Investigated China’s A-share re-entry procedure of red chip companies with VIE structure and IPOs of Energy firms across the country to analyze major success reasons; examined eligibility and mapped client re-entry to the A-market.  
+• Analytical: Facilitated an energy firm going public by utilizing previous research; Utilized 5+ years of retrieved financial data to validate the data and supported the team for such process.  
+
+## Familiar Technologies/Apps & Concepts
+**Programming Languages/Packages/Apps**: Python (SciPy, matplotlib, sklearn, webDriver, tensorflow, pyTorch,NLTK), R, Java, MATLAB, SQL, STATA,Tableau.  
+**Concepts**: Time Series, Recommender Systems, Web Mining, Machine Learning, Deep Learning, Natural Language Processing.
+  
+
+See full resume [here](resume.pdf).

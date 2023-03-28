@@ -1,0 +1,30 @@
+---
+title: "Sirius (Yunhan) Zhang"
+image: avatar.jpg
+about:
+  template: trestles
+  links:
+    - text: LinkedIn
+      url: "https:/www.linkedin.com/in/yuz047"
+    - text: GitHub
+      url: "https://github.com/yuz047"
+    - text: Email
+      url: "mailto:yuz047@outlook.com"
+    - text: Resume
+      url: "resume.pdf"
+comments: false
+
+---
+::: {.column-page}
+## Bio
+Sirius Zhang is a data scientist specializing in the application of data science techniques to financial analysis and trading. He obtained a Bachelor's degree from the University of California, San Diego with two majors: Data Science and the Joint Major of Mathematics and Economics. Currently, he is pursuing a Master's degree in Data Science and Analytics at Georgetown University.
+
+His research interests encompass utilizing the data science toolbox to facilitate financial analysis and trading. Presently, he is conducting research on the impact of federal fund rates on the general market. The objective of this research is to uncover valuable insights that can inform and improve financial decision-making processes.
+
+With professional experience as a research assistant at UCSD Global Policy & Strategy, he has contributed to various research projects by applying strong analytical skills. Currently, he is working under the supervision of Prof. Cong and Prof. Dahiya at the McDonough School of Business in Georgetown University, further honing his expertise in finance and data analysis.
+
+
+:::
+
+
+
