@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artefacts (none expected — static HTML — but defensive)
+node_modules/
+dist/
+build/
+.cache/
+
+# Local logs
+*.log
+
+# AI-assistant metadata — keep out of the public repo
+.claude/
+.claude*
+CLAUDE.md
+claude.md
+.cursor/
+.aider*
+.continue/
+
+# Local screenshot / scratch artefacts that sometimes get co-located
+v2-screens/
+*.bundle

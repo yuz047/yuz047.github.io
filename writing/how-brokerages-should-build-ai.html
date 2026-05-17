@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>How Brokerages Should Build AI | Sirius Zhang</title>
+  <meta name="description" content="A controlled architecture for retrieval, drafting, validation, approval, and audit logging before autonomous action." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">Brokerage AI architecture</div>
+      <h1>How Brokerages Should Build AI</h1>
+      <p class="subtitle">The strongest first use is not autonomy. It is a reviewable layer for retrieval, drafting, validation, approval, and audit logging.</p>
+      <div class="meta-row"><span class="pill">retrieval</span><span class="pill">audit trail</span><span class="pill">human approval</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/copilot-architecture.svg" alt="How Brokerages Should Build AI diagram" /></div>
+    
+<p>A brokerage AI system should not begin as an autonomous decision-maker. It should begin as a copilot: retrieve approved information, summarize complex inputs, draft reviewable notes, highlight uncertainty, and route high-risk cases to humans.</p>
+<p>That sounds less exciting than an autonomous trading agent. It is also the more realistic path for a regulated market firm.</p>
+<h2 id="1-the-brokerage-problem-is-not-lack-of-information">The brokerage problem is not lack of information</h2>
+<p>Brokerages already have too much information: positions, balances, margin requirements, order activity, surveillance alerts, restricted lists, market data, policy documents, client communications, event calendars, vendor files, and analyst notes.</p>
+<p>The problem is converting fragmented information into reviewable decisions. A human analyst has to understand what happened, which account or product is affected, which policy applies, what evidence supports the conclusion, what is still unknown, what action requires approval, and what should be preserved for future review.</p>
+<p>This is where AI can help. Not by becoming the decision-maker, but by compressing context and making the review process faster.</p>
+<h2 id="2-a-safe-brokerage-ai-architecture">A safer brokerage AI architecture</h2>
+<p>A controlled brokerage copilot usually needs six layers.</p>
+<h3>Intake layer</h3>
+<p>The system receives alerts, risk outputs, account status, market data, case notes, or policy questions. Inputs should be typed and permissioned. A client-service workflow, risk workflow, and surveillance workflow should not have the same access by default.</p>
+<h3>Retrieval layer</h3>
+<p>The system retrieves from approved sources: policy manuals, product documentation, risk definitions, internal procedures, historical cases, or relevant market summaries. Retrieval is the grounding layer. Without it, the model may rely on memory or invent unsupported explanations.</p>
+<h3>Model layer</h3>
+<p>The language model drafts a structured output: case summary, risk memo, missing-evidence list, customer-service draft, or research synthesis. The model should be instructed to distinguish confirmed facts from assumptions.</p>
+<h3>Validation layer</h3>
+<p>The output is checked for source support, policy consistency, numerical sanity, missing fields, prohibited language, and escalation triggers. Calculations should be handled by deterministic code whenever precision matters.</p>
+<h3>Human-review layer</h3>
+<p>A licensed, trained, or accountable employee reviews the output before client-impacting or policy-impacting action. The AI can recommend review steps; it should not silently execute high-impact decisions.</p>
+<h3>Audit layer</h3>
+<p>The system logs prompt, model version, source documents, retrieved chunks, generated output, edits, approver, timestamp, and final action. Without logs, the firm cannot reconstruct the workflow.</p>
+<h2 id="3-what-ai-should-do-first">Start where the risk is manageable</h2>
+<p>The strongest first use cases are internal productivity and decision support: policy summarization, fact extraction, internal risk memos, margin explanations, surveillance-alert triage, market-event summaries, stress-test commentary, escalation drafts, and missing-data checks.</p>
+<p>These workflows have clear value and manageable risk because humans remain in control.</p>
+<h2 id="4-what-ai-should-not-do-first">Keep the first version away from final authority</h2>
+<p>A brokerage should be cautious with AI that independently approves trades, determines suitability, adjudicates fraud, modifies account restrictions, sends unreviewed client communications, changes margin policy, overrides liquidation controls, or executes multi-step actions across internal systems.</p>
+<p>Those are not impossible forever. They require much stronger governance, deterministic controls, model validation, permissioning, monitoring, and accountability than a drafting copilot.</p>
+<h2 id="5-generalized-case-study-risk-operations-copilot">A risk-operations example</h2>
+<p>Imagine a brokerage builds a Risk Operations Copilot. The copilot receives a stress-test alert showing that an account has concentrated exposure in a futures product before a major economic release.</p>
+<p>A weak system might say: “Liquidate the account.”</p>
+<p>A safer system would produce an account exposure summary, identify the contract involved, show margin status before and after the stress scenario, cite relevant policy, note the market catalyst, call out missing information, suggest review severity, and require human approval.</p>
+<p>The copilot does not decide. It makes the decision easier to review.</p>
+<h2 id="6-what-this-means-for-brokers">For brokers, accountability is the product</h2>
+<p>For a broker, AI should improve supervision, documentation, and operational consistency. A good brokerage AI system reduces manual workload without reducing accountability.</p>
+<p>The firm should define intended use, prohibited use, users, permissions, data sources, model behavior, performance thresholds, escalation rules, and retention requirements. It should test the system before deployment and monitor it after deployment.</p>
+<h2 id="7-what-this-means-for-traders">For traders, broker AI has a boundary</h2>
+<p>A trader interacting with broker-provided AI should understand the boundary. A broker’s AI assistant may explain product mechanics, summarize educational material, or help navigate account workflows. It should not be treated as personalized investment advice unless the firm explicitly provides that service under the right supervisory structure.</p>
+<p>The same principle applies to a trader’s own tools. Build copilots before agents. Let AI summarize, critique, and organize. Do not let it trade without limits, logs, and risk controls.</p>
+<h2 id="8-what-this-means-for-practitioners">For builders, this is infrastructure</h2>
+<p>Practitioners should build AI systems like controlled infrastructure, not like prototypes. The useful questions are direct: what data can the model access, what can it output, what actions can it trigger, what needs human approval, what is logged, how are errors detected, and how does the system fail safely?</p>
+<p>A useful implementation pattern is “draft, verify, approve, log.”</p>
+<h2 id="professional-workflow-takeaway">The professional takeaway</h2>
+<p>Most people should use AI the same way. Start with copilot workflows: organize information, draft communications, prepare checklists, compare alternatives, and expose missing evidence. Delay autopilot workflows until you can define permissions, failure modes, review process, and rollback.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>The future of brokerage AI is not an all-powerful chatbot. It is a controlled workflow layer that connects data, policy, risk outputs, and human judgment. The winning design principle is direct: copilot first, autopilot last.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>Morgan Stanley, <a href="https://www.morganstanley.com/press-releases/morgan-stanley-research-announces-askresearchgpt">AskResearchGPT announcement</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="what-counts-as-ai.html"><strong>What Counts as AI in Markets?</strong><br><span>model taxonomy · workflow fit · human control</span></a><a href="why-ai-fails.html"><strong>Why AI Fails in Financial Workflows</strong><br><span>model risk · data leakage · workflow controls</span></a><a href="prompting-is-workflow-design.html"><strong>Operating Controls for AI Assistants</strong><br><span>source limits · review paths</span></a></div>
+    <nav class="series-nav"><a class="series-link" href="prompting-is-workflow-design.html"><span>Previous</span><strong>Operating Controls for AI Assistants</strong></a><a class="series-link" href="trader-ai-stack.html"><span>Next</span><strong>A Trader AI Stack</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-the-brokerage-problem-is-not-lack-of-information">Information problem</a><a href="#2-a-safe-brokerage-ai-architecture">Architecture</a><a href="#3-what-ai-should-do-first">First use cases</a><a href="#4-what-ai-should-not-do-first">Final authority</a><a href="#5-generalized-case-study-risk-operations-copilot">Risk example</a><a href="#6-what-this-means-for-brokers">For brokers</a><a href="#7-what-this-means-for-traders">For traders</a><a href="#8-what-this-means-for-practitioners">For builders</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

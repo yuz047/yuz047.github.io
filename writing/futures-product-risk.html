@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futures Product Types and Brokerage Risk Controls | Sirius Zhang</title>
+  <meta name="description" content="Futures product families, liquidity profiles, leveraged risk, and brokerage risk controls for futures accounts." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <div class="eyebrow">Brokerage risk note</div>
+    
+<h1>Futures Product Types, Liquidity, and Brokerage Risk Controls</h1>
+<p class="subtitle">A futures product is not just a ticker. It is a package of leverage, liquidity, expiration rules, margin behavior, and stress risk.</p>
+<div class="meta-row"><span class="pill">Part 4 of 4</span><span class="pill">Brokerage risk view</span><span class="pill">Product liquidity · concentration · risk controls</span></div>
+
+<div class="hero-card"><p><strong>Core idea:</strong> different futures products behave differently under stress. A brokerage risk system must monitor not only direction and P&amp;L, but also margin sufficiency, liquidity, concentration, and event risk.</p></div>
+
+<section id="types"><h2>Major futures product families</h2>
+<div class="matrix"><table><thead><tr><th>Product family</th><th>Common examples</th><th>Typical risk drivers</th><th>Liquidity notes</th></tr></thead><tbody>
+<tr><td>Equity index</td><td>ES, MES, NQ, MNQ, RTY</td><td>Macro data, earnings, rates, risk sentiment</td><td>Often deep in benchmark contracts</td></tr>
+<tr><td>Interest rates</td><td>Treasury futures, SOFR futures</td><td>Fed policy, inflation, funding, yield curve</td><td>Very deep in core products</td></tr>
+<tr><td>Energy</td><td>Crude oil, natural gas, refined products</td><td>Inventory, geopolitics, weather, supply shocks</td><td>Strong in benchmarks; delivery details matter</td></tr>
+<tr><td>Metals</td><td>Gold, silver, copper</td><td>Rates, USD, inflation, industrial demand</td><td>Varies by metal and contract month</td></tr>
+<tr><td>Agriculture</td><td>Corn, wheat, soybeans, livestock</td><td>Weather, crop cycles, export demand, inventories</td><td>Seasonal depth; delivery rules matter</td></tr>
+<tr><td>FX</td><td>Major currency futures</td><td>Rates, central banks, macro flows</td><td>Strong in majors; time-zone effects matter</td></tr>
+<tr><td>Crypto</td><td>Bitcoin, Ether futures</td><td>Spot volatility, liquidity, weekend risk, regulation</td><td>Can trade nearly around the clock; margin can be conservative</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="liquidity"><h2>Why liquidity varies</h2>
+<p>Liquidity depends on who needs the product, how much natural hedging demand exists, how many market makers compete, how transparent the underlying exposure is, and how easy it is to hedge. ES is liquid because many traders, asset managers, and hedgers want S&amp;P 500 exposure. A far-deferred agricultural contract may be much less liquid because fewer users need that exact exposure.</p>
+<p>For traders, liquidity affects spread, slippage, stop execution, and liquidation quality. For brokers, liquidity affects whether risk can be reduced quickly during stress.</p>
+</section>
+
+<section id="leverage"><h2>Leveraged products exaggerate risk</h2>
+<p>Futures are capital-efficient because margin is smaller than notional exposure. That efficiency is useful for hedging and dangerous for undercapitalized speculation. A small market move can be a large percentage move on posted margin.</p>
+<p>The dangerous combination is not just leverage. It is leverage plus concentration, low excess equity, poor liquidity, event risk, and no exit discipline.</p>
+</section>
+
+<section id="brokerage-controls"><h2>Brokerage risk-control map</h2>
+<div class="grid-2">
+  <div class="risk-card"><h3>Margin sufficiency</h3><p>Track equity against initial, maintenance, intraday, overnight, and house requirements.</p></div>
+  <div class="risk-card"><h3>Concentration</h3><p>Flag accounts that are too large in one product, direction, expiration, or correlated exposure cluster.</p></div>
+  <div class="risk-card"><h3>Liquidity and liquidation</h3><p>Estimate whether positions can be reduced without severe slippage or market impact.</p></div>
+  <div class="risk-card"><h3>Volatility regime</h3><p>Adjust attention when realized volatility, implied volatility, or event risk changes quickly.</p></div>
+  <div class="risk-card"><h3>Expiration and delivery</h3><p>Control clients holding contracts near expiration, settlement, or physical delivery windows.</p></div>
+  <div class="risk-card"><h3>Debit prevention</h3><p>Act before client losses exceed collateral and become firm or clearing exposure.</p></div>
+</div>
+</section>
+
+<section id="trader-checklist"><h2>Questions before taking the risk</h2>
+<p>Before entering a futures trade, the trader needs to know the contract multiplier, tick value, expiration, margin requirement, normal and stressed move size, liquidation threshold, and event risk. The sizing question is part of the trade too: if the full-size contract makes the risk too coarse, a micro contract may be the more professional choice.</p>
+<blockquote>A good futures trader asks, “What can I make?” A better futures trader asks, “What exposure am I carrying, and what happens before I have time to react?”</blockquote>
+</section>
+
+<section class="references" id="references"><h2>References</h2><ul>
+<li><a href="https://www.cmegroup.com/markets/products.html">CME Group — Product Slate</a></li>
+<li><a href="https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.html">CME Group — E-mini S&amp;P 500 Futures</a></li>
+<li><a href="https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/FuturesMarketBasics/index.htm">CFTC — Futures Market Basics</a></li>
+<li><a href="https://www.ninjatrader.com/futures/blogs/futures-margin-day-vs-overnight/">NinjaTrader — Day Margin vs. Overnight Margin</a></li>
+</ul></section>
+
+    <nav class="series-nav"><a class="series-link" href="futures-contract-selection.html"><span>Previous</span><strong>Choosing the Right Contract</strong></a><span></span></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#types">Product families</a><a href="#liquidity">Liquidity</a><a href="#leverage">Leverage</a><a href="#brokerage-controls">Risk controls</a><a href="#trader-checklist">Before trading</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

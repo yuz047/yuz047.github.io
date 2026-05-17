@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futures Margin Stress Lab</title>
+  <style>
+    :root {
+      --bg: #f6f6f2;
+      --ink: #111111;
+      --muted: rgba(17, 17, 17, 0.58);
+      --line: rgba(17, 17, 17, 0.10);
+      --blue: #2f5f9f;
+      --soft-blue: rgba(47, 95, 159, 0.10);
+      --green: #047857;
+      --green-bg: #ecfdf5;
+      --amber: #b45309;
+      --amber-bg: #fffbeb;
+      --red: #b91c1c;
+      --red-bg: #fef2f2;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.07);
+      --radius: 32px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(246, 246, 242, 0.90);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav, main { max-width: 1280px; margin: 0 auto; }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      font-size: 13px;
+    }
+    nav .links { display: flex; gap: 28px; color: rgba(17,17,17,.62); }
+    main { padding: 54px 24px 72px; }
+    .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 32px; }
+    .panel, .metric, .chart-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .panel { padding: 26px; margin-top: 28px; }
+    .hero-card { padding: 34px; }
+    .kicker { color: var(--blue); text-transform: uppercase; letter-spacing: .16em; font-size: 12px; font-weight: 800; }
+    h1 { margin: 18px 0 0; font-size: clamp(48px, 6vw, 84px); line-height: .96; letter-spacing: -.07em; font-weight: 500; }
+    h2 { margin: 0; font-size: 34px; line-height: 1; letter-spacing: -.05em; font-weight: 500; }
+    h3 { margin: 0; font-size: 24px; line-height: 1.05; letter-spacing: -.04em; font-weight: 500; }
+    p { color: var(--muted); line-height: 1.7; }
+    .status-pill { display: inline-flex; border-radius: 999px; padding: 7px 12px; background: #000; color: #fff; font-size: 11px; letter-spacing: .12em; font-weight: 800; text-transform: uppercase; }
+    .hero-value { margin-top: 8px; font-size: 56px; letter-spacing: -.06em; font-weight: 500; }
+    .grid { display: grid; gap: 16px; }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+    .metric { padding: 20px; min-height: 130px; box-shadow: none; }
+    .metric.dark { background: #000; color: #fff; }
+    .metric.dark p { color: rgba(255,255,255,.62); }
+    .metric.green { background: var(--green-bg); border-color: rgba(4,120,87,.16); }
+    .metric.amber { background: var(--amber-bg); border-color: rgba(180,83,9,.16); }
+    .metric.red { background: var(--red-bg); border-color: rgba(185,28,28,.16); }
+    .metric-label { color: rgba(17,17,17,.45); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+    .metric-value { margin-top: 12px; font-size: 30px; line-height: 1; letter-spacing: -.06em; font-weight: 500; }
+    .metric-help { margin: 12px 0 0; font-size: 13px; line-height: 1.55; }
+    .section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    button, input, select, textarea {
+      border-radius: 16px;
+      border: 1px solid rgba(17,17,17,.15);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      font: inherit;
+    }
+    button { cursor: pointer; font-size: 14px; font-weight: 650; }
+    button.primary { background: #000; color: #fff; border-color: #000; }
+    button.danger { color: var(--red); border-color: rgba(185,28,28,.2); }
+    input, select, textarea { width: 100%; font-size: 14px; outline: none; }
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 4px var(--soft-blue); }
+    label { display: block; color: rgba(17,17,17,.45); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    label input, label select, label textarea { margin-top: 8px; }
+    .chart-card { padding: 24px; box-shadow: none; }
+    .bar-list { display: grid; gap: 12px; margin-top: 22px; }
+    .bar-row { display: grid; grid-template-columns: 140px 1fr 110px; gap: 12px; align-items: center; font-size: 14px; }
+    .bar-track { height: 13px; border-radius: 999px; overflow: hidden; background: rgba(17,17,17,.08); }
+    .bar-fill { height: 100%; min-width: 2%; border-radius: 999px; background: var(--blue); }
+    .bar-fill.good { background: var(--green); }
+    .bar-fill.loss { background: var(--red); }
+    .bar-value { text-align: right; color: var(--muted); }
+    .bridge { display: grid; gap: 10px; margin-top: 22px; }
+    .bridge-line { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(17,17,17,.08); color: var(--muted); }
+    .bridge-line strong { color: var(--ink); }
+    .table-wrap { margin-top: 18px; overflow-x: auto; border: 1px solid var(--line); border-radius: 24px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1120px; font-size: 14px; }
+    th { background: rgba(17,17,17,.03); color: rgba(17,17,17,.45); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+    th, td { padding: 12px; border-bottom: 1px solid rgba(17,17,17,.08); text-align: left; vertical-align: middle; }
+    tr:last-child td { border-bottom: 0; }
+    .sub { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .schema { margin-top: 14px; padding: 14px 16px; border-radius: 18px; background: rgba(17,17,17,.035); color: var(--muted); font-size: 13px; line-height: 1.55; }
+    @media (max-width: 1100px) { .hero, .grid-2, .grid-3, .grid-6, .chart-grid { grid-template-columns: 1fr; } }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="../index.html"><strong>Sirius Zhang</strong></a>
+      <div class="links"><a href="../work.html">Work</a><a href="../writing.html">Blogs</a><a href="../cv.html">CV</a></div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="panel hero-card">
+        <div class="kicker">Trader view stress testing tool</div>
+        <h1>Futures margin stress lab.</h1>
+        <p>Load positions, upload a separate margin-rate file, shock markets, apply residual VaR, and test whether account NLV and collateral remain sufficient against intraday, maintenance, and overnight initial requirements.</p>
+      </div>
+      <div class="panel hero-card">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Funding signal</div>
+            <div id="mainStatus" class="status-pill">Initial sufficient</div>
+          </div>
+          <p style="margin:0;text-align:right;">NLV → Intraday → Maintenance → Initial</p>
+        </div>
+        <p style="margin-top:42px;margin-bottom:0;">Stressed NLV</p>
+        <div id="headlineNlv" class="hero-value">$0</div>
+        <div class="grid grid-3" style="margin-top:28px;">
+          <div id="miniIntradayCard" class="metric"><div class="metric-label">Intraday Excess</div><div id="miniIntraday" class="metric-value">$0</div><p class="metric-help">Day session</p></div>
+          <div id="miniInitialCard" class="metric"><div class="metric-label">Initial Excess</div><div id="miniInitial" class="metric-value">$0</div><p class="metric-help">Overnight</p></div>
+          <div id="miniTopupCard" class="metric"><div class="metric-label">Top-up</div><div id="miniTopup" class="metric-value">$0</div><p class="metric-help">Initial + buffer</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-6" style="margin-top:24px;">
+      <div class="metric dark"><div class="metric-label">Current NLV</div><div id="metricCurrentNlv" class="metric-value">$0</div><p class="metric-help">Cash + OTE + NOV</p></div>
+      <div id="metricStressedCard" class="metric"><div class="metric-label">Stressed NLV</div><div id="metricStressedNlv" class="metric-value">$0</div><p class="metric-help">After shock + VaR</p></div>
+      <div id="metricIntradayCard" class="metric"><div class="metric-label">Intraday Req.</div><div id="metricIntradayReq" class="metric-value">$0</div><p class="metric-help">Uploaded day rate</p></div>
+      <div id="metricInitialCard" class="metric"><div class="metric-label">Initial Req.</div><div id="metricInitialReq" class="metric-value">$0</div><p class="metric-help">Uploaded IR</p></div>
+      <div id="metricCoverageCard" class="metric"><div class="metric-label">NLV / Initial</div><div id="metricCoverage" class="metric-value">0%</div><p class="metric-help">Funding coverage</p></div>
+      <div id="metricTopupCard" class="metric"><div class="metric-label">Top-up Needed</div><div id="metricTopup" class="metric-value">$0</div><p class="metric-help">Restore buffer</p></div>
+    </section>
+
+    <section class="grid grid-2" style="margin-top:28px;">
+      <div class="panel">
+        <h2>Account funding inputs</h2>
+        <p>NLV is the account resource. Collateral/SOD is included in funding equity for margin sufficiency checks.</p>
+        <div class="grid grid-2" style="margin-top:20px;">
+          <label>Cash Balance<input id="cashBalance" type="number" step="1000" /></label>
+          <label>OTE<input id="ote" type="number" step="1000" /></label>
+          <label>Net Option Value<input id="netOptionValue" type="number" step="1000" /></label>
+          <label>Collateral / SOD Credit<input id="collateralCredit" type="number" step="1000" /></label>
+          <label>Target Funding Buffer<input id="targetBuffer" type="number" step="1000" /></label>
+          <label>Primary Risk Mode<select id="riskMode"><option value="intraday">Intraday trading</option><option value="initial">Overnight initial</option><option value="maintenance">Maintenance / liquidation</option></select></label>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Scenario controls</h2>
+        <p>Use built-in stress sets or edit shocks and margin uplifts directly.</p>
+        <div class="grid grid-3" style="margin-top:20px;">
+          <label style="grid-column:1/-1;">Scenario<select id="scenarioSelect"></select></label>
+          <label>Residual VaR Weight<input id="residualVarWeight" type="number" min="0" max="3" step="0.05" /></label>
+          <label>VaR Multiplier<input id="varMultiplier" type="number" min="0" max="5" step="0.05" /></label>
+          <label>Initial Uplift<input id="initialUplift" type="number" min="0" max="2" step="0.01" /></label>
+          <label>Intraday Uplift<input id="intradayUplift" type="number" min="0" max="2" step="0.01" /></label>
+          <label>Maintenance Uplift<input id="maintenanceUplift" type="number" min="0" max="2" step="0.01" /></label>
+        </div>
+        <div class="buttons" style="margin-top:14px;"><button id="resetScenario">Reset scenario</button><button id="zeroScenario">Current market / no shock</button></div>
+        <div class="table-wrap"><table id="shockTable"></table></div>
+      </div>
+    </section>
+
+    <section class="chart-grid">
+      <div class="chart-card"><h3>Funding sufficiency bridge</h3><p>How current NLV moves through deterministic stress, residual VaR, and collateral credit into funding equity.</p><div id="bridge" class="bridge"></div></div>
+      <div class="chart-card"><h3>Requirement coverage</h3><p>Compares stressed funding equity against intraday, maintenance, initial, and initial-plus-buffer requirements.</p><div id="coverageBars" class="bar-list"></div></div>
+      <div class="chart-card"><h3>Stress P&L by product</h3><p>Signed price-shock P&L aggregated by contract type.</p><div id="pnlBars" class="bar-list"></div></div>
+      <div class="chart-card"><h3>Residual VaR by product</h3><p>VaR overlay after deterministic stress. This keeps brokerage risk discipline in a trader-facing view.</p><div id="varBars" class="bar-list"></div></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Margin rate file</h2>
+          <p>Upload IR/MR/intraday rates separately from positions. Default columns preserve the baseline rate; editable columns override the default only when populated. Blank editable cells fall back to default.</p>
+        </div>
+        <div class="buttons"><button id="addRateRow" class="primary">Add rate row</button><button id="reloadRates">Reload defaults</button><button id="downloadRates">Download rates CSV</button></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:18px;">
+        <label>Upload Rate CSV<input id="rateUpload" type="file" accept=".csv,.tsv,.txt" /></label>
+        <label>Paste Rate CSV<textarea id="ratePaste" placeholder="symbol,product,defaultInitialRate,initialRate,defaultMaintenanceRate,maintenanceRate,defaultIntradayRate,intradayRate,source"></textarea></label>
+      </div>
+      <div class="buttons" style="margin-top:14px;"><button id="loadRatePaste">Load pasted rates</button><button id="copyCurrentRates">Copy current rates to paste box</button></div>
+      <div class="table-wrap"><table id="rateTable"></table></div>
+      <div class="schema">Rate CSV schema: symbol, product, defaultInitialRate, initialRate, defaultMaintenanceRate, maintenanceRate, defaultIntradayRate, intradayRate, source. Symbol can be blank for product-level fallback. Editable columns can be blank to use default.</div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <h2>Position book</h2>
+          <p>Position rows carry exposure only. Effective rates are joined from the uploaded rate book by symbol first, then product fallback.</p>
+        </div>
+        <div class="buttons"><button id="addRow" class="primary">Add position</button><button id="loadSample">Reload sample</button><button id="downloadPositions">Download positions CSV</button><button id="downloadJson">Download JSON</button></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:18px;">
+        <label>Upload Position CSV<input id="csvUpload" type="file" accept=".csv,.tsv,.txt" /></label>
+        <label>Paste Position CSV<textarea id="csvPaste" placeholder="symbol,product,side,qty,price,multiplier"></textarea></label>
+      </div>
+      <div class="buttons" style="margin-top:14px;"><button id="loadCsvPaste">Load pasted positions</button><button id="copyCurrentPositions">Copy current positions to paste box</button><button id="clearPositions" class="danger">Clear positions</button></div>
+      <div class="table-wrap"><table id="positionTable"></table></div>
+      <div class="schema">Position CSV schema: symbol, product, side, qty, price, multiplier. Side accepts Long/Short or signed quantity.</div>
+    </section>
+  </main>
+
+  <script>
+    const PRODUCT_TYPES = ["Stock Index", "Energy", "Metals", "Crypto", "Currency", "Interest Rates", "Agriculture"];
+    const BASE_VAR_RATE = { "Stock Index": 0.018, Energy: 0.035, Metals: 0.025, Crypto: 0.055, Currency: 0.012, "Interest Rates": 0.010, Agriculture: 0.026 };
+    const DEFAULT_RATE_ROWS = [
+      { symbol: "", product: "Stock Index", defaultInitialRate: 0.075, initialRate: "", defaultMaintenanceRate: 0.068, maintenanceRate: "", defaultIntradayRate: 0.004, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Energy", defaultInitialRate: 0.12, initialRate: "", defaultMaintenanceRate: 0.11, maintenanceRate: "", defaultIntradayRate: 0.03, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Metals", defaultInitialRate: 0.08, initialRate: "", defaultMaintenanceRate: 0.072, maintenanceRate: "", defaultIntradayRate: 0.012, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Crypto", defaultInitialRate: 0.38, initialRate: "", defaultMaintenanceRate: 0.25, maintenanceRate: "", defaultIntradayRate: 0.025, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Currency", defaultInitialRate: 0.02, initialRate: "", defaultMaintenanceRate: 0.018, maintenanceRate: "", defaultIntradayRate: 0.008, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Interest Rates", defaultInitialRate: 0.04, initialRate: "", defaultMaintenanceRate: 0.035, maintenanceRate: "", defaultIntradayRate: 0.015, intradayRate: "", source: "default product" },
+      { symbol: "", product: "Agriculture", defaultInitialRate: 0.04, initialRate: "", defaultMaintenanceRate: 0.036, maintenanceRate: "", defaultIntradayRate: 0.032, intradayRate: "", source: "default product" },
+      { symbol: "ESM6", product: "Stock Index", defaultInitialRate: 0.075, initialRate: "", defaultMaintenanceRate: 0.068, maintenanceRate: "", defaultIntradayRate: 0.004, intradayRate: "", source: "symbol template" },
+      { symbol: "MESM6", product: "Stock Index", defaultInitialRate: 0.076, initialRate: "", defaultMaintenanceRate: 0.069, maintenanceRate: "", defaultIntradayRate: 0.004, intradayRate: "", source: "symbol template" },
+      { symbol: "MNQM6", product: "Stock Index", defaultInitialRate: 0.083, initialRate: "", defaultMaintenanceRate: 0.075, maintenanceRate: "", defaultIntradayRate: 0.0042, intradayRate: "", source: "symbol template" },
+      { symbol: "MCLK6", product: "Energy", defaultInitialRate: 0.13, initialRate: "", defaultMaintenanceRate: 0.118, maintenanceRate: "", defaultIntradayRate: 0.032, intradayRate: "", source: "symbol template" },
+      { symbol: "CLK6", product: "Energy", defaultInitialRate: 0.115, initialRate: "", defaultMaintenanceRate: 0.105, maintenanceRate: "", defaultIntradayRate: 0.029, intradayRate: "", source: "symbol template" },
+      { symbol: "MGCJ6", product: "Metals", defaultInitialRate: 0.078, initialRate: "", defaultMaintenanceRate: 0.071, maintenanceRate: "", defaultIntradayRate: 0.012, intradayRate: "", source: "symbol template" },
+      { symbol: "MBTJ6", product: "Crypto", defaultInitialRate: 0.375, initialRate: "", defaultMaintenanceRate: 0.25, maintenanceRate: "", defaultIntradayRate: 0.02, intradayRate: "", source: "symbol template" },
+      { symbol: "6EM6", product: "Currency", defaultInitialRate: 0.02, initialRate: "", defaultMaintenanceRate: 0.018, maintenanceRate: "", defaultIntradayRate: 0.008, intradayRate: "", source: "symbol template" },
+      { symbol: "ZSK6", product: "Agriculture", defaultInitialRate: 0.039, initialRate: "", defaultMaintenanceRate: 0.036, maintenanceRate: "", defaultIntradayRate: 0.031, intradayRate: "", source: "symbol template" }
+    ];
+    const SAMPLE_POSITIONS = [
+      { symbol: "ESM6", product: "Stock Index", side: "Long", qty: 1, price: 7060, multiplier: 50 },
+      { symbol: "MESM6", product: "Stock Index", side: "Short", qty: 12, price: 7062, multiplier: 5 },
+      { symbol: "MNQM6", product: "Stock Index", side: "Long", qty: 3, price: 24400, multiplier: 2 },
+      { symbol: "MCLK6", product: "Energy", side: "Short", qty: 8, price: 94.2, multiplier: 100 },
+      { symbol: "CLK6", product: "Energy", side: "Long", qty: 1, price: 94.1, multiplier: 1000 },
+      { symbol: "MGCJ6", product: "Metals", side: "Long", qty: 4, price: 4820, multiplier: 10 },
+      { symbol: "MBTJ6", product: "Crypto", side: "Long", qty: 2, price: 74000, multiplier: 0.1 },
+      { symbol: "6EM6", product: "Currency", side: "Short", qty: 1, price: 1.18, multiplier: 125000 },
+      { symbol: "ZSK6", product: "Agriculture", side: "Long", qty: 1, price: 1120, multiplier: 50 }
+    ];
+    const SCENARIOS = {
+      "Current market / no shock": { residualVarWeight: 1, varMultiplier: 1, initialUplift: 0, intradayUplift: 0, maintenanceUplift: 0, shocks: { "Stock Index": 0, Energy: 0, Metals: 0, Crypto: 0, Currency: 0, "Interest Rates": 0, Agriculture: 0 } },
+      "Equity selloff + vol expansion": { residualVarWeight: 1, varMultiplier: 1.35, initialUplift: 0.18, intradayUplift: 0.30, maintenanceUplift: 0.12, shocks: { "Stock Index": -0.12, Energy: -0.05, Metals: 0.035, Crypto: -0.20, Currency: 0.01, "Interest Rates": 0.015, Agriculture: -0.025 } },
+      "Energy spike / inflation shock": { residualVarWeight: 1, varMultiplier: 1.45, initialUplift: 0.20, intradayUplift: 0.25, maintenanceUplift: 0.12, shocks: { "Stock Index": -0.045, Energy: 0.18, Metals: 0.025, Crypto: -0.08, Currency: 0.008, "Interest Rates": -0.010, Agriculture: 0.045 } },
+      "Crypto weekend gap": { residualVarWeight: 1, varMultiplier: 1.60, initialUplift: 0.25, intradayUplift: 0.35, maintenanceUplift: 0.18, shocks: { "Stock Index": -0.055, Energy: -0.02, Metals: 0.02, Crypto: -0.30, Currency: 0.006, "Interest Rates": 0.006, Agriculture: -0.01 } },
+      "Metals squeeze": { residualVarWeight: 1, varMultiplier: 1.30, initialUplift: 0.15, intradayUplift: 0.18, maintenanceUplift: 0.10, shocks: { "Stock Index": -0.035, Energy: 0.015, Metals: 0.14, Crypto: -0.04, Currency: 0.012, "Interest Rates": 0.004, Agriculture: 0.01 } },
+      "Custom": { residualVarWeight: 1, varMultiplier: 1, initialUplift: 0.10, intradayUplift: 0.10, maintenanceUplift: 0.05, shocks: { "Stock Index": -0.06, Energy: 0.05, Metals: 0.03, Crypto: -0.12, Currency: 0.005, "Interest Rates": 0.005, Agriculture: 0.02 } }
+    };
+    const RATE_COLUMNS = ["symbol", "product", "defaultInitialRate", "initialRate", "defaultMaintenanceRate", "maintenanceRate", "defaultIntradayRate", "intradayRate", "source"];
+    const POSITION_COLUMNS = ["symbol", "product", "side", "qty", "price", "multiplier"];
+    const state = { positions: structuredClone(SAMPLE_POSITIONS), rateRows: structuredClone(DEFAULT_RATE_ROWS), selectedScenario: "Equity selloff + vol expansion", scenario: structuredClone(SCENARIOS["Equity selloff + vol expansion"]), account: { cashBalance: 125000, ote: -8500, netOptionValue: 0, collateralCredit: 15000, targetBuffer: 10000, riskMode: "initial" } };
+
+    const $ = id => document.getElementById(id);
+    const moneyFmt = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+    const pctFmt = new Intl.NumberFormat("en-US", { style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const toNum = (v, fallback = 0) => { const n = Number(v); return Number.isFinite(n) ? n : fallback; };
+    const optNum = v => (v === null || v === undefined || String(v).trim() === "") ? "" : (Number.isFinite(Number(v)) ? Number(v) : "");
+    const money = n => moneyFmt.format(Number.isFinite(n) ? n : 0);
+    const pct = n => pctFmt.format(Number.isFinite(n) ? n : 0);
+    const esc = s => String(s ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+    const tone = (excess, requirement) => excess < 0 ? "red" : excess < requirement * 0.15 ? "amber" : "green";
+
+    function positionNotional(row) { return (String(row.side).toLowerCase().startsWith("short") ? -1 : 1) * Math.abs(toNum(row.qty)) * toNum(row.price) * toNum(row.multiplier, 1); }
+    function effectiveValue(editable, defaultValue) { return editable === "" || editable === null || editable === undefined ? toNum(defaultValue) : toNum(editable, toNum(defaultValue)); }
+    function rateMatch(row, pos) {
+      const rowSymbol = String(row.symbol || "").trim().toUpperCase();
+      const posSymbol = String(pos.symbol || "").trim().toUpperCase();
+      if (rowSymbol && rowSymbol !== posSymbol) return false;
+      return String(row.product || "").trim() === String(pos.product || "").trim();
+    }
+    function effectiveRatesFor(pos) {
+      const symbolRow = state.rateRows.find(r => String(r.symbol || "").trim() && rateMatch(r, pos));
+      const productRow = state.rateRows.find(r => !String(r.symbol || "").trim() && rateMatch(r, pos));
+      const fallback = DEFAULT_RATE_ROWS.find(r => !r.symbol && r.product === pos.product) || DEFAULT_RATE_ROWS[0];
+      const row = symbolRow || productRow || fallback;
+      return {
+        source: symbolRow ? `symbol:${symbolRow.symbol}` : productRow ? `product:${productRow.product}` : `fallback:${fallback.product}`,
+        initialRate: effectiveValue(row.initialRate, row.defaultInitialRate),
+        maintenanceRate: effectiveValue(row.maintenanceRate, row.defaultMaintenanceRate),
+        intradayRate: effectiveValue(row.intradayRate, row.defaultIntradayRate)
+      };
+    }
+    function compute() {
+      updateAccountFromControlsIfReady(); updateScenarioFromControlsIfReady();
+      const a = state.account;
+      const currentNlv = a.cashBalance + a.ote + a.netOptionValue;
+      const currentFundingEquity = currentNlv + a.collateralCredit;
+      const byProduct = new Map();
+      let grossNotional = 0, netNotional = 0, initialReq = 0, intradayReq = 0, maintenanceReq = 0, scenarioPnl = 0, residualVarLoss = 0;
+      state.positions.forEach(row => {
+        const product = row.product || "Other";
+        const notional = positionNotional(row);
+        const gross = Math.abs(notional);
+        const pnl = notional * toNum(state.scenario.shocks[product]);
+        const varLoss = gross * (BASE_VAR_RATE[product] ?? 0.02) * state.scenario.varMultiplier * state.scenario.residualVarWeight;
+        const rates = effectiveRatesFor(row);
+        const initial = gross * rates.initialRate;
+        const intraday = gross * rates.intradayRate;
+        const maintenance = gross * rates.maintenanceRate;
+        if (!byProduct.has(product)) byProduct.set(product, { product, pnl: 0, varLoss: 0, gross: 0 });
+        const bucket = byProduct.get(product);
+        bucket.pnl += pnl; bucket.varLoss += varLoss; bucket.gross += gross;
+        grossNotional += gross; netNotional += notional; initialReq += initial; intradayReq += intraday; maintenanceReq += maintenance; scenarioPnl += pnl; residualVarLoss += varLoss;
+      });
+      const stressedNlv = currentNlv + scenarioPnl - residualVarLoss;
+      const stressedFundingEquity = currentFundingEquity + scenarioPnl - residualVarLoss;
+      const stressedInitial = initialReq * (1 + state.scenario.initialUplift);
+      const stressedIntraday = intradayReq * (1 + state.scenario.intradayUplift);
+      const stressedMaintenance = maintenanceReq * (1 + state.scenario.maintenanceUplift);
+      const initialExcess = stressedFundingEquity - stressedInitial;
+      const intradayExcess = stressedFundingEquity - stressedIntraday;
+      const maintenanceExcess = stressedFundingEquity - stressedMaintenance;
+      const primaryRequirement = a.riskMode === "intraday" ? stressedIntraday : a.riskMode === "maintenance" ? stressedMaintenance : stressedInitial;
+      const primaryExcess = stressedFundingEquity - primaryRequirement;
+      return { currentNlv, currentFundingEquity, grossNotional, netNotional, initialReq, intradayReq, maintenanceReq, stressedInitial, stressedIntraday, stressedMaintenance, scenarioPnl, residualVarLoss, stressedNlv, stressedFundingEquity, initialExcess, intradayExcess, maintenanceExcess, initialCoverage: stressedInitial === 0 ? 9 : stressedFundingEquity / stressedInitial, intradayCoverage: stressedIntraday === 0 ? 9 : stressedFundingEquity / stressedIntraday, maintenanceCoverage: stressedMaintenance === 0 ? 9 : stressedFundingEquity / stressedMaintenance, topupNeeded: Math.max(0, stressedInitial + a.targetBuffer - stressedFundingEquity), primaryRequirement, primaryExcess, primaryCoverage: primaryRequirement === 0 ? 9 : stressedFundingEquity / primaryRequirement, byProduct: [...byProduct.values()].sort((a,b) => Math.abs(b.pnl) - Math.abs(a.pnl)) };
+    }
+    function renderMetrics(r) {
+      $("headlineNlv").textContent = money(r.stressedNlv); $("metricCurrentNlv").textContent = money(r.currentNlv); $("metricStressedNlv").textContent = money(r.stressedNlv); $("metricIntradayReq").textContent = money(r.stressedIntraday); $("metricInitialReq").textContent = money(r.stressedInitial); $("metricCoverage").textContent = pct(r.initialCoverage); $("metricTopup").textContent = money(r.topupNeeded); $("miniIntraday").textContent = money(r.intradayExcess); $("miniInitial").textContent = money(r.initialExcess); $("miniTopup").textContent = money(r.topupNeeded);
+      const mode = state.account.riskMode === "intraday" ? "Intraday" : state.account.riskMode === "maintenance" ? "Maintenance" : "Initial";
+      $("mainStatus").textContent = r.primaryExcess < 0 ? `${mode} breach` : r.primaryCoverage < 1.15 ? `${mode} watch` : `${mode} sufficient`;
+      $("metricStressedCard").className = `metric ${r.stressedNlv < r.currentNlv ? "amber" : "green"}`;
+      $("metricIntradayCard").className = `metric ${tone(r.intradayExcess, r.stressedIntraday)}`; $("miniIntradayCard").className = `metric ${tone(r.intradayExcess, r.stressedIntraday)}`;
+      $("metricInitialCard").className = `metric ${tone(r.initialExcess, r.stressedInitial)}`; $("miniInitialCard").className = `metric ${tone(r.initialExcess, r.stressedInitial)}`;
+      $("metricCoverageCard").className = `metric ${r.initialCoverage < 1 ? "red" : r.initialCoverage < 1.15 ? "amber" : "green"}`;
+      $("metricTopupCard").className = `metric ${r.topupNeeded > 0 ? "red" : "green"}`; $("miniTopupCard").className = `metric ${r.topupNeeded > 0 ? "red" : "green"}`;
+    }
+    function renderBridge(r) {
+      const lines = [["Current NLV", r.currentNlv], ["Scenario P&L", r.scenarioPnl], ["Residual VaR loss", -r.residualVarLoss], ["Stressed NLV", r.stressedNlv], ["Collateral / SOD credit", state.account.collateralCredit], ["Stressed funding equity", r.stressedFundingEquity], ["Less stressed initial", -r.stressedInitial], ["Initial margin excess", r.initialExcess]];
+      $("bridge").innerHTML = lines.map(([name, value]) => `<div class="bridge-line"><span>${esc(name)}</span><strong>${money(value)}</strong></div>`).join("");
+    }
+    function renderBarList(id, rows, valueAccessor, lossColor = false) {
+      const max = Math.max(...rows.map(r => Math.abs(valueAccessor(r))), 1);
+      $(id).innerHTML = rows.map(row => { const value = valueAccessor(row); const klass = lossColor ? (value < 0 ? "loss" : "good") : ""; return `<div class="bar-row"><div>${esc(row.product)}</div><div class="bar-track"><div class="bar-fill ${klass}" style="width:${Math.max(2, Math.abs(value) / max * 100)}%"></div></div><div class="bar-value">${money(value)}</div></div>`; }).join("");
+    }
+    function renderCoverageBars(r) {
+      const rows = [{ product: "Funding Equity", value: r.stressedFundingEquity, klass: "good" }, { product: "Intraday Req.", value: r.stressedIntraday, klass: r.intradayExcess < 0 ? "loss" : "" }, { product: "Maintenance Req.", value: r.stressedMaintenance, klass: r.maintenanceExcess < 0 ? "loss" : "" }, { product: "Initial Req.", value: r.stressedInitial, klass: r.initialExcess < 0 ? "loss" : "" }, { product: "Initial + Buffer", value: r.stressedInitial + state.account.targetBuffer, klass: r.topupNeeded > 0 ? "loss" : "" }];
+      const max = Math.max(...rows.map(row => Math.abs(row.value)), 1);
+      $("coverageBars").innerHTML = rows.map(row => `<div class="bar-row"><div>${row.product}</div><div class="bar-track"><div class="bar-fill ${row.klass}" style="width:${Math.max(2, Math.abs(row.value) / max * 100)}%"></div></div><div class="bar-value">${money(row.value)}</div></div>`).join("");
+    }
+    function renderCharts(r) { renderBridge(r); renderCoverageBars(r); renderBarList("pnlBars", r.byProduct, x => x.pnl, true); renderBarList("varBars", [...r.byProduct].sort((a,b) => b.varLoss - a.varLoss), x => x.varLoss); }
+    function renderShockTable() {
+      $("shockTable").innerHTML = `<thead><tr><th>Product</th><th>Price Shock</th><th>Formatted</th></tr></thead><tbody>${PRODUCT_TYPES.map(product => `<tr><td><strong>${esc(product)}</strong></td><td><input data-shock="${esc(product)}" type="number" step="0.005" value="${state.scenario.shocks[product] ?? 0}" /></td><td>${pct(toNum(state.scenario.shocks[product]))}</td></tr>`).join("")}</tbody>`;
+      document.querySelectorAll("[data-shock]").forEach(input => input.addEventListener("input", e => { state.selectedScenario = "Custom"; $("scenarioSelect").value = "Custom"; state.scenario.shocks[e.target.dataset.shock] = toNum(e.target.value); render(); }));
+    }
+    function renderRateTable() {
+      $("rateTable").innerHTML = `<thead><tr>${["Symbol", "Product", "Default IR", "Edit IR", "Default MR", "Edit MR", "Default Intra", "Edit Intra", "Source", ""].map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${state.rateRows.map((row, i) => `<tr><td><input data-rate-row="${i}" data-rate-field="symbol" value="${esc(row.symbol)}" placeholder="blank = product" /></td><td><select data-rate-row="${i}" data-rate-field="product">${PRODUCT_TYPES.map(p => `<option value="${esc(p)}"${p === row.product ? " selected" : ""}>${esc(p)}</option>`).join("")}</select></td>${["defaultInitialRate", "initialRate", "defaultMaintenanceRate", "maintenanceRate", "defaultIntradayRate", "intradayRate"].map(key => `<td><input data-rate-row="${i}" data-rate-field="${key}" type="number" step="0.0001" value="${row[key] ?? ""}" placeholder="${key.startsWith("default") ? "default" : "blank = default"}" /></td>`).join("")}<td><input data-rate-row="${i}" data-rate-field="source" value="${esc(row.source || "")}" /></td><td><button class="danger" data-remove-rate="${i}">Remove</button></td></tr>`).join("")}</tbody>`;
+      document.querySelectorAll("#rateTable [data-rate-row]").forEach(input => input.addEventListener("input", e => { const i = Number(e.target.dataset.rateRow); const f = e.target.dataset.rateField; const defaults = ["defaultInitialRate", "defaultMaintenanceRate", "defaultIntradayRate"]; const edits = ["initialRate", "maintenanceRate", "intradayRate"]; state.rateRows[i][f] = defaults.includes(f) ? toNum(e.target.value) : edits.includes(f) ? optNum(e.target.value) : e.target.value; render(); }));
+      document.querySelectorAll("[data-remove-rate]").forEach(btn => btn.addEventListener("click", e => { state.rateRows.splice(Number(e.target.dataset.removeRate), 1); render(); }));
+    }
+    function renderPositions() {
+      $("positionTable").innerHTML = `<thead><tr>${["Symbol", "Product", "Side", "Qty", "Price", "Multiplier", "Eff. Intraday", "Eff. IR", "Eff. MR", "Rate Source", "Notional", ""].map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${state.positions.map((row, i) => { const rates = effectiveRatesFor(row); return `<tr><td><input data-row="${i}" data-field="symbol" value="${esc(row.symbol)}" /></td><td><select data-row="${i}" data-field="product">${PRODUCT_TYPES.map(p => `<option value="${esc(p)}"${p === row.product ? " selected" : ""}>${esc(p)}</option>`).join("")}</select></td><td><select data-row="${i}" data-field="side"><option${row.side === "Long" ? " selected" : ""}>Long</option><option${row.side === "Short" ? " selected" : ""}>Short</option></select></td><td><input data-row="${i}" data-field="qty" type="number" step="1" value="${row.qty}" /></td><td><input data-row="${i}" data-field="price" type="number" step="0.01" value="${row.price}" /></td><td><input data-row="${i}" data-field="multiplier" type="number" step="0.01" value="${row.multiplier}" /></td><td>${pct(rates.intradayRate)}</td><td>${pct(rates.initialRate)}</td><td>${pct(rates.maintenanceRate)}</td><td>${esc(rates.source)}</td><td><strong>${money(Math.abs(positionNotional(row)))}</strong><span class="sub">${positionNotional(row) < 0 ? "short" : "long"} signed ${money(positionNotional(row))}</span></td><td><button class="danger" data-remove="${i}">Remove</button></td></tr>`; }).join("")}</tbody>`;
+      document.querySelectorAll("#positionTable [data-row]").forEach(input => input.addEventListener("input", e => { const i = Number(e.target.dataset.row); const f = e.target.dataset.field; state.positions[i][f] = ["qty", "price", "multiplier"].includes(f) ? toNum(e.target.value) : e.target.value; render(); }));
+      document.querySelectorAll("[data-remove]").forEach(btn => btn.addEventListener("click", e => { state.positions.splice(Number(e.target.dataset.remove), 1); render(); }));
+    }
+    function parseDelimited(text) { const lines = text.trim().split(/\r?\n/).filter(Boolean); if (!lines.length) return { headers: [], rows: [] }; const split = line => line.split(/,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)|\t/).map(x => x.trim().replace(/^"|"$/g, "")); return { headers: split(lines[0]), rows: lines.slice(1).map(split) }; }
+    function norm(h) { return String(h).toLowerCase().replace(/[_\s.-]+/g, ""); }
+    function pick(row, headers, aliases) { const normalizedAliases = aliases.map(norm); const idx = headers.findIndex(h => normalizedAliases.includes(h)); return idx >= 0 ? row[idx] : ""; }
+    function parseRateCsv(text) { const { headers, rows } = parseDelimited(text); const h = headers.map(norm); return rows.map(row => { const product = pick(row, h, ["product", "contractType", "assetClass"]) || "Stock Index"; const fallback = DEFAULT_RATE_ROWS.find(x => !x.symbol && x.product === product) || DEFAULT_RATE_ROWS[0]; return { symbol: pick(row, h, ["symbol", "contract"]), product, defaultInitialRate: optNum(pick(row, h, ["defaultInitialRate", "defaultIR", "cmeInitialRate"])) || fallback.defaultInitialRate, initialRate: optNum(pick(row, h, ["initialRate", "ir", "editableInitialRate"])), defaultMaintenanceRate: optNum(pick(row, h, ["defaultMaintenanceRate", "defaultMR", "cmeMaintenanceRate"])) || fallback.defaultMaintenanceRate, maintenanceRate: optNum(pick(row, h, ["maintenanceRate", "mr", "editableMaintenanceRate"])), defaultIntradayRate: optNum(pick(row, h, ["defaultIntradayRate", "defaultDayRate", "cmeIntradayRate"])) || fallback.defaultIntradayRate, intradayRate: optNum(pick(row, h, ["intradayRate", "dayRate", "editableIntradayRate"])), source: pick(row, h, ["source", "note", "rateSource"]) }; }).filter(row => row.product || row.symbol); }
+    function parsePositionCsv(text) { const { headers, rows } = parseDelimited(text); const h = headers.map(norm); return rows.map(row => { const rawQty = toNum(pick(row, h, ["qty", "quantity"])); const signed = optNum(pick(row, h, ["signedQty", "signedQuantity"])); let side = pick(row, h, ["side"]) || "Long"; let qty = Math.abs(rawQty); if (signed !== "") { side = signed < 0 ? "Short" : "Long"; qty = Math.abs(signed); } else if (rawQty < 0) { side = "Short"; qty = Math.abs(rawQty); } return { symbol: pick(row, h, ["symbol", "contract"]), product: pick(row, h, ["product", "contractType", "assetClass"]) || "Stock Index", side: String(side).toLowerCase().startsWith("s") ? "Short" : "Long", qty, price: toNum(pick(row, h, ["price", "marketPrice", "markPrice"])), multiplier: toNum(pick(row, h, ["multiplier", "contractMultiplier"]), 1) }; }).filter(row => row.symbol && Number.isFinite(row.price) && Number.isFinite(row.qty)); }
+    function toCsv(rows, cols) { return [cols.join(","), ...rows.map(row => cols.map(c => JSON.stringify(row[c] ?? "")).join(","))].join("\n"); }
+    function download(filename, content, type = "text/csv") { const blob = new Blob([content], { type }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+    function setAccountControls() { ["cashBalance", "ote", "netOptionValue", "collateralCredit", "targetBuffer"].forEach(k => $(k).value = state.account[k]); $("riskMode").value = state.account.riskMode; }
+    function updateAccountFromControls() { ["cashBalance", "ote", "netOptionValue", "collateralCredit", "targetBuffer"].forEach(k => state.account[k] = toNum($(k).value)); state.account.riskMode = $("riskMode").value; }
+    function updateAccountFromControlsIfReady() { if ($("cashBalance") && $("cashBalance").value !== "") updateAccountFromControls(); }
+    function renderScenarioSelect() { $("scenarioSelect").innerHTML = Object.keys(SCENARIOS).map(name => `<option value="${esc(name)}"${name === state.selectedScenario ? " selected" : ""}>${esc(name)}</option>`).join(""); }
+    function renderScenarioControls() { ["residualVarWeight", "varMultiplier", "initialUplift", "intradayUplift", "maintenanceUplift"].forEach(k => $(k).value = state.scenario[k]); renderShockTable(); }
+    function updateScenarioFromControls() { ["residualVarWeight", "varMultiplier", "initialUplift", "intradayUplift", "maintenanceUplift"].forEach(k => state.scenario[k] = toNum($(k).value)); }
+    function updateScenarioFromControlsIfReady() { if ($("residualVarWeight") && $("residualVarWeight").value !== "") updateScenarioFromControls(); }
+    function render() { const r = compute(); renderMetrics(r); renderCharts(r); renderShockTable(); renderRateTable(); renderPositions(); }
+    function init() {
+      renderScenarioSelect(); setAccountControls(); renderScenarioControls();
+      ["cashBalance", "ote", "netOptionValue", "collateralCredit", "targetBuffer", "riskMode"].forEach(id => $(id).addEventListener("input", render));
+      ["residualVarWeight", "varMultiplier", "initialUplift", "intradayUplift", "maintenanceUplift"].forEach(id => $(id).addEventListener("input", render));
+      $("scenarioSelect").addEventListener("change", e => { state.selectedScenario = e.target.value; state.scenario = structuredClone(SCENARIOS[state.selectedScenario]); renderScenarioControls(); render(); });
+      $("resetScenario").addEventListener("click", () => { state.scenario = structuredClone(SCENARIOS[state.selectedScenario]); renderScenarioControls(); render(); });
+      $("zeroScenario").addEventListener("click", () => { state.selectedScenario = "Current market / no shock"; state.scenario = structuredClone(SCENARIOS[state.selectedScenario]); renderScenarioSelect(); renderScenarioControls(); render(); });
+      $("addRateRow").addEventListener("click", () => { state.rateRows.push({ symbol: "", product: "Stock Index", defaultInitialRate: 0.075, initialRate: "", defaultMaintenanceRate: 0.068, maintenanceRate: "", defaultIntradayRate: 0.004, intradayRate: "", source: "manual" }); render(); });
+      $("reloadRates").addEventListener("click", () => { state.rateRows = structuredClone(DEFAULT_RATE_ROWS); render(); });
+      $("downloadRates").addEventListener("click", () => download("sample_margin_rates.csv", toCsv(state.rateRows, RATE_COLUMNS)));
+      $("copyCurrentRates").addEventListener("click", () => { $("ratePaste").value = toCsv(state.rateRows, RATE_COLUMNS); });
+      $("loadRatePaste").addEventListener("click", () => { const parsed = parseRateCsv($("ratePaste").value); if (parsed.length) { state.rateRows = parsed; render(); } });
+      $("rateUpload").addEventListener("change", async e => { const file = e.target.files?.[0]; if (!file) return; const parsed = parseRateCsv(await file.text()); if (parsed.length) { state.rateRows = parsed; render(); } e.target.value = ""; });
+      $("addRow").addEventListener("click", () => { state.positions.push({ symbol: "NEW", product: "Stock Index", side: "Long", qty: 1, price: 1000, multiplier: 50 }); render(); });
+      $("loadSample").addEventListener("click", () => { state.positions = structuredClone(SAMPLE_POSITIONS); render(); });
+      $("clearPositions").addEventListener("click", () => { state.positions = []; render(); });
+      $("copyCurrentPositions").addEventListener("click", () => { $("csvPaste").value = toCsv(state.positions, POSITION_COLUMNS); });
+      $("loadCsvPaste").addEventListener("click", () => { const parsed = parsePositionCsv($("csvPaste").value); if (parsed.length) { state.positions = parsed; render(); } });
+      $("csvUpload").addEventListener("change", async e => { const file = e.target.files?.[0]; if (!file) return; const parsed = parsePositionCsv(await file.text()); if (parsed.length) { state.positions = parsed; render(); } e.target.value = ""; });
+      $("downloadPositions").addEventListener("click", () => download("sample_positions.csv", toCsv(state.positions, POSITION_COLUMNS)));
+      $("downloadJson").addEventListener("click", () => { const result = compute(); download("trader_stress_snapshot.json", JSON.stringify({ account: state.account, scenarioName: state.selectedScenario, scenario: state.scenario, result, positions: state.positions, rateRows: state.rateRows }, null, 2), "application/json"); });
+      render();
+    }
+    init();
+  </script>
+</body>
+</html>

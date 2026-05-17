@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Operating Controls for AI Assistants | Sirius Zhang</title>
+  <meta name="description" content="A practical note on writing AI instructions that respect source limits, uncertainty, review paths, and financial-workflow boundaries." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">AI controls note</div>
+      <h1>Operating Controls for AI Assistants</h1>
+      <p class="subtitle">In financial work, a prompt is not a magic sentence. It is a small operating rule: what the model may use, what it may say, and when a person has to take over.</p>
+      <div class="meta-row"><span class="pill">source limits</span><span class="pill">review paths</span><span class="pill">human approval</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/ai-stack.svg" alt="Operating Controls for AI Assistants diagram" /></div>
+    
+<p>A good prompt does not start with clever wording. It starts with the job. Are you asking the model to classify, extract, summarize, draft, reason, calculate, recommend, or act? Those are different tasks, and they deserve different controls.</p>
+<p>A public client response is not the same as an internal analyst note. A trade thesis is not the same as a risk limit. If the prompt does not understand that difference, the model will blur boundaries that the business cannot afford to blur.</p>
+<blockquote><p>The prompt is not complete until it can survive the workflow it is entering.</p></blockquote>
+<h2 id="1-task-first-model-second-prompt-third">Start with the job, not the model</h2>
+<p>Many AI failures begin with the wrong first question. Instead of asking how to make a chatbot do something, start with the work itself. If the task is deterministic, a rule or calculator may be better. If the task is classification, the output needs stable labels. If the task is drafting, the source boundary matters. If the task involves execution, permissions and human approval matter more than style.</p>
+<p>The model should be chosen after the task is understood. Otherwise, the prompt becomes a patch over a bad workflow decision.</p>
+<h2 id="2-the-firm-framework">A useful prompt has four parts</h2>
+<p>For market and brokerage work, the useful prompt usually does four things. It frames the task, makes clear what role or skill the model is supposed to use, restricts the source material, and defines an output that can be reviewed. That sounds less exciting than “prompt engineering,” but it is what turns the model from a clever text generator into a controlled assistant.</p>
+<p>For example, a brokerage-operations prompt should not ask the model to decide a case. It should ask for a source-grounded summary that separates confirmed facts from assumptions and sends high-risk items to a human reviewer.</p>
+<blockquote><p>Act as a brokerage operations analyst. Using only the approved case notes below, draft a five-sentence internal summary for a supervisor. Separate confirmed facts from assumptions. State missing information explicitly. Do not infer client intent. If the case involves fraud, suitability, or account restriction, add an escalation flag.</p></blockquote>
+<p>That example is not good because it sounds sophisticated. It is good because it narrows the job. The audience is defined, the source is limited, unsupported intent is prohibited, and escalation is built into the output.</p>
+<h2 id="3-the-role-framework">Tone is not enough</h2>
+<p>Role prompting can help with tone, but tone is the easy part. In financial work, the model also needs a clear outcome, firm limits, and an escalation path. Otherwise it may sound like the right professional while quietly doing the wrong professional task.</p>
+<p>A client-service draft is a good example. The model can help explain the next step, but it should not improvise legal conclusions, investment advice, or fraud findings.</p>
+<blockquote><p>Act as a customer-service assistant for a brokerage firm. Answer using only the approved policy excerpt and account status below. Explain the next step in plain language under 120 words. Do not give investment advice, legal conclusions, or speculate about fraud. If the matter involves account restriction, suitability, or suspected unauthorized activity, instruct the user to contact a licensed representative.</p></blockquote>
+<p>The role sets the voice. The limits make it safe enough to use.</p>
+<h2 id="4-prompting-for-brokers">For brokers, the prompt should keep authority outside the model</h2>
+<p>Brokerage prompts should treat AI as a controlled copilot, not an authority. The assistant can read across alerts, policies, account status, margin data, and case notes. It can draft the memo that an analyst should not have to write from scratch. But the prompt should keep final approval, account restriction, suitability interpretation, and client-impacting action outside the model.</p>
+<p>The difference is visible in the question. A bad prompt asks:</p>
+<blockquote><p>Should we approve this trade?</p></blockquote>
+<p>A better prompt keeps the decision where it belongs:</p>
+<blockquote><p>Using only the account status, product eligibility table, margin data, and restricted-symbol policy below, identify whether any review flags are present. Do not approve or reject the trade. Return a table with flag name, evidence, source, severity, and required human review step.</p></blockquote>
+<p>That difference is the entire point. The AI should support the decision workflow without pretending to be the decision-maker.</p>
+<h2 id="5-prompting-for-traders">For traders, the prompt should make the thesis harder to fool yourself with</h2>
+<p>A trader’s AI prompt should not ask the model to predict the market in isolation. That produces confidence faster than evidence. The better use is to make the thesis more inspectable: what is the bullish case, what is the bearish case, what would invalidate the trade, and where is the position exposed to liquidity, margin, or event risk?</p>
+<p>A weak prompt asks:</p>
+<blockquote><p>Should I buy ES tomorrow?</p></blockquote>
+<p>A better prompt asks the model to organize the evidence without pretending to have the final answer:</p>
+<blockquote><p>Summarize the main bullish and bearish arguments for ES over the next trading session using the notes and data below. Separate macro catalyst, technical level, volatility condition, liquidity condition, and position-risk concern. Do not give a final trade recommendation. End with three questions I should answer before entering a position.</p></blockquote>
+<p>This turns AI into a disciplined critic instead of a hype generator.</p>
+<h2 id="6-prompting-for-practitioners">For builders, prompts are part of the product surface</h2>
+<p>Practitioners should write prompts like production requirements. A prompt that works once in a demo is not enough. The same instruction has to behave across many users, many cases, and many edge conditions.</p>
+<p>A memo-drafting prompt should require source support. A surveillance prompt should avoid unsupported intent claims. A research prompt should distinguish facts, assumptions, and hypotheses. A coding prompt should define tests and edge cases. If the output cannot be evaluated, the prompt is not ready for serious use.</p>
+<h2 id="professional-workflow-takeaway">The useful mental model</h2>
+<p>Good prompting is disciplined delegation. You are not trying to make the model sound smart. You are trying to give a fast assistant a narrow job, a reliable source boundary, and a clean handoff back to a human when the work becomes judgment.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>Prompting is not wordsmithing. In finance, it is part of the control environment. The best prompts define task, source, limits, output, and escalation. That structure is the difference between a useful assistant and an uncontrolled operational risk.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="what-counts-as-ai.html"><strong>What Counts as AI in Markets?</strong><br><span>model taxonomy · workflow fit · human control</span></a><a href="why-ai-fails.html"><strong>Why AI Fails in Financial Workflows</strong><br><span>model risk · data leakage · workflow controls</span></a><a href="how-brokerages-should-build-ai.html"><strong>How Brokerages Should Build AI</strong><br><span>retrieval · audit trail · human approval</span></a></div>
+    <nav class="series-nav"><a class="series-link" href="why-ai-fails.html"><span>Previous</span><strong>Why AI Fails in Financial Workflows</strong></a><a class="series-link" href="how-brokerages-should-build-ai.html"><span>Next</span><strong>How Brokerages Should Build AI</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-task-first-model-second-prompt-third">Start with the job</a><a href="#2-the-firm-framework">Four useful parts</a><a href="#3-the-role-framework">Tone is not enough</a><a href="#4-prompting-for-brokers">For brokers</a><a href="#5-prompting-for-traders">For traders</a><a href="#6-prompting-for-practitioners">For builders</a><a href="#professional-workflow-takeaway">Mental model</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

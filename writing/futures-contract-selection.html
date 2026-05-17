@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Which Futures Contract Should I Trade? | Sirius Zhang</title>
+  <meta name="description" content="How to choose futures contracts by expiration, liquidity, roll dates, and contract size, using ES and MES as highly traded representative examples." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <div class="eyebrow">Market structure note</div>
+    
+<h1>Which Futures Contract Should I Trade? Expiration, Liquidity, and Product Choice</h1>
+<p class="subtitle">A futures ticker is not enough. Traders need to choose the right expiration, contract size, and liquidity profile for the exposure they actually want.</p>
+<div class="meta-row"><span class="pill">Part 3 of 4</span><span class="pill">Contract selection</span><span class="pill">Expiration · roll date · liquidity</span></div>
+
+<div class="hero-card"><p><strong>Core idea:</strong> the right futures contract depends on purpose. A day trader typically wants the most liquid front contract. A hedger usually wants the contract that best matches the timing of the exposure.</p></div>
+
+<section id="many-contracts"><h2>Why does ES have so many contracts?</h2>
+<p>When you open an ES quote chain, you may see multiple quarterly contracts. They exist because market participants hedge and trade different time horizons. A short-term trader may care about today’s liquidity. A portfolio hedger may care about exposure over the next quarter. An institutional desk may need to roll exposure across contract months.</p>
+<p>Equity index futures commonly use a quarterly cycle. CME month-code shorthand such as H/M/U/Z maps to March, June, September, and December, but the practical point is liquidity migration: the active contract changes as expiration approaches.</p>
+<div class="callout"><div class="callout-title">Month-code takeaway</div><p>The letters matter less than the workflow: know which expiration is active, when liquidity rolls, and whether your holding period crosses the roll window.</p></div>
+</section>
+
+<section id="front-month"><h2>Front month versus deferred contracts</h2>
+<p>The front-month contract is usually the nearest actively traded expiration. For many short-term traders, it tends to be the contract with the best liquidity, narrowest spread, and deepest visible order book. Deferred contracts can still be useful, especially for hedgers, but they may trade with less depth.</p>
+<div class="table-wrap"><table><thead><tr><th>User type</th><th>Typical choice</th><th>Primary concern</th></tr></thead><tbody>
+<tr><td>Day trader</td><td>Most liquid active contract</td><td>Spread, depth, execution quality</td></tr>
+<tr><td>Swing trader</td><td>Liquid active contract, with roll awareness</td><td>Holding period, roll date, overnight margin</td></tr>
+<tr><td>Portfolio hedger</td><td>Contract aligned to hedge horizon</td><td>Basis risk and hedge timing</td></tr>
+<tr><td>Institutional desk</td><td>Front and deferred contracts, calendar spreads</td><td>Roll execution and liquidity transfer</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="roll"><h2>Roll dates and rollover risk</h2>
+<p>Futures expire. If the trader wants to keep exposure after expiration, the position must be rolled by closing the old contract and opening a later one. CME notes that equity index futures can be rolled from one quarterly contract month to the next, and the equity roll date is the Monday before the third Friday of the expiration month.</p>
+<p>Rollover is not just an administrative detail. Liquidity migrates. Spreads can change. Execution quality can vary. Traders who ignore expiration can end up trading the wrong contract or holding exposure near settlement without understanding the mechanics.</p>
+</section>
+
+<section id="es-vs-mes"><h2>ES versus MES: representative benchmark contracts, different size</h2>
+<p>ES and Micro E-mini S&amp;P 500 futures, symbol <span class="inline-code">MES</span>, are highly traded representative S&amp;P 500 index futures contracts. ES uses a $50 multiplier; MES uses a $5 multiplier. The market exposure points in the same direction, but position granularity and account-level risk are very different.</p>
+<div class="table-wrap"><table><thead><tr><th>Contract</th><th>Multiplier</th><th>Approx. value of 1 index point</th><th>Use case</th></tr></thead><tbody>
+<tr><td>ES</td><td>$50 × index</td><td>$50</td><td>Larger accounts, benchmark index exposure, active institutional and professional trading</td></tr>
+<tr><td>MES</td><td>$5 × index</td><td>$5</td><td>Smaller sizing, incremental hedge adjustment, more granular risk budgeting</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="checklist"><h2>Questions before choosing the contract</h2>
+<p>The contract choice should follow the exposure. A trader should know the market being traded or hedged, the holding period, where liquidity is concentrated, when the contract expires, when liquidity rolls, what margin applies, and whether the contract is cash-settled or physically deliverable. If those answers are vague, the trade is not ready.</p>
+</section>
+
+<section class="references" id="references"><h2>References</h2><ul>
+<li><a href="https://www.cmegroup.com/trading/equity-index/rolldates.html">CME Group — Equity Index Roll Dates</a></li>
+<li><a href="https://www.cmegroup.com/month-codes.html">CME Group — Contract Month Codes</a></li>
+<li><a href="https://www.cmegroup.com/education/courses/introduction-to-futures/understanding-contract-trading-codes">CME Group — Understanding Contract Trading Codes</a></li>
+<li><a href="https://www.cmegroup.com/markets/equities/sp/micro-e-mini-sandp-500.html">CME Group — Micro E-mini S&amp;P 500 Futures</a></li>
+</ul></section>
+
+    <nav class="series-nav"><a class="series-link" href="futures-margin-liquidation.html"><span>Previous</span><strong>Futures Margin Explained</strong></a><a class="series-link" href="futures-product-risk.html"><span>Next</span><strong>Product Types and Risk Controls</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#many-contracts">Why many contracts?</a><a href="#front-month">Front vs deferred</a><a href="#roll">Roll dates</a><a href="#es-vs-mes">ES vs MES</a><a href="#checklist">Contract questions</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

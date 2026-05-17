@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prediction Markets Are Becoming Market Structure | Sirius Zhang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+  <main class="article-shell container">
+    <article class="article">
+      <div class="eyebrow">Market structure series</div>
+      <h1>Prediction markets are becoming market structure.</h1>
+      <p class="subtitle">Polymarket, Kalshi, and brokerage event contracts turn real-world events into tradable risk. The price looks like a probability, but the market underneath is shaped by liquidity, regulation, bots, insiders, and settlement rules.</p>
+      <div class="meta-row">
+        <span class="pill">Event contracts</span>
+        <span class="pill">Market microstructure</span>
+        <span class="pill">Bot surveillance</span>
+        <span class="pill">Retail distribution</span>
+      </div>
+
+      <section class="hero-card" id="market-structure-thesis">
+        <p><strong>Thesis:</strong> prediction-market odds are useful market prices, not clean truth signals. A 63-cent YES contract can contain beliefs, fees, stale quotes, market-maker inventory, bot flow, contract wording, and settlement risk at the same time.</p>
+      </section>
+
+      <section id="prediction-markets-101">
+        <h2>Prediction Markets 101</h2>
+        <p>A prediction market asks a contract-level question: will an event happen by the stated settlement rule? A YES contract often pays $1 if the event occurs and zero if it does not. When YES trades at $0.63, the common shortcut is to call it a 63% probability.</p>
+        <p>That shortcut is useful, but incomplete. The price is a market price. It can reflect collective belief, but it can also reflect liquidity, fees, funding costs, market-maker quotes, bot activity, position limits, wording ambiguity, and dispute risk.</p>
+        <div class="source-note">
+          <p>The CFTC describes event contracts as yes/no instruments with fixed payouts and notes that prices may reflect perceived likelihood. The important word is <strong>may</strong>: perceived probability travels through market structure before it becomes a traded price.</p>
+        </div>
+
+        <figure class="figure-card">
+          <figcaption>Figure 1 · Binary event contract payoff</figcaption>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Position</th><th>Entry</th><th>If YES settles true</th><th>If YES settles false</th></tr></thead>
+              <tbody>
+                <tr><td>Buy YES</td><td>$0.40</td><td>Receives $1; earns $0.60 before fees</td><td>Expires at zero; loses $0.40</td></tr>
+                <tr><td>Buy NO</td><td>$0.60</td><td>Expires at zero; loses $0.60</td><td>Receives $1; earns $0.40 before fees</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+
+        <h3>Venue wrapper matters</h3>
+        <p>Prediction markets are no longer one product category. Polymarket represents a crypto-native, internet-first path. Kalshi represents a regulated event-exchange path. Robinhood represents mainstream retail distribution. The payoff can look similar while the oversight, user base, execution environment, and surveillance obligations differ materially.</p>
+        <div class="grid-2">
+          <div class="risk-card"><h3>Crypto-native venue</h3><p>Wallet flow, fast market creation, global attention, and jurisdictional complexity.</p></div>
+          <div class="risk-card"><h3>Regulated exchange</h3><p>Contract-market rules, listing review, surveillance expectations, and federal jurisdiction questions.</p></div>
+          <div class="risk-card"><h3>Brokerage distribution</h3><p>Retail-product framing, customer disclosures, suitability-adjacent controls, and support escalation.</p></div>
+          <div class="risk-card"><h3>Research use</h3><p>Market-implied odds can be an input, but should be treated like noisy order-book data rather than final truth.</p></div>
+        </div>
+      </section>
+
+      <section id="event-contracts-market-structure">
+        <h2>When event contracts become brokerage market structure</h2>
+        <p>The regulatory question is not simply “derivative or gambling?” A more useful risk lens is contract-level classification: whether the event has a hedging use, whether the outcome is manipulable, whether an insider population exists, and whether the resolution source is objective and auditable.</p>
+        <p>Retail brokerage distribution changes the scale of the problem. A product that once lived on specialist venues can become a mainstream active-trader product. That creates familiar market-structure questions: volume quality, customer understanding, concentration, surveillance, and post-event dispute handling.</p>
+
+        <figure class="figure-card">
+          <figcaption>Figure 2 · Gross volume versus informational liquidity</figcaption>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Flow source</th><th>Market-quality read</th><th>Risk interpretation</th></tr></thead>
+              <tbody>
+                <tr><td>Genuine disagreement</td><td>Useful</td><td>Different participants attach different probabilities to the event.</td></tr>
+                <tr><td>Market making</td><td>Mixed</td><td>Improves spreads, but volume may be mechanically generated.</td></tr>
+                <tr><td>Sports-event turnover</td><td>Mixed</td><td>High engagement, but behavior can resemble betting more than hedging.</td></tr>
+                <tr><td>Cross-market arbitrage</td><td>Useful</td><td>Corrects inconsistent prices across related contracts.</td></tr>
+                <tr><td>Wash-like loops</td><td>Harmful</td><td>Inflates credibility without transferring meaningful risk.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+
+        <h3>A better screening framework</h3>
+        <p>Market operators and brokerages should classify contracts by event type, manipulability, insider population, resolution clarity, venue surveillance coverage, and customer disclosure burden. A Fed decision contract, a weather contract, a sports contract, and an election contract may share yes/no payoff mechanics, but they should not automatically receive the same risk treatment.</p>
+      </section>
+
+      <section id="bots-manipulation-mispricing">
+        <h2>Bots, manipulation, and mispriced contracts</h2>
+        <p>Prediction markets look clean on the surface: a question, two sides, and a price between zero and one dollar. Underneath, they are microstructure systems. A displayed price may reflect crowd belief; it may also reflect stale quotes, thin books, latency, insider information, wash-like volume, ambiguous wording, or a fragile resolution source.</p>
+
+        <div class="grid-2">
+          <div class="risk-card"><h3>Helpful automation</h3><p>Market-making bots can tighten spreads. Arbitrage bots can align related contracts. News-driven systems can update stale markets after public information appears.</p></div>
+          <div class="risk-card"><h3>Adverse automation</h3><p>Fast systems can snipe stale quotes, amplify misleading volume, route around weak controls, or exploit settlement wording faster than casual users can react.</p></div>
+        </div>
+
+        <figure class="figure-card">
+          <figcaption>Figure 3 · Mispricing taxonomy</figcaption>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Mispricing type</th><th>Mechanism</th><th>Risk</th></tr></thead>
+              <tbody>
+                <tr><td>Probability error</td><td>True odds differ from market odds</td><td>Forecasting loss</td></tr>
+                <tr><td>Liquidity error</td><td>Thin book moves on small trade</td><td>False probability signal</td></tr>
+                <tr><td>Wording error</td><td>Traders misread resolution rule</td><td>Settlement surprise</td></tr>
+                <tr><td>Time-value error</td><td>Capital lockup is ignored</td><td>Poor capital efficiency</td></tr>
+                <tr><td>Structural error</td><td>Related contracts imply inconsistent probabilities</td><td>Arbitrage or model loss</td></tr>
+                <tr><td>Insider-flow error</td><td>Price moves before public information</td><td>Market-integrity breach</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+
+        <h3>Manipulation has a wider attack surface</h3>
+        <p>In equities, manipulation usually targets price. In prediction markets, manipulation can target price, the event, the resolution source, or the timing of public information. If settlement depends on a data feed, the data feed becomes part of the market. If settlement depends on a public announcement, the announcement process becomes part of the market.</p>
+      </section>
+
+      <section id="brokerage-risk-view">
+        <h2>Brokerage risk view</h2>
+        <p>Prediction markets should be evaluated like market structure, not like novelty content. A credible control stack needs contract approval, insider-risk mapping, market surveillance, bot/API governance, resolution governance, customer disclosures, and post-settlement review.</p>
+        <figure class="figure-card">
+          <figcaption>Figure 4 · Controls needed for credible prediction markets</figcaption>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Control layer</th><th>What to inspect</th><th>Practical output</th></tr></thead>
+              <tbody>
+                <tr><td>Contract approval</td><td>Event category and resolution source</td><td>Approve, restrict, or reject</td></tr>
+                <tr><td>Insider-risk map</td><td>Who can know or influence the outcome?</td><td>Monitor or restrict high-risk participants</td></tr>
+                <tr><td>Market surveillance</td><td>Timing, concentration, funding links</td><td>Escalate abnormal patterns</td></tr>
+                <tr><td>Bot/API governance</td><td>Order-to-trade ratio and self-trading</td><td>Rate limits, registration, kill switches</td></tr>
+                <tr><td>Resolution governance</td><td>Source hierarchy and dispute window</td><td>Publish clear settlement rationale</td></tr>
+                <tr><td>Customer protection</td><td>Fees, liquidity, payoff, settlement risk</td><td>Plain-language risk disclosures</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </figure>
+      </section>
+
+      <section class="related">
+        <h2>Related blogs</h2>
+        <a href="anatomy-of-high-risk-symbol.html"><strong>Anatomy of a High-Risk Symbol</strong><br><span>thin float · promotion · surveillance</span></a>
+        <a href="futures-product-risk.html"><strong>Futures Products, Liquidity, and Risk Controls</strong><br><span>product liquidity · concentration · controls</span></a>
+        <a href="ai-governance-for-markets.html"><strong>AI Governance for Markets</strong><br><span>supervision · validation · red team</span></a>
+      </section>
+
+      <section class="references" id="references">
+        <h2>References</h2>
+        <ol>
+          <li><a href="https://www.cftc.gov/LearnandProtect/PredictionMarkets">CFTC — Understanding Prediction Markets and Event Contracts</a></li>
+          <li><a href="https://www.cftc.gov/PressRoom/PressReleases/8302-20">CFTC — KalshiEX designated as a contract market</a></li>
+          <li><a href="https://www.cftc.gov/PressRoom/PressReleases/8478-22">CFTC — Polymarket 2022 enforcement action</a></li>
+          <li><a href="https://investors.robinhood.com/news-releases/news-release-details/robinhood-reports-first-quarter-2026-results">Robinhood — Q1 2026 results</a></li>
+          <li><a href="https://www.trmlabs.com/resources/blog/how-prediction-markets-scaled-to-usd-21b-in-monthly-volume-in-2026">TRM Labs — Prediction-market volume and wallet analysis</a></li>
+          <li><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5251980">SSRN — Network-Based Detection of Wash Trading</a></li>
+        </ol>
+      </section>
+    </article>
+
+    <aside class="toc">
+      <h2>On this page</h2>
+      <a href="#market-structure-thesis">Thesis</a>
+      <a href="#prediction-markets-101">Prediction Markets 101</a>
+      <a href="#event-contracts-market-structure">Brokerage market structure</a>
+      <a href="#bots-manipulation-mispricing">Bots and mispricing</a>
+      <a href="#brokerage-risk-view">Brokerage risk view</a>
+      <a href="#references">References</a>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

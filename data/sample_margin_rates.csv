@@ -1,0 +1,17 @@
+symbol,product,defaultInitialRate,initialRate,defaultMaintenanceRate,maintenanceRate,defaultIntradayRate,intradayRate,source
+,Stock Index,0.075,,0.068,,0.004,,default product
+,Energy,0.12,,0.11,,0.03,,default product
+,Metals,0.08,,0.072,,0.012,,default product
+,Crypto,0.38,,0.25,,0.025,,default product
+,Currency,0.02,,0.018,,0.008,,default product
+,Interest Rates,0.04,,0.035,,0.015,,default product
+,Agriculture,0.04,,0.036,,0.032,,default product
+ESM6,Stock Index,0.075,,0.068,,0.004,,symbol template
+MESM6,Stock Index,0.076,,0.069,,0.004,,symbol template
+MNQM6,Stock Index,0.083,,0.075,,0.0042,,symbol template
+MCLK6,Energy,0.13,,0.118,,0.032,,symbol template
+CLK6,Energy,0.115,,0.105,,0.029,,symbol template
+MGCJ6,Metals,0.078,,0.071,,0.012,,symbol template
+MBTJ6,Crypto,0.375,,0.25,,0.02,,symbol template
+6EM6,Currency,0.02,,0.018,,0.008,,symbol template
+ZSK6,Agriculture,0.039,,0.036,,0.031,,symbol template

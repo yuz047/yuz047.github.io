@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anatomy of a High-Risk Symbol | Sirius Zhang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+  <main class="article-shell container">
+  <article class="article">
+    <div class="eyebrow">Market structure note · Symbol risk controls</div>
+    <h1>Anatomy of a High-Risk Symbol</h1>
+    <p class="subtitle">Ten reported pump-and-dump or ramp-and-dump symbols show the same recurring structure: fragile float, attention engineering, hidden or concentrated selling inventory, and retail buyers becoming the exit liquidity.</p>
+    <div class="meta-row">
+      <span class="pill">Thin float</span>
+      <span class="pill">Small-cap fraud</span>
+      <span class="pill">Discord / WhatsApp / X</span>
+      <span class="pill">Brokerage surveillance</span>
+      <span class="pill">Illustrative dataset included</span>
+    </div>
+
+    <section class="card">
+      <p class="note"><strong>Important:</strong> This is a research and risk-control case study, not investment advice. Some cases below are allegations from regulator or law-enforcement filings; defendants are presumed innocent unless proven guilty. Several market features are reconstructed from reported facts and public-source historical tables, so the dataset is designed for education and surveillance design, not for trading signals.</p>
+    </section>
+
+    <section id="market-structure">
+      <h2>The stock tip is not the product. The buyer is the product.</h2>
+      <p>A pump-and-dump scheme does not work because a small company is automatically bad. It works when the security is easy to move and the buyer base can be coordinated. Low price, weak liquidity, a thin or controlled float, limited analyst review, and a persuasive story can turn a small amount of capital into a large visible price move.</p>
+      <p>Once the chart starts moving, the chart itself becomes marketing. A private group can say “look, the market is confirming the thesis,” when the market is really reacting to a temporary demand imbalance created by the same group. The final buyer does not realize they are not entering a trade; they are providing liquidity for someone else’s exit.</p>
+    </section>
+
+    <section class="grid two">
+      <figure class="card">
+        <img src="../assets/high-risk-symbols/plot_reported_case_share_inventory.png" alt="Reported case share inventory, where disclosed" />
+        <figcaption>Reported share inventory or case-linked shares. The log scale is intentional: modern ramp-and-dump cases such as CLEU and OST involve tens of millions of shares, while social-media scalping cases can still move smaller fragile names with much smaller disclosed inventory.</figcaption>
+      </figure>
+      <figure class="card">
+        <img src="../assets/high-risk-symbols/plot_reported_collapse_drop.png" alt="Reported collapse drop percentages for CLEU and OST" />
+        <figcaption>Collapse magnitude where the reported record gives a clear before/after price. CLEU and OST are useful modern examples because the event drop is observable and extreme.</figcaption>
+      </figure>
+    </section>
+
+    <section id="case-patterns">
+      <h2>What the ten symbols have in common</h2>
+      <p>The cases differ in style. CLEU and OST look like modern cross-border ramp-and-dump operations using fake advisor identities and social platforms. The Atlas Trading symbols look more like influencer-driven social-media scalping: buy first, promote to followers, then sell into the volume created by the promotion.</p>
+      <p>From a brokerage risk perspective, the common theme is not the specific app or channel. The common theme is that a fragile security becomes the vehicle for manufactured demand.</p>
+      <figure class="card">
+        <img src="../assets/high-risk-symbols/plot_historical_feature_flags.png" alt="Historical case-feature flags across reported symbols" />
+        <figcaption>Feature flags from the reported cases. A blue marker does not mean final liability; it means the case record included a fact pattern useful for surveillance design.</figcaption>
+      </figure>
+    </section>
+
+    <section id="case-table">
+      <h2>The case table</h2>
+      <p>This table is structured like a small risk-lab dataset. It keeps the case fact, the market feature, the promotion channel, and the operational risk band in the same row.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Case window</th>
+              <th>Reported cap</th>
+              <th>Case shares</th>
+              <th>Sell volume</th>
+              <th>Drop</th>
+              <th>Message / channel</th>
+              <th>Risk score</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr>
+      <td><strong>CLEU/CLEUF</strong><br><span>China Liberal Education Holdings</span></td>
+      <td>Jan 2025<br><span>Ramp-and-dump / fake advisor investment club</span></td>
+      <td>228M</td>
+      <td>33.9M</td>
+      <td>31.5M</td>
+      <td>98.1%</td>
+      <td>WhatsApp / social media<br><span>Promised up to 380% return, M&A story, buy-price instructions, U.S.-advisor impersonation</span></td>
+      <td>100<br><span>Restricted</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>OST</strong><br><span>Ostin Technology Group</span></td>
+      <td>Apr-Jun 2025<br><span>Pump-and-dump / social media campaign</span></td>
+      <td>—</td>
+      <td>70.0M</td>
+      <td>—</td>
+      <td>94.1%</td>
+      <td>Social media / alleged identity misuse<br><span>Coordinated social-media campaign; DOJ alleged non-bona-fide transfers and dumping; FBI reported $9.40 high to $0.55 close on June 26, 2025</span></td>
+      <td>100<br><span>Restricted</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>CEI</strong><br><span>Camber Energy</span></td>
+      <td>Aug-Oct 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>—</td>
+      <td>2.18M</td>
+      <td>2.07M</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoted as swing, cheap, $2+, $3–5, $10+ while alleged selling occurred into follower demand</span></td>
+      <td>85<br><span>Restricted</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>ALZN</strong><br><span>Alzamend Neuro</span></td>
+      <td>Jun 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoted as large swing position, new highs, $12 target, drug-market upside narrative</span></td>
+      <td>70<br><span>High Risk</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>VISL</strong><br><span>Vislink Technologies</span></td>
+      <td>Mar 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>116M</td>
+      <td>0.406M</td>
+      <td>0.156M</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoted around CEO interview, ESPN/radio, Starlink, after-hours gapper, no-debt thesis</span></td>
+      <td>85<br><span>Restricted</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>TRCH/MMAT</strong><br><span>Torchlight Energy Resources / Meta Materials</span></td>
+      <td>Feb 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>—</td>
+      <td>0.798M</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoted via merger, dividend, Tesla rumor, COVID-angle, and $10B-market-cap narrative</span></td>
+      <td>85<br><span>Restricted</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>ABVC</strong><br><span>ABVC BioPharma</span></td>
+      <td>Aug 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>87.6M</td>
+      <td>0.282M</td>
+      <td>0.282M</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoted as $4/$4.50 breakout and long $6+++ while alleged same-day liquidation occurred</span></td>
+      <td>70<br><span>High Risk</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>AREC</strong><br><span>American Resources Corp.</span></td>
+      <td>Mar 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoter allegedly claimed loss while complaint alleged profitable selling around the same promotion window</span></td>
+      <td>70<br><span>High Risk</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>HUGE</strong><br><span>FSD Pharma</span></td>
+      <td>Feb 2021<br><span>Atlas Trading alleged social-media scalping</span></td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Twitter / Discord / podcast<br><span>Promoter allegedly said he took the loss, while complaint alleged profitable dumping that day</span></td>
+      <td>70<br><span>High Risk</span></td>
+    </tr>
+    
+    <tr>
+      <td><strong>GTT</strong><br><span>GTT Communications</span></td>
+      <td>Mar 2021<br><span>Atlas Trading alleged social-media scalping / private call mechanics</span></td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>Twitter / Discord / private call<br><span>Private call allegedly discussed repeated hype loop, follower demand, and dump mechanics</span></td>
+      <td>70<br><span>High Risk</span></td>
+    </tr>
+    
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="case-notes">
+      <h2>Case notes</h2>
+      <h3>CLEU: fake advisor identities plus hidden unrestricted inventory</h3>
+      <p>In the CLEU matter, the dangerous combination was not simply that people on WhatsApp promoted a stock. The risk stack was deeper: alleged U.S.-advisor impersonation, buy instructions, promised returns, an acquisition-style story, millions of shares deposited into subject accounts, and a public share-count picture that did not reflect later disclosures. That is why CLEU is a clean case study for brokerage controls: the trading risk, disclosure risk, and beneficial-ownership risk appeared together.</p>
+
+      <h3>OST: issuer-side supply meets social promotion</h3>
+      <p>The OST allegations show why high-risk-symbol surveillance cannot stop at price and volume. DOJ alleged non-bona-fide transactions, tens of millions of shares, and a coordinated social-media campaign. If the upstream share supply is compromised, a broker’s trading desk may only see the symptom: volume, price movement, and retail demand. The source of the risk may sit in issuance, transfer, ownership, or foreign-account structure.</p>
+
+      <h3>Atlas Trading symbols: influencer credibility as market impact</h3>
+      <p>The Atlas Trading cases are useful because the alleged mechanism is direct. A promoter buys or already holds shares, announces the stock to followers, posts targets or bullish catalysts, and then sells as followers create liquidity. The key risk variable is not only the price move. It is the mismatch between public message and private inventory.</p>
+    </section>
+
+    <section id="risk-team-use">
+      <h2>How a risk team can use this</h2>
+      <p>A good symbol-risk model should combine issuer, market, and behavior features. A low price alone is not enough. Low price plus weak liquidity plus sudden volume plus social promotion plus related-account concentration is different.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Symbol features</h3>
+          <ul>
+            <li>Market capitalization and share price</li>
+            <li>Public float and shares outstanding</li>
+            <li>Average dollar volume and bid-ask spread</li>
+            <li>Recent reverse split, offering, or abrupt issuer change</li>
+            <li>Analyst coverage and filing quality</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Behavior features</h3>
+          <ul>
+            <li>New-account concentration in the same symbol</li>
+            <li>Same-time limit-order clusters</li>
+            <li>Large deposits of newly unrestricted shares</li>
+            <li>Social mention spike or private-group call-to-action</li>
+            <li>Promoter selling shortly after public promotion</li>
+          </ul>
+        </div>
+      </div>
+      <p>The operational output should be a band, not a vague warning: watchlist, high risk, restricted, or post-event review. The control can then be matched to the band: alert, warning, margin restriction, opening-trade restriction, closing-only, or compliance escalation.</p>
+    </section>
+
+    <section id="data-limitations">
+      <h2>Data limitations</h2>
+      <p>Exact historical free float, depth, spread, and 20-day average dollar volume require point-in-time market data and issuer filings. For the blog version, the dataset intentionally separates reported case facts from enrichment fields. This prevents false precision and makes the data auditable.</p>
+      <p>The next step would be to enrich the dataset using CRSP/Compustat, Nasdaq TotalView, Polygon/IEX/Refinitiv, SEC filings, and social-message archives where legally available.</p>
+    </section>
+
+    <section id="references">
+      <h2>References</h2>
+      <ol class="refs">
+        <li>SEC, <a href="https://www.sec.gov/files/litigation/complaints/2022/comp-pr2022-221.pdf">Complaint: SEC v. Constantin et al. / Atlas Trading</a>.</li>
+        <li>DOJ, <a href="https://www.justice.gov/usao-ndil/media/1394111/dl?inline=">Civil forfeiture complaint involving China Liberal Education Holdings (CLEU)</a>.</li>
+        <li>DOJ, <a href="https://www.justice.gov/opa/pr/co-ceo-chinese-publicly-traded-technology-company-and-financial-advisor-indicted-over-100m">OST indictment press release</a>.</li>
+        <li>FBI, <a href="https://www.fbi.gov/how-we-can-help-you/victim-services/seeking-victim-information/seeking-victim-information-in-pump-and-dump-investigation">Seeking victim information in OST pump-and-dump investigation</a>.</li>
+        <li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/manipulative-trading">2026 Annual Regulatory Oversight Report: Manipulative Trading</a>.</li>
+      </ol>
+    </section>
+
+  </article>
+  <aside class="toc">
+    <h2>On this page</h2>
+    <a href="#market-structure">Market structure</a>
+    <a href="#case-patterns">Case patterns</a>
+    <a href="#case-table">Case table</a>
+    <a href="#case-notes">Case notes</a>
+    <a href="#risk-team-use">Risk-team use</a>
+    <a href="#data-limitations">Data limitations</a>
+    <a href="#references">References</a>
+  </aside>
+  </main>
+  <footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

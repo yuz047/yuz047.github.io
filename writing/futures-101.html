@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futures as Risk-Transfer Markets | Sirius Zhang</title>
+  <meta name="description" content="Beginner-friendly futures introduction: why futures exist, how hedgers and liquidity providers use them, and why futures are risk-transfer markets." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <div class="eyebrow">Futures market note</div>
+    
+<h1>Futures as Risk-Transfer Markets</h1>
+<p class="subtitle">Futures are often introduced as leveraged trading products. That description is technically true, but it misses the original purpose: futures markets are organized risk-transfer markets.</p>
+<div class="meta-row"><span class="pill">Part 1 of 4</span><span class="pill">Risk-transfer mechanics</span><span class="pill">Hedging · liquidity · contract exposure</span></div>
+
+<div class="hero-card">
+  <p><strong>Core idea:</strong> a futures contract lets two sides lock in economic exposure to a future price. One side may want protection from falling prices, another may want protection from rising prices, and liquidity providers help the market clear.</p>
+</div>
+
+<section id="problem">
+<h2>The old problem: price uncertainty</h2>
+<p>Start with the commercial hedging problem. A wheat farmer plants today but will harvest months later. If wheat prices collapse by harvest, revenue falls. A grain buyer faces the opposite risk: if wheat prices rise before it needs inventory, input cost rises. A futures market gives both sides a standardized way to transfer that price risk.</p>
+<p>This is why futures should not be framed only as speculation. They began as a solution to a production-and-consumption timing problem. The farmer can sell futures to lock in a price. The buyer can buy futures to protect against a future price increase. The exchange standardizes contract terms so the two sides do not need to negotiate custom contracts each time.</p>
+<blockquote>Futures are not mainly about predicting the future. They are about deciding who should carry price risk.</blockquote>
+</section>
+
+<section id="contract">
+<h2>What is a futures contract?</h2>
+<p>A futures contract is a standardized exchange-traded agreement to buy or sell an underlying exposure at a future date. The underlying can be a physical commodity, an interest rate, a currency, an equity index, a metal, energy, or a crypto reference product.</p>
+<p>The contract defines the product, contract size, tick size, expiration, settlement method, and exchange rules. Some contracts can physically deliver the commodity. Many financial futures are cash-settled or closed before delivery.</p>
+<div class="table-wrap"><table><thead><tr><th>Term</th><th>What it means</th><th>Why it matters</th></tr></thead><tbody>
+<tr><td>Contract size</td><td>The amount of exposure represented by one contract</td><td>Determines dollar P&amp;L per move</td></tr>
+<tr><td>Tick size</td><td>The minimum price increment</td><td>Determines smallest tradable P&amp;L step</td></tr>
+<tr><td>Expiration</td><td>The contract month/date when the contract settles or expires</td><td>Creates roll and settlement risk</td></tr>
+<tr><td>Settlement</td><td>Cash settlement or physical delivery</td><td>Determines operational risk near expiration</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="participants">
+<h2>Who uses futures?</h2>
+<div class="grid-2">
+  <div class="risk-card"><h3>Hedgers</h3><p>Users with an existing exposure. A farmer, airline, producer, bank, or asset manager can use futures to reduce uncertainty in prices, funding, inventory, or portfolio value.</p></div>
+  <div class="risk-card"><h3>Speculators</h3><p>Users taking risk to earn return from price direction, volatility, relative value, carry, or short-term market structure.</p></div>
+  <div class="risk-card"><h3>Liquidity providers</h3><p>Market makers and trading firms quote bids and offers, absorb temporary imbalance, and compete to reduce execution cost.</p></div>
+  <div class="risk-card"><h3>Brokerage risk teams</h3><p>Risk teams monitor margin, concentration, volatility, liquidity, and debit risk so client losses do not become firm losses.</p></div>
+</div>
+</section>
+
+<section id="modern">
+<h2>From wheat hedging to financial infrastructure</h2>
+<p>The same structure that helped agricultural producers now supports modern macro and portfolio risk management. Equity index futures let a portfolio manager adjust market beta quickly. Treasury futures help manage rates exposure. Energy futures support producers and consumers. FX futures standardize currency exposure.</p>
+<p>The product set is broad, but the economic structure is the same: futures compress future price exposure into a standardized contract that can be traded, margined, cleared, and monitored.</p>
+</section>
+
+<section id="takeaway">
+<h2>Takeaway</h2>
+<p>Futures are tools for transferring and managing price risk. They can be used prudently for hedging or aggressively for leveraged trading. The instrument itself is neutral; the risk comes from contract size, leverage, liquidity, expiration, and account controls.</p>
+<div class="callout"><div class="callout-title">Before strategy</div><p>Before thinking about a trade idea, learn the contract. A futures position is defined by point value, tick value, expiration, margin, and liquidity. Without those details, the trader does not really know the exposure.</p></div>
+</section>
+
+<section class="references" id="references"><h2>References</h2><ul>
+<li><a href="https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/FuturesMarketBasics/index.htm">CFTC — Futures Market Basics</a></li>
+<li><a href="https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/economicpurpose.html">CFTC — Economic Purpose of Futures Markets</a></li>
+<li><a href="https://www.cmegroup.com/markets/products.html">CME Group — Product Slate</a></li>
+</ul></section>
+
+    <nav class="series-nav"><span></span><a class="series-link" href="futures-margin-liquidation.html"><span>Next</span><strong>Futures Margin Explained</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#problem">Price uncertainty</a><a href="#contract">What is a futures contract?</a><a href="#participants">Market participants</a><a href="#modern">Modern usage</a><a href="#takeaway">Takeaway</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

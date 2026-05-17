@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futures Margin Explained | Sirius Zhang</title>
+  <meta name="description" content="Initial margin, maintenance margin, intraday margin, representative ES exposure, and auto-liquidation explained from a brokerage risk perspective." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <div class="eyebrow">Margin risk note</div>
+    
+<h1>Futures Margin Explained: Initial, Maintenance, Intraday, and Liquidation</h1>
+<p class="subtitle">Futures margin is not the purchase price of the contract. It is collateral posted to support leveraged exposure whose losses can move faster than account equity.</p>
+<div class="meta-row"><span class="pill">Part 2 of 4</span><span class="pill">Margin mechanics</span><span class="pill">Initial · maintenance · intraday · liquidation</span></div>
+
+<div class="hero-card">
+  <p><strong>Core idea:</strong> margin is a performance bond. It allows capital-efficient exposure, but it also creates a liquidation path when account equity falls below required levels.</p>
+</div>
+
+<section id="not-stock-margin"><h2>Futures margin is not stock margin</h2>
+<p>In stock trading, margin usually means borrowing money to buy securities. In futures, margin is better understood as a performance bond. The trader posts collateral, the position is marked to market, and gains or losses flow through the account.</p>
+<p>This distinction matters because a trader is not paying the full notional value of the futures contract. A relatively small margin deposit can control a much larger amount of exposure.</p>
+</section>
+
+<section id="terms"><h2>The three margin levels traders must separate</h2>
+<div class="grid-2">
+  <div class="risk-card"><h3>Initial margin</h3><p>The amount required to open a position. If the account does not have enough available equity, the order may be rejected or the trader may need to deposit more funds.</p></div>
+  <div class="risk-card"><h3>Maintenance margin</h3><p>The minimum equity level required to keep the position open. Falling below maintenance can trigger a margin call or risk action.</p></div>
+  <div class="risk-card"><h3>Intraday margin</h3><p>A broker-specific lower requirement for positions expected to be closed during the day. It can change around market stress, close, or event risk.</p></div>
+  <div class="risk-card"><h3>House margin</h3><p>The broker may require more than the exchange minimum based on product volatility, client profile, concentration, or operational risk.</p></div>
+</div>
+</section>
+
+<section id="es-example"><h2>ES example: representative liquid benchmark exposure</h2>
+<p>E-mini S&amp;P 500 futures use the symbol <span class="inline-code">ES</span>. ES is a benchmark, highly traded representative equity-index futures contract, which makes it useful for explaining notional exposure and margin mechanics. The contract multiplier is $50 times the S&amp;P 500 Index. If ES trades near 7,200, one contract represents about $360,000 of notional exposure.</p>
+<p>That does not mean the trader deposits $360,000. The trader posts margin. This is why one small index move can become a large account-level event.</p>
+<div class="table-wrap"><table><thead><tr><th>ES move</th><th>P&amp;L per contract</th><th>Why it matters</th></tr></thead><tbody>
+<tr><td>1 point</td><td>$50</td><td>Base point value</td></tr>
+<tr><td>10 points</td><td>$500</td><td>Normal intraday noise can matter</td></tr>
+<tr><td>30 points</td><td>$1,500</td><td>Can materially reduce margin excess</td></tr>
+<tr><td>50 points</td><td>$2,500</td><td>Can trigger risk action for undercapitalized accounts</td></tr>
+</tbody></table></div>
+<div class="figure-card"><img src="../assets/es_margin_liquidation_example.png" alt="Illustrative ES futures margin path showing account equity crossing maintenance margin" /><div class="caption">Illustrative only. The chart assumes one long ES contract and a simplified margin deposit, then maps account equity against an adverse ES move from entry. Actual margin and liquidation rules depend on exchange, broker, volatility, and account policy.</div></div>
+</section>
+
+<section id="liquidation"><h2>When does auto-liquidation happen?</h2>
+<p>Auto-liquidation is broker-specific, but the risk logic is usually similar. The account has open exposure, unrealized losses reduce equity, equity approaches or breaches required margin, and the trader does not reduce exposure or add funds quickly enough. The broker then liquidates to reduce the probability of a debit balance.</p>
+<p>From a trader perspective, forced liquidation is painful because it can happen during fast markets. From a brokerage perspective, it is a necessary control because a futures account can lose more than posted collateral when markets gap or liquidity deteriorates.</p>
+<blockquote>Margin is not a comfort zone. It is the line where the broker starts asking whether the account can survive the next adverse move.</blockquote>
+</section>
+
+<section id="risk-view"><h2>Brokerage risk view</h2>
+<p>A brokerage risk team does not only ask whether a client is profitable. It asks whether the account can withstand a stress move without creating exposure for the firm or clearing chain.</p>
+<ul>
+<li><strong>Margin sufficiency:</strong> current equity versus initial, maintenance, intraday, and house margin.</li>
+<li><strong>Concentration:</strong> position size relative to account equity, product liquidity, and client behavior.</li>
+<li><strong>Volatility regime:</strong> whether recent volatility makes historical margin assumptions too soft.</li>
+<li><strong>Liquidation quality:</strong> whether positions can be closed without severe slippage.</li>
+<li><strong>Event risk:</strong> CPI, FOMC, payrolls, inventory reports, geopolitical shocks, and product-specific events.</li>
+</ul>
+</section>
+
+<section class="references" id="references"><h2>References</h2><ul>
+<li><a href="https://www.schwab.com/futures/futures-margin">Schwab — Futures Margin</a></li>
+<li><a href="https://www.schwab.com/learn/story/how-futures-margin-works">Schwab — How Futures Margin Works</a></li>
+<li><a href="https://www.schwab.com/futures/sp-500-emini">Schwab — E-mini S&amp;P 500 Futures Specifications</a></li>
+<li><a href="https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.html">CME Group — E-mini S&amp;P 500 Futures</a></li>
+</ul></section>
+
+    <nav class="series-nav"><a class="series-link" href="futures-101.html"><span>Previous</span><strong>Futures as Risk-Transfer Markets</strong></a><a class="series-link" href="futures-contract-selection.html"><span>Next</span><strong>Choosing the Right Contract</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#not-stock-margin">Not stock margin</a><a href="#terms">Margin levels</a><a href="#es-example">Representative ES exposure</a><a href="#liquidation">Auto-liquidation</a><a href="#risk-view">Brokerage risk view</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

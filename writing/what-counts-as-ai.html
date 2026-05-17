@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What Counts as AI in Markets? | Sirius Zhang</title>
+  <meta name="description" content="A practical taxonomy from rule engines and statistical models to transformer copilots for brokerage, trading, and risk workflows." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">AI systems note</div>
+      <h1>What Counts as AI in Markets?</h1>
+      <p class="subtitle">A practical taxonomy from rule engines and statistical models to transformer copilots for brokerage, trading, and risk workflows.</p>
+      <div class="meta-row"><span class="pill">model taxonomy</span><span class="pill">workflow fit</span><span class="pill">human control</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/ai-stack.svg" alt="What Counts as AI in Markets? diagram" /></div>
+    
+<p>AI is not one thing. In financial markets, the word gets used for everything from a deterministic restricted-list rule to a language model that drafts a risk memo. That ambiguity is dangerous. If we do not know what kind of AI we are using, we will not know what it can do, where it fails, or how much control it needs.</p>
+<p>A better way to think about AI is as a stack of methods for turning information into decisions, scores, actions, or generated content. Each layer has a different mathematical core and a different operational boundary.</p>
+<blockquote><p>Practical thesis: the right question is not “Should we use AI?” The right question is “What type of AI fits this workflow, what should it be allowed to decide, and what must remain under human or rules-based control?”</p></blockquote>
+<h2 id="1-rule-based-ai-logic-before-learning">Rules still do work that models should not touch</h2>
+<p>The oldest form of AI in markets is not a chatbot. It is a rule engine. A rule engine evaluates explicit if-then conditions over known facts.</p>
+<p>Examples are everywhere in brokerage infrastructure: restricted-list checks, order-entry eligibility, risk thresholds, surveillance lexicons, margin-call routing, and client-service workflow triggers. A rule might say: if a symbol is under a trading halt, reject new buy orders; if account equity falls below maintenance requirement, flag margin deficiency; if a message contains prohibited promissory language, route it to review.</p>
+<p>For a broker, rule systems are valuable because they are deterministic and auditable. You can show the rule, explain when it fired, and document who changed it. Their weakness is that they do not generalize. A rule can catch exactly what you wrote; it cannot understand a new manipulation pattern, sarcasm in a message, or a subtle change in trader behavior.</p>
+<p>For a trader, rules still matter. A stop-loss rule, max-position rule, no-trade window before an event, or “do not trade illiquid names” rule is not glamorous, but it is often more valuable than a sophisticated model. The first layer of personal trading AI should usually be rules that prevent bad behavior.</p>
+<h2 id="2-statistical-machine-learning-learn-a-decision-function-from-data">Machine learning is useful when feedback exists</h2>
+<p>Statistical ML learns a mapping from input features to an output. The output can be a probability, score, category, ranking, forecast, or anomaly flag. Unlike rules, the relationship is learned from data.</p>
+<p>In a brokerage, ML fits workflows where labels exist and feedback is measurable: fraud scoring, churn prediction, document classification, trade-surveillance prioritization, call-volume forecasting, alert deduplication, and case triage. A fraud model can learn nonlinear relationships between device behavior, transfer amount, IP mismatch, failed login patterns, and account history.</p>
+<p>But ML is not judgment. A model can rank risk; it cannot independently prove suitability, fairness, or compliance. A high fraud score says “review this now,” not “this client is guilty.” A high trade-risk score says “the exposure deserves attention,” not “force liquidation without policy.”</p>
+<p>For a trader, ML is useful for ranking and filtering: which symbols have unusual volume, which futures contracts have abnormal realized volatility, which macro events have historically moved an asset, or which watchlist names deserve deeper review. It is much less safe as an isolated buy/sell oracle.</p>
+<h2 id="3-deep-learning-learn-the-representation-too">Deep learning helps with messy information</h2>
+<p>Traditional ML depends heavily on handcrafted features. Deep learning can learn intermediate representations automatically. This matters for messy financial data: emails, voice transcripts, PDFs, news articles, images, app behavior, and long event histories.</p>
+<p>For brokers, deep learning can make unstructured data tractable. It can help process client communications, extract fields from documents, transcribe calls, identify anomalous behavior, or classify support tickets. The cost is opacity. Deep models are often harder to explain locally, more data-hungry, and more vulnerable to drift.</p>
+<p>For traders, deep learning can help structure information that is too large to read manually: earnings-call transcripts, news flows, filings, macro commentary, or social sentiment. The safe use is not “the neural net told me to buy.” The safer use is “the model helps me organize and compare signals so I can make a better decision.”</p>
+<h2 id="4-reinforcement-learning-optimize-sequences-not-single-predictions">Reinforcement learning is about sequences, not opinions</h2>
+<p>Reinforcement learning learns policies: what action to take in a state to maximize reward over time. That is why it is attractive for execution, routing, hedging, market making, and resource allocation. The decision is not one static prediction; it is a sequence.</p>
+<p>The danger is reward design. If the reward is incomplete, the agent can optimize the wrong thing. An execution model that only rewards low transaction cost may increase market impact in subtle ways. A fraud-escalation policy that rewards fewer false positives may allow more fraud. A trader’s agent that rewards short-term P&amp;L may learn leverage and concentration habits that fail in tail events.</p>
+<p>For a broker, RL belongs only in tightly scoped, heavily simulated, strongly monitored workflows. For an individual trader, RL should usually remain research or paper trading unless the guardrails are extremely conservative.</p>
+<h2 id="5-transformers-and-generative-ai-context-fusion-and-language-generation">Generative AI is strongest as a language and context layer</h2>
+<p>Transformers are powerful because they learn which parts of an input should attend to which other parts. This makes them useful for language, sequence reasoning, summarization, retrieval, and multi-document context. A transformer can understand that “earnings beat” may be less important than “guidance cut” in the same headline.</p>
+<p>Generative AI adds another capability: it can produce new language. In markets, that means drafting notes, summarizing alerts, explaining policy, converting raw data into readable narratives, and helping analysts navigate research. Retrieval-augmented generation, or RAG, improves this by grounding output in selected source documents instead of model memory alone.</p>
+<p>For a brokerage, the ideal early GenAI workflow is not autonomous decision-making. It is controlled drafting and retrieval: summarize this alert, cite the policy, explain the exposure, list missing evidence, and route the case to a human reviewer.</p>
+<p>For a trader, GenAI is useful as a research assistant: summarize news, compare catalysts, build a trade journal, stress test a position, write a checklist, or explain what could invalidate a thesis. The model should assist thinking, not replace it.</p>
+<h2 id="what-this-means-for-brokers">For brokers, the layers should stay separate</h2>
+<p>Brokerage AI should be layered. Rules enforce hard boundaries. ML prioritizes risk. Deep learning structures unstructured data. Transformers retrieve and summarize. Generative AI drafts and explains. Humans retain accountability for judgment, client communication, policy interpretation, and high-stakes action.</p>
+<p>That architecture is slower than saying “let the AI decide,” but it is much safer. A broker operates inside supervision, recordkeeping, communications, market integrity, privacy, and client-protection obligations. The AI system needs to produce outputs that can be reviewed, challenged, logged, and explained.</p>
+<h2 id="what-this-means-for-traders">For traders, the best first use is decision support</h2>
+<p>A trader can build useful AI without building an autonomous trading robot. The highest-return first step is usually a personal decision-support layer: a watchlist monitor, a news and filing summarizer, a position-risk dashboard, a trade journal, a scenario generator, and a rules layer that blocks impulsive or oversized trades.</p>
+<p>The trader should treat AI like a junior analyst with speed, not a portfolio manager with authority.</p>
+<h2 id="what-this-means-for-practitioners">For builders, the task comes before the model</h2>
+<p>For product managers, engineers, quants, risk analysts, and compliance teams, the workflow should start with model-task matching. The first question is not which model is fashionable. The first question is what kind of work is being done: deterministic policy, prediction, classification, language drafting, calculation, or sequential action.</p>
+<p>Once that is clear, the next questions become practical. What source of truth is allowed? What output can be validated? What action can the system influence? Who owns the final decision? A model choice made before those questions is usually a guess.</p>
+<h2 id="professional-workflow-takeaway">The professional takeaway</h2>
+<p>AI literacy is becoming financial literacy. Even outside finance, the same pattern applies: use rules for non-negotiable boundaries, models to prioritize, language systems to summarize and draft, and human review where the cost of being wrong is high.</p>
+<p>The practical skill is knowing when fluency is enough and when control is required. In markets, fluency is never enough by itself.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>AI is not a governance-free layer added on top of a financial workflow. It is a set of tools with different mathematical cores and different failure modes. The safest systems combine them deliberately: rules for hard limits, models for pattern detection, retrieval for source grounding, language generation for synthesis, and human review for accountability.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/notices/24-09">Regulatory Notice 24-09: Generative AI and Large Language Models</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="why-ai-fails.html"><strong>Why AI Fails in Financial Workflows</strong><br><span>model risk · data leakage · workflow controls</span></a><a href="prompting-is-workflow-design.html"><strong>Operating Controls for AI Assistants</strong><br><span>source limits · review paths</span></a><a href="how-brokerages-should-build-ai.html"><strong>How Brokerages Should Build AI</strong><br><span>retrieval · audit trail · human approval</span></a></div>
+    <nav class="series-nav"><span></span><a class="series-link" href="why-ai-fails.html"><span>Next</span><strong>Why AI Fails in Financial Workflows</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-rule-based-ai-logic-before-learning">Rules</a><a href="#2-statistical-machine-learning-learn-a-decision-function-from-data">Machine learning</a><a href="#3-deep-learning-learn-the-representation-too">Deep learning</a><a href="#4-reinforcement-learning-optimize-sequences-not-single-predictions">Reinforcement learning</a><a href="#5-transformers-and-generative-ai-context-fusion-and-language-generation">Generative AI</a><a href="#what-this-means-for-brokers">For brokers</a><a href="#what-this-means-for-traders">For traders</a><a href="#what-this-means-for-practitioners">For builders</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

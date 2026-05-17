@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Why AI Fails in Financial Workflows | Sirius Zhang</title>
+  <meta name="description" content="The most dangerous failure is not a strange answer. It is a confident answer used outside the workflow it can safely support." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">AI risk note</div>
+      <h1>Why AI Fails in Financial Workflows</h1>
+      <p class="subtitle">The most dangerous failure is not a strange answer. It is a confident answer used outside the workflow it can safely support.</p>
+      <div class="meta-row"><span class="pill">model risk</span><span class="pill">data leakage</span><span class="pill">workflow controls</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/failure-modes.svg" alt="Why AI Fails in Financial Workflows diagram" /></div>
+    
+<p>The most dangerous AI failure is often not a bizarre answer. It is a fluent answer that sounds operationally correct but is wrong, unsupported, or used in a workflow where it should never have been trusted.</p>
+<p>This matters because financial workflows run at scale. One bad human answer affects one case. One bad automated workflow can affect thousands of accounts, alerts, messages, or trading decisions. The risk is not merely inaccuracy. The risk is unaudited automation of inaccuracy.</p>
+<h2 id="1-model-task-mismatch">The model is doing the wrong job</h2>
+<p>AI fails when the model is used for a task it was not designed to solve.</p>
+<p>A rule engine is good for deterministic policy. A classifier is good for ranking labeled examples. A transformer encoder is good for language understanding. A generative model is good for drafting language. A retrieval system is good for finding relevant sources. An agent is good for multi-step tool use only when its permissions, state, and actions are tightly controlled.</p>
+<p>The failure begins when these boundaries are ignored. A general-purpose chatbot should not be the primary engine for hard policy enforcement, financial reconciliation, final fraud adjudication, or suitability determination. It may explain a rule, draft a summary, or identify missing evidence. It should not become the rulebook.</p>
+<p>For a brokerage, model-task mismatch creates audit and supervision risk. For a trader, it creates false confidence. A model trained to summarize news may sound like it has a trading edge, but summarization is not signal validation.</p>
+<h2 id="2-technical-limitations">The data changes faster than the model expects</h2>
+<p>Strong models still operate within constraints: training data, context length, calibration, feature quality, optimization objective, and distribution shift.</p>
+<p>A fraud model may perform well on historical account-takeover patterns and still miss a new synthetic-identity scheme. A news sentiment model may work on normal headlines and fail during a crisis when language changes quickly. A language model may summarize the available documents accurately but miss an important source that was not retrieved.</p>
+<p>Markets are especially hard because regimes change. A pattern learned in low-volatility conditions may break when rates, liquidity, margin pressure, or crowding changes. The model is not necessarily “broken.” It may simply be outside its training environment.</p>
+<h2 id="3-hallucination">The answer sounds right but is not supported</h2>
+<p>Hallucination occurs when a generative model produces information not supported by the prompt, source material, or reality. The output can include invented policies, nonexistent citations, fabricated reasons, false calculations, or incorrect attributions.</p>
+<p>In brokerage operations, hallucination is dangerous because the writing often sounds professional. A client-service assistant might invent a reason for a delayed transfer. A risk memo might cite a policy that does not apply. A surveillance summary might describe intent that is not supported by evidence.</p>
+<p>For traders, hallucination can appear as fake precision: “the stock fell because of X,” “this event usually leads to Y,” or “the strategy has low drawdown” when no validated analysis supports the claim.</p>
+<h2 id="4-information-leakage">The workflow leaks information</h2>
+<p>AI workflows can leak confidential data if users paste sensitive details into unapproved tools, if retrieval permissions are too broad, if logs capture regulated information, or if an agent accesses systems beyond its intended scope.</p>
+<p>For a brokerage, leakage can include client identifiers, account activity, internal surveillance logic, trading controls, research content, credentials, and proprietary business rules. The problem is not only the model. It is the architecture around the model: connectors, permissions, storage, logging, caching, and vendor boundaries.</p>
+<p>For a trader, leakage is also real. A personal AI connected to email, brokerage statements, trade journals, tax documents, or cloud storage can become a sensitive data hub. Convenience increases the blast radius.</p>
+<h2 id="5-poor-prompting-and-weak-workflow-design">The instruction is too vague for the risk</h2>
+<p>A vague prompt creates vague behavior. But the deeper issue is that many prompts are written like prototypes rather than production instructions.</p>
+<p>A safe financial prompt should specify the role, task, source boundary, prohibited actions, uncertainty handling, output format, and escalation condition. Without those constraints, the model may over-answer, infer unsupported facts, or speak with authority it does not have.</p>
+<p>Poor prompting is not just a writing problem. It is a control problem.</p>
+<h2 id="6-automation-bias">People trust the polished version too quickly</h2>
+<p>Automation bias happens when humans overtrust system output because it appears quantitative, polished, or machine-generated. In a brokerage, an analyst may accept an AI summary without checking the source. In trading, a user may treat a generated thesis as independent confirmation rather than a recombination of existing information.</p>
+<p>This is why AI should show uncertainty, cite sources, expose assumptions, and make review easier. The best AI systems do not hide the work. They make the work inspectable.</p>
+<h2 id="what-this-means-for-brokers">For brokers, the risk is operational</h2>
+<p>For brokerages, AI risk is not only model error. It is governance failure, documentation failure, security failure, and supervision failure. A safe AI workflow should make clear what the model can assist with and what it cannot decide.</p>
+<p>Use AI for retrieval, summarization, drafting, triage, pattern detection, and analyst productivity. Be extremely cautious with unsupervised trade decisions, suitability determinations, final fraud conclusions, unreviewed public communications, or client-impacting actions.</p>
+<h2 id="what-this-means-for-traders">For traders, explanation is not evidence</h2>
+<p>For traders, the most common AI failure is mistaking explanation for evidence. A language model can explain a market move even when the causal claim is weak. It can produce a clean strategy description even when the backtest is overfit. It can summarize a consensus view while making it feel like original insight.</p>
+<p>Before acting on AI output, a trader needs to slow the answer down. What data supports this? What would prove it wrong? What happens if the model is confidently wrong? Those questions matter more than how clean the generated explanation sounds.</p>
+<h2 id="what-this-means-for-practitioners">For builders, failure modes come first</h2>
+<p>Practitioners should design AI workflows around failure modes, not only capabilities. A production-grade system needs a defined task, source controls, logging, model-version tracking, testing, privacy controls, escalation paths, and human review for high-impact action. None of that is decoration. It is the difference between a useful assistant and a hidden process risk.</p>
+<h2 id="professional-workflow-takeaway">The professional takeaway</h2>
+<p>The practitioner lesson is direct: use AI where it lowers the cost of thinking, not where it removes responsibility for thinking. It is excellent for organizing, summarizing, translating, drafting, and generating checklists. It is risky when it silently becomes the final authority.</p>
+<h2 id="practical-checklist">A simple trust test</h2>
+<p>Before trusting AI output in a financial context, ask whether the model is doing the right kind of task, whether the source materials are known, whether facts are separated from assumptions, whether calculations are independently verified, and whether a human can challenge the result. If those answers are unclear, the system is not ready for high-stakes use.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>AI failure is often a mismatch between a powerful tool and a poorly controlled workflow. The answer is not to avoid AI. The answer is to use AI with clear boundaries: source grounding, validation, auditability, human review, and a strong distinction between assisting judgment and replacing judgment.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/notices/24-09">Regulatory Notice 24-09: Generative AI and Large Language Models</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="what-counts-as-ai.html"><strong>What Counts as AI in Markets?</strong><br><span>model taxonomy · workflow fit · human control</span></a><a href="prompting-is-workflow-design.html"><strong>Operating Controls for AI Assistants</strong><br><span>source limits · review paths</span></a><a href="how-brokerages-should-build-ai.html"><strong>How Brokerages Should Build AI</strong><br><span>retrieval · audit trail · human approval</span></a></div>
+    <nav class="series-nav"><a class="series-link" href="what-counts-as-ai.html"><span>Previous</span><strong>What Counts as AI in Markets?</strong></a><a class="series-link" href="prompting-is-workflow-design.html"><span>Next</span><strong>Operating Controls for AI Assistants</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-model-task-mismatch">Wrong job</a><a href="#2-technical-limitations">Changing data</a><a href="#3-hallucination">Unsupported answers</a><a href="#4-information-leakage">Information leakage</a><a href="#5-poor-prompting-and-weak-workflow-design">Weak instructions</a><a href="#6-automation-bias">Automation bias</a><a href="#what-this-means-for-brokers">For brokers</a><a href="#what-this-means-for-traders">For traders</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

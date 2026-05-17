@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Governance for Markets | Sirius Zhang</title>
+  <meta name="description" content="A market-practitioner note on documenting, testing, monitoring, and challenging AI systems in financial workflows." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">AI governance note</div>
+      <h1>AI Governance for Markets</h1>
+      <p class="subtitle">A market-practitioner note on documenting, testing, monitoring, and challenging AI systems after they move beyond the prototype stage.</p>
+      <div class="meta-row"><span class="pill">supervision</span><span class="pill">validation</span><span class="pill">red team</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/failure-modes.svg" alt="AI Governance for Markets diagram" /></div>
+    
+<p>The right governance question is not “Can AI do this?” In markets, the question is: can this system be documented, tested, audited, challenged, monitored, and aligned with the firm’s obligations?</p>
+<p>AI risk is not only model error. It is also governance failure, documentation failure, security failure, privacy failure, supervision failure, and values failure.</p>
+<h2 id="1-define-intended-use-and-prohibited-use">Start by naming the use and the boundary</h2>
+<p>Every AI workflow should start with a use statement.</p>
+<p>Intended use explains what the system is designed to do: summarize alerts, draft internal memos, classify documents, extract fields, retrieve policy, or generate educational explanations.</p>
+<p>Prohibited use explains what it must not do: final trade approval, final fraud adjudication, suitability determination, unreviewed client communication, account restriction, or autonomous execution.</p>
+<p>This distinction protects the firm and the user. It also makes testing possible. You cannot validate a system if you do not know what it is supposed to do.</p>
+<h2 id="2-document-data-sources-and-permissions">The data boundary is part of the model</h2>
+<p>A market AI system should have a source inventory. The firm needs to know what data the system can access, who owns it, whether it is public or confidential, whether it is current, how it is permissioned, whether retrieval crosses users or teams, and whether prompts and outputs are stored.</p>
+<p>Many AI failures are not model failures. They are access-control failures.</p>
+<h2 id="3-test-the-model-and-the-workflow">Testing has to include the workflow</h2>
+<p>Testing should cover more than average accuracy. A financial workflow has to test factual accuracy, retrieval precision, hallucination behavior, policy consistency, numerical sanity, privacy behavior, bias concerns, ambiguous cases, adversarial inputs, and escalation behavior.</p>
+<p>A model that performs well on normal examples may still fail on the cases that matter most.</p>
+<h2 id="4-monitor-after-deployment">Deployment is the beginning of governance</h2>
+<p>AI systems drift. Data changes, users change, products change, policies change, and model providers update systems. Governance cannot stop at launch.</p>
+<p>Monitoring should preserve prompt and output logs, model version, retrieval sources, user edits, approval rates, error reports, escalation patterns, drift indicators, and post-incident reviews.</p>
+<p>If the system cannot be monitored, it should not be relied on for important workflows.</p>
+<h2 id="5-keep-humans-in-the-loop-where-the-stakes-are-high">Human review has to be real</h2>
+<p>Human-in-the-loop does not mean a person casually glances at the answer. It means an accountable reviewer has enough evidence, source context, and authority to approve, reject, or modify the output.</p>
+<p>For high-impact decisions, the reviewer should see the model output, source evidence, uncertainty flags, missing information, validation checks, and the reason escalation was triggered.</p>
+<p>Human review must be meaningful, not ceremonial.</p>
+<h2 id="6-red-team-the-system">Try to break it before users do</h2>
+<p>Red teaming means intentionally trying to break the workflow before real users do. For brokerage AI, that means testing prompt injection in retrieved documents, requests for confidential data, attempts to bypass escalation, false policy citations, misleading market narratives, adversarial client messages, and tool actions outside permission scope.</p>
+<p>The goal is not to prove the model is smart. The goal is to discover where it fails.</p>
+<h2 id="7-govern-agents-more-strictly-than-chatbots">Agents need stricter governance than chatbots</h2>
+<p>An AI chatbot that drafts text is risky. An AI agent that can use tools, access files, call APIs, send messages, or place orders is much riskier.</p>
+<p>Agents require stronger controls: least-privilege permissions, sandboxing, action confirmation, tool allowlists, rate limits, transaction limits, logging, rollback procedures, and independent monitoring.</p>
+<p>The more the AI can do, the less trust should be implicit.</p>
+<h2 id="8-what-this-means-for-brokers">For brokers, governance is supervision</h2>
+<p>For brokers, AI governance is part of supervision. A firm using AI must understand where it fits into communications, recordkeeping, privacy, cybersecurity, trading controls, and supervisory procedures. The system should be reviewed before deployment and monitored afterward.</p>
+<p>A good operating principle is: if it cannot be documented, tested, audited, challenged, and aligned with firm values, it should not be deployed into a brokerage workflow.</p>
+<h2 id="9-what-this-means-for-traders">For traders, governance is discipline</h2>
+<p>For traders, governance sounds corporate, but the personal version is direct: know what the tool is allowed to do, avoid unnecessary credentials, keep a trade journal, require source links for claims, separate analysis from execution, use hard risk limits, and review mistakes.</p>
+<p>Without governance, a trader risks automating impulse instead of discipline.</p>
+<h2 id="10-what-this-means-for-practitioners">For builders, governance belongs beside the code</h2>
+<p>Practitioners should write governance artifacts alongside code: intended and prohibited use, data-source inventory, access-control matrix, test plan, monitoring plan, incident response plan, model-change log, human-review procedure, and retirement criteria.</p>
+<p>This is not bureaucracy. It is how AI becomes infrastructure.</p>
+<h2 id="professional-workflow-takeaway">The professional takeaway</h2>
+<p>A compact governance loop works across market-facing AI workflows: define what the tool is for, define what it must not do, control sensitive data, check sources, review before acting, and keep a record of important decisions.</p>
+<p>The more important the decision, the more governance it deserves.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>AI governance is not anti-innovation. It is what lets AI safely enter real workflows. In markets, the winning systems will not be the flashiest prototypes. They will be the systems that can be documented, tested, audited, challenged, monitored, and trusted under stress.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>SEC, <a href="https://www.sec.gov/rules-regulations/2025/06/s7-12-23">S7-12-23 rulemaking page: Predictive Data Analytics conflicts proposal and withdrawal</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="what-counts-as-ai.html"><strong>What Counts as AI in Markets?</strong><br><span>model taxonomy · workflow fit · human control</span></a><a href="why-ai-fails.html"><strong>Why AI Fails in Financial Workflows</strong><br><span>model risk · data leakage · workflow controls</span></a><a href="prompting-is-workflow-design.html"><strong>Operating Controls for AI Assistants</strong><br><span>source limits · review paths</span></a></div>
+    <nav class="series-nav"><a class="series-link" href="trader-ai-stack.html"><span>Previous</span><strong>A Trader AI Stack</strong></a><span></span></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-define-intended-use-and-prohibited-use">Use and boundary</a><a href="#2-document-data-sources-and-permissions">Data boundary</a><a href="#3-test-the-model-and-the-workflow">Testing</a><a href="#4-monitor-after-deployment">Monitoring</a><a href="#5-keep-humans-in-the-loop-where-the-stakes-are-high">Human review</a><a href="#6-red-team-the-system">Red team</a><a href="#7-govern-agents-more-strictly-than-chatbots">Agents</a><a href="#8-what-this-means-for-brokers">For brokers</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

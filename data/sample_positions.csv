@@ -1,0 +1,10 @@
+symbol,product,side,qty,price,multiplier
+ESM6,Stock Index,Long,1,7060,50
+MESM6,Stock Index,Short,12,7062,5
+MNQM6,Stock Index,Long,3,24400,2
+MCLK6,Energy,Short,8,94.2,100
+CLK6,Energy,Long,1,94.1,1000
+MGCJ6,Metals,Long,4,4820,10
+MBTJ6,Crypto,Long,2,74000,0.1
+6EM6,Currency,Short,1,1.18,125000
+ZSK6,Agriculture,Long,1,1120,50

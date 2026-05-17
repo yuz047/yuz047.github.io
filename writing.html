@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Writing — Sirius Zhang</title>
+  <meta name="description" content="Research notes on trading, risk, AI, and data." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+        <div class="nav-links">
+          <a href="work.html">Work</a>
+          <a class="is-current" href="writing.html">Writing</a>
+          <a href="cv.html">CV</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container page-head">
+      <div class="eyebrow">Writing · research notes</div>
+      <h1>Trading, risk, AI, and data — research notes.</h1>
+      <p class="lede">
+        Notes on how trading products, automated tools, risk models, and data pipelines behave under real market pressure. Three threads: where AI helps and where it fails, how market structure is shifting, and how futures-account risk actually plays out under leverage.
+      </p>
+    </section>
+
+    <div class="container">
+      <section class="topic">
+        <div class="topic-head">
+          <div>
+            <span class="eyebrow">Thread 01</span>
+            <h2>AI in financial work</h2>
+          </div>
+          <p class="blurb">AI as part of market infrastructure: useful for retrieval, triage, research, and drafting — dangerous when fluency is mistaken for judgment.</p>
+        </div>
+        <div class="post-list">
+          <a class="post" href="writing/ai-in-markets.html">
+            <span class="label">1</span>
+            <span class="title">AI in Markets</span>
+            <p class="summary">A research thread on where AI belongs in trading, brokerage operations, and risk work, and where it should stay under human control.</p>
+            <span class="tagrow">model fit · risk controls · audit trail</span>
+          </a>
+          <a class="post" href="writing/what-counts-as-ai.html">
+            <span class="label">2</span>
+            <span class="title">What Counts as AI in Markets?</span>
+            <p class="summary">A practical taxonomy from rule engines and statistical models to transformer copilots, with the workflow fit for each layer.</p>
+            <span class="tagrow">model taxonomy · workflow fit</span>
+          </a>
+          <a class="post" href="writing/why-ai-fails.html">
+            <span class="label">3</span>
+            <span class="title">Why AI Fails in Financial Workflows</span>
+            <p class="summary">The most dangerous failure is not a strange answer. It is a confident answer used outside the workflow it can safely support.</p>
+            <span class="tagrow">model risk · data leakage · workflow</span>
+          </a>
+          <a class="post" href="writing/prompting-is-workflow-design.html">
+            <span class="label">4</span>
+            <span class="title">Operating Controls for AI Assistants</span>
+            <p class="summary">A prompt is not a magic sentence. It is a small operating rule: source limits, uncertainty, review paths, and when a person has to take over.</p>
+            <span class="tagrow">source limits · review paths</span>
+          </a>
+          <a class="post" href="writing/how-brokerages-should-build-ai.html">
+            <span class="label">5</span>
+            <span class="title">How Brokerages Should Build AI</span>
+            <p class="summary">A reviewable architecture for retrieval, drafting, validation, approval, and audit logging — before autonomous action.</p>
+            <span class="tagrow">retrieval · audit trail · approval</span>
+          </a>
+          <a class="post" href="writing/trader-ai-stack.html">
+            <span class="label">6</span>
+            <span class="title">A Trader AI Stack</span>
+            <p class="summary">A practical personal stack for research, risk checks, catalyst monitoring, and post-trade review without giving the model execution authority.</p>
+            <span class="tagrow">watchlists · risk alerts · journal</span>
+          </a>
+          <a class="post" href="writing/ai-governance-for-markets.html">
+            <span class="label">7</span>
+            <span class="title">AI Governance for Markets</span>
+            <p class="summary">Documenting, testing, monitoring, and challenging AI systems after they move beyond the prototype stage.</p>
+            <span class="tagrow">supervision · validation · red team</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="topic">
+        <div class="topic-head">
+          <div>
+            <span class="eyebrow">Thread 02</span>
+            <h2>Market structure</h2>
+          </div>
+          <p class="blurb">Prediction markets and promoted small-cap symbols look different on the surface. Both come down to liquidity, incentives, information, and who is left holding risk when the trade gets crowded.</p>
+        </div>
+        <div class="post-list">
+          <a class="post" href="writing/prediction-markets-series.html">
+            <span class="label">1</span>
+            <span class="title">Prediction Markets Are Becoming Market Structure</span>
+            <p class="summary">Event contracts, venue design, bot flow, and why market odds should be read as prices rather than pure probabilities.</p>
+            <span class="tagrow">event contracts · CFTC · Robinhood · bots</span>
+          </a>
+          <a class="post" href="writing/anatomy-of-high-risk-symbol.html">
+            <span class="label">2</span>
+            <span class="title">Anatomy of a High-Risk Symbol</span>
+            <p class="summary">Ten reported pump-and-dump symbols show the same structure: fragile float, attention engineering, hidden inventory, and retail buyers as exit liquidity.</p>
+            <span class="tagrow">thin float · promotion · surveillance</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="topic">
+        <div class="topic-head">
+          <div>
+            <span class="eyebrow">Thread 03</span>
+            <h2>Futures and margin</h2>
+          </div>
+          <p class="blurb">From why futures exist to what happens when leverage, margin, expiration, liquidity, and liquidation all meet inside a brokerage account.</p>
+        </div>
+        <div class="post-list">
+          <a class="post" href="writing/futures-101.html">
+            <span class="label">1</span>
+            <span class="title">Futures as Risk-Transfer Markets</span>
+            <p class="summary">A practitioner-oriented introduction to standardized futures contracts, commercial hedging, and modern financial exposure.</p>
+            <span class="tagrow">hedging · liquidity · contract exposure</span>
+          </a>
+          <a class="post" href="writing/futures-margin-liquidation.html">
+            <span class="label">2</span>
+            <span class="title">Futures Margin, Maintenance, and Liquidation</span>
+            <p class="summary">How margin supports leveraged exposure, why representative ES exposure matters, and how liquidation paths form.</p>
+            <span class="tagrow">initial · maintenance · ES liquidation</span>
+          </a>
+          <a class="post" href="writing/futures-contract-selection.html">
+            <span class="label">3</span>
+            <span class="title">Choosing the Right Futures Contract</span>
+            <p class="summary">Expiration, roll timing, liquidity migration, and ES / MES sizing as representative benchmark contracts.</p>
+            <span class="tagrow">expiration · roll date · liquidity</span>
+          </a>
+          <a class="post" href="writing/futures-product-risk.html">
+            <span class="label">4</span>
+            <span class="title">Futures Products, Liquidity, and Risk Controls</span>
+            <p class="summary">A brokerage-risk view of futures product types, leverage, liquidity, expiration, and account-level controls.</p>
+            <span class="tagrow">product liquidity · concentration · controls</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row">
+        <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+        <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

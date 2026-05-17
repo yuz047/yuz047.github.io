@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Trader AI Stack | Sirius Zhang</title>
+  <meta name="description" content="A practical personal AI stack for market research, risk checks, catalyst monitoring, and post-trade review without unsafe execution authority." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+      <div class="nav-links">
+        <a href="../work.html">Work</a>
+        <a class="is-current" href="../writing.html">Writing</a>
+        <a href="../cv.html">CV</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+</header>
+<main class="article-shell container">
+  <article class="article">
+    <section class="hero">
+      <div class="eyebrow">Trader AI stack</div>
+      <h1>A Trader AI Stack</h1>
+      <p class="subtitle">A practical personal AI stack for market research, risk checks, catalyst monitoring, and post-trade review without handing execution authority to the model.</p>
+      <div class="meta-row"><span class="pill">watchlists</span><span class="pill">risk alerts</span><span class="pill">trade journal</span></div>
+    </section>
+    <div class="hero-figure"><img src="../assets/copilot-architecture.svg" alt="A Trader AI Stack diagram" /></div>
+    
+<p>A trader does not need to build a hedge-fund-grade autonomous agent to benefit from AI. The first useful trader AI stack is more controlled: organize information, monitor risk, summarize catalysts, challenge trade ideas, and keep a better journal.</p>
+<p>The mistake is jumping straight to “AI that trades for me.” The better starting point is “AI that helps me think before I trade.”</p>
+<h2 id="1-the-trader-ai-stack">The stack starts with attention, not execution</h2>
+<p>A practical trader AI stack has six modules.</p>
+<h3>Market monitor</h3>
+<p>This layer tracks watchlist symbols, futures contracts, macro events, earnings dates, volatility conditions, and unusual moves. It does not need to predict. It needs to surface what deserves attention.</p>
+<h3>News and filing summarizer</h3>
+<p>This layer summarizes headlines, filings, earnings calls, analyst notes, and market commentary. The output should separate facts from interpretation and highlight source links.</p>
+<h3>Position and risk dashboard</h3>
+<p>This layer translates holdings into exposure: direction, size, leverage, concentration, estimated P&amp;L under stress, margin usage, and event sensitivity. For futures traders, this includes contract multiplier, notional exposure, margin requirement, and liquidation risk.</p>
+<h3>Trade journal</h3>
+<p>This layer records the reason for the trade before entry: thesis, catalyst, entry condition, risk limit, invalidation point, expected holding period, and post-trade review. AI can make this easier by asking the right questions.</p>
+<h3>Scenario generator</h3>
+<p>This layer asks: what happens if CPI surprises, rates move, liquidity disappears, the opening gap invalidates the setup, or correlated assets break their normal relationship?</p>
+<h3>Guardrail layer</h3>
+<p>This layer blocks or warns against trades that violate predefined limits: max loss, max leverage, no-trade windows, event risk, illiquidity, or revenge-trading behavior.</p>
+<h2 id="2-what-ai-can-safely-do-for-a-trader">The safer work is research support</h2>
+<p>AI is useful when it summarizes news, extracts catalysts, compares bullish and bearish arguments, identifies hidden assumptions, explains risk metrics, organizes backtest results, and improves post-trade review. Those tasks make the trader more prepared without pretending the model has a validated edge.</p>
+<p>It is less safe for making final trade calls. A language model can sound persuasive without having a validated edge.</p>
+<h2 id="3-example-trading-around-a-fed-decision">Example: trading around a Fed decision</h2>
+<p>Suppose a trader wants to trade equity-index futures around a Federal Reserve decision. A useful AI workflow might look like this:</p>
+<p>A useful workflow would summarize the event calendar and market consensus, compare similar historical events, identify the likely volatility window, estimate how much adverse movement would threaten the position, and force the trader to write the thesis before entry.</p>
+<p>A dangerous workflow would ask the model whether to go long or short, let it place the trade, and increase size after a confident explanation.</p>
+<p>The difference is control.</p>
+<h2 id="4-build-the-first-version-without-live-execution">Build the first version without live execution</h2>
+<p>The first personal trader AI should not have trading permissions. It should read, summarize, calculate, and journal. Live execution should come much later, if ever, and only with strict limits.</p>
+<p>A safe build order is boring on purpose: start with a knowledge assistant, then add a watchlist summarizer, a journal assistant, a risk calculator, a backtest helper, a paper-trading simulator, and only then an alert-only system. Limited automation with hard constraints comes last, if it comes at all.</p>
+<p>Most traders never need step eight.</p>
+<h2 id="5-data-integrity-matters">Bad data creates false confidence</h2>
+<p>A trader AI is only as good as its inputs. Bad data can create false confidence. Common problems include adjusted versus unadjusted prices, missing dividends, stale options chains, incorrect futures rolls, survivorship bias, look-ahead bias, and timezone mismatch.</p>
+<p>Every backtest should make its data assumptions explicit. The trader needs to know the source, whether the data was available at the time of the decision, whether transaction costs are included, whether margin and leverage are included, whether stressed conditions are represented, and whether the idea survives across regimes.</p>
+<p>AI can help check these questions, but it cannot repair bad data without controls.</p>
+<h2 id="6-what-this-means-for-brokers">For brokers, client-side AI changes the risk surface</h2>
+<p>Brokerages should assume clients will increasingly build personal AI tools. That changes the risk surface. Automated or semi-automated order flow can amplify market-impact risk, manipulation risk, margin risk, and suitability concerns.</p>
+<p>Brokerages may need clearer API controls, tradeable-universe restrictions, rate limits, order throttles, education, and monitoring for AI-driven behavior. The point is not to ban trader AI. The point is to make sure automation does not create uncontrolled harm.</p>
+<h2 id="7-what-this-means-for-traders">For traders, the tool should slow down bad decisions</h2>
+<p>The best personal AI is a discipline machine. It should slow down impulsive decisions, not accelerate them. It should ask whether the trade has a catalyst, edge, risk limit, and invalidation point. It should record why the trade was entered so the trader cannot rewrite history later.</p>
+<p>If your AI only produces reasons to trade, it is not a risk assistant. It is a leverage amplifier.</p>
+<h2 id="8-what-this-means-for-practitioners">For builders, default to transparency and control</h2>
+<p>Practitioners building trader tools should design for read-only data access first, minimal credential storage, explicit confirmation before actions, hard position limits, full logs, paper trading by default, clear disclosures, and explainable risk metrics.</p>
+<h2 id="professional-workflow-takeaway">The professional takeaway</h2>
+<p>The transferable pattern is the same across research and operations: summarize information, structure alternatives, expose assumptions, preserve logs, and keep humans responsible for final judgment.</p>
+<h2 id="takeaway">Takeaway</h2>
+<p>The trader’s first AI should not be a robot trader. It should be a research assistant, risk coach, journal keeper, and scenario generator. The goal is not to outsource conviction. The goal is to make conviction more disciplined.</p>
+<section class="references" id="references"><h2>References</h2><ul>
+<li>FINRA, <a href="https://www.finra.org/investors/insights/artificial-intelligence-ai-investment-fraud">Investor Insight: Artificial Intelligence and Investment Fraud</a></li>
+<li>FINRA, <a href="https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai">GenAI: Continuing and Emerging Trends, 2026 Annual Regulatory Oversight Report</a></li>
+<li>NIST, <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI Risk Management Framework</a></li>
+</ul></section>
+    <div class="related"><h2>Related reading</h2><a href="what-counts-as-ai.html"><strong>What Counts as AI in Markets?</strong><br><span>model taxonomy · workflow fit · human control</span></a><a href="why-ai-fails.html"><strong>Why AI Fails in Financial Workflows</strong><br><span>model risk · data leakage · workflow controls</span></a><a href="prompting-is-workflow-design.html"><strong>Operating Controls for AI Assistants</strong><br><span>source limits · review paths</span></a></div>
+    <nav class="series-nav"><a class="series-link" href="how-brokerages-should-build-ai.html"><span>Previous</span><strong>How Brokerages Should Build AI</strong></a><a class="series-link" href="ai-governance-for-markets.html"><span>Next</span><strong>AI Governance for Markets</strong></a></nav>
+  </article>
+  <aside class="toc"><h2>On this page</h2><a href="#1-the-trader-ai-stack">The stack</a><a href="#2-what-ai-can-safely-do-for-a-trader">Research support</a><a href="#3-example-trading-around-a-fed-decision">Fed example</a><a href="#4-build-the-first-version-without-live-execution">No live execution</a><a href="#5-data-integrity-matters">Data integrity</a><a href="#6-what-this-means-for-brokers">For brokers</a><a href="#7-what-this-means-for-traders">For traders</a><a href="#8-what-this-means-for-practitioners">For builders</a><a href="#references">References</a></aside>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row">
+      <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+      <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+    </div>
+  </div>
+</footer>
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>
