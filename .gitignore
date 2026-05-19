@@ -24,12 +24,26 @@ claude.md
 .cursor/
 .aider*
 .continue/
+.agents/
+
+# Personal scratch / dev notes — these belong in a sibling notes folder
+AGENTS.md
+PUSH_TO_GITHUB.md
+setup-git.sh
+WRITING_STYLE_GUIDE.md
+NOTES*.md
+TODO*.md
+DEPLOY*.md
+SETUP*.md
+SCRATCH*.md
+*-NOTES.md
 
 # Local screenshot / scratch artefacts that sometimes get co-located
 v2-screens/
 *.bundle
+*.bak
 
-# Personal scratch / bootstrap — never in the public repo
-AGENTS.md
-PUSH_TO_GITHUB.md
-setup-git.sh
+# Env files (defensive — site is static but never know)
+.env
+.env.local
+.env.*.local
