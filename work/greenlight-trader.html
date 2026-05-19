@@ -163,20 +163,22 @@
     <section class="container">
       <div class="page-head">
         <div class="eyebrow">Paper-trading research · live</div>
-        <h1>GreenLight Trader: a $1,000 disciplined AI trader.</h1>
+        <h1>GreenLight Trader: a $1,000 SPY-anchored alpha overlay.</h1>
         <p class="lede">
-          A research system that runs a paper portfolio after the US close every weekday,
-          generates a "stock pitcher" rank of next-day candidates from a multi-factor
-          relative-strength model, applies rule-based momentum and mean-reversion overlays,
-          gates everything through a strict risk engine, and writes a human-readable EOD
-          review. Strategy modules are hot-swappable: drop a new file, bump the registry,
-          the next cron picks it up. Capital preservation first — not investment advice.
+          Mandate: <strong>beat SPY by 10%</strong>, trail SPY by no more than 5%.
+          The book holds SPY as the always-on baseline. A multi-factor pitcher
+          identifies high-conviction names (composite z ≥ 1.0) and substitutes
+          them for portions of the SPY core. When a pick underperforms SPY by
+          more than 2% on a closing basis, it's force-exited and the SPY
+          allocation is restored. Strategy modules are hot-swappable; the EOD
+          reviewer can propose changes but cannot apply them. Not investment
+          advice.
         </p>
         <div class="contact-strip">
           <span class="gl-pill">paper trading</span>
           <span class="gl-pill">$1,000 book</span>
-          <span class="gl-pill">3 strategies</span>
-          <span class="gl-pill">1% / trade · 10% DD stop</span>
+          <span class="gl-pill">target SPY + 10%</span>
+          <span class="gl-pill">max −5% vs SPY</span>
           <span class="gl-pill" id="gl-source-pill">loading…</span>
         </div>
       </div>
@@ -269,11 +271,15 @@
     <section class="container" style="padding-top: 36px;">
       <div class="topic-head">
         <div class="eyebrow">Risk framework</div>
-        <h2>The $1,000 book has the discipline turned up.</h2>
+        <h2>Relative to SPY, not absolute.</h2>
         <p class="blurb">
-          On a small book, position sizing is the only line of defense — there is no
-          alpha that survives a 20% drawdown. Caps below are tight and surfaced on
-          the live dashboard so the system's behavior is always auditable against them.
+          The V2 risk gate is benchmarked. The mandate is to beat SPY by 10% over
+          two years and to never trail SPY by more than 5%. The system enforces
+          this at three levels: each pick has a 2% relative stop vs SPY (kills
+          the pick if it lags); the portfolio has a 4% relative-DD yellow gate
+          (reduces to one pick) and a 4% red gate (closes all picks, holds
+          100% SPY for 20 trading days); per-pick weight is capped at 20% of NAV,
+          floor at 60% SPY when any picks are active.
         </p>
       </div>
 
@@ -453,16 +459,17 @@
       `).join("");
     }
 
-    // ---- Risk caps ----
+    // ---- Risk caps (V2 — relative mandate) ----
     function renderCaps(cfg) {
       const c = document.getElementById("gl-caps");
       if (!c || !cfg) return;
       const items = [
-        ["Risk / trade", (cfg.max_risk_per_trade_pct * 100).toFixed(2) + "%"],
-        ["Daily loss cap", (cfg.max_daily_loss_pct * 100).toFixed(2) + "%"],
-        ["Max DD cap", (cfg.max_drawdown_pct * 100).toFixed(2) + "%"],
-        ["Max open positions", String(cfg.max_open_positions ?? "—")],
-        ["Max single position", (cfg.max_single_position_pct * 100).toFixed(0) + "%"],
+        ["Benchmark",            String(cfg.benchmark ?? "SPY")],
+        ["Target alpha",         "+" + ((cfg.target_alpha_pct ?? 0.1) * 100).toFixed(0) + "%"],
+        ["Max rel. drawdown",    ((cfg.max_relative_drawdown_pct ?? 0.05) * 100).toFixed(1) + "%"],
+        ["Max picks open",       String(cfg.max_picks_open ?? "—")],
+        ["Weight / pick",        ((cfg.pick_weight_per_position ?? 0.2) * 100).toFixed(0) + "%"],
+        ["SPY core floor",       ((cfg.spy_core_min_weight ?? 0.6) * 100).toFixed(0) + "%"],
       ];
       c.innerHTML = items.map(([k, v]) => `
         <div class="gl-tile accent">
@@ -533,32 +540,53 @@
         </div>`).join("");
     }
 
-    // ---- Equity chart ----
+    // ---- Equity chart with SPY benchmark overlay ----
     function renderChart(snapshots, startingCapital) {
       const canvas = document.getElementById("gl-equity");
       if (!canvas || typeof Chart === "undefined") return;
       if (!snapshots || !snapshots.length) { return; }
       const labels = snapshots.map(s => s.date);
       const data = snapshots.map(s => s.equity);
+      const bench = snapshots.map(s => s.benchmark_equity ?? s.equity);
       new Chart(canvas, {
         type: "line",
         data: {
           labels,
-          datasets: [{
-            data,
-            borderColor: "#1f3a5f",
-            backgroundColor: "rgba(31,58,95,.08)",
-            borderWidth: 1.8,
-            tension: 0.18,
-            pointRadius: 0,
-            fill: true,
-          }],
+          datasets: [
+            {
+              label: "Strategy",
+              data,
+              borderColor: "#1f3a5f",
+              backgroundColor: "rgba(31,58,95,.08)",
+              borderWidth: 1.8,
+              tension: 0.18,
+              pointRadius: 0,
+              fill: true,
+            },
+            {
+              label: "SPY (benchmark)",
+              data: bench,
+              borderColor: "#9aa7b8",
+              borderDash: [4, 4],
+              borderWidth: 1.4,
+              tension: 0.18,
+              pointRadius: 0,
+              fill: false,
+            },
+          ],
         },
         options: {
           responsive: true, maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { display: false },
+            legend: {
+              display: true,
+              labels: {
+                font: { family: "JetBrains Mono", size: 10 },
+                color: "#45494f",
+                boxWidth: 18, boxHeight: 2,
+              },
+            },
             tooltip: {
               backgroundColor: "#ffffff",
               titleColor: "#45494f",
@@ -635,22 +663,29 @@
       const c = document.getElementById("gl-metrics");
       if (!c) return;
       if (!m) { c.innerHTML = `<div class="gl-loading">No metrics</div>`; return; }
+      const cls = (x) => !Number.isFinite(x) || x === 0 ? "" : x > 0 ? "num-pos" : "num-neg";
       const items = [
-        ["Sharpe (ann.)", fmt(m.sharpe, 2)],
-        ["Sortino (ann.)", fmt(m.sortino, 2)],
-        ["Max DD", ((m.max_drawdown ?? 0) * 100).toFixed(2) + "%"],
-        ["Vol (ann.)", ((m.vol_annualized ?? 0) * 100).toFixed(2) + "%"],
-        ["Win rate", ((m.win_rate ?? 0) * 100).toFixed(1) + "%"],
-        ["Profit factor", m.profit_factor == null ? "—" : fmt(m.profit_factor, 2)],
-        ["Avg win", "$" + fmt(m.avg_win ?? 0)],
-        ["Avg loss", "$" + fmt(m.avg_loss ?? 0)],
-        ["Largest loss", "$" + fmt(m.largest_loss ?? 0)],
-        ["# Trades", String(m.n_trades ?? "—")],
+        // V2 relative metrics — the most important ones up front
+        ["Strategy return", { v: ((m.total_return ?? 0) * 100).toFixed(2) + "%", cls: cls(m.total_return) }],
+        ["SPY return",      { v: ((m.benchmark_total_return ?? 0) * 100).toFixed(2) + "%" }],
+        ["Alpha vs SPY",    { v: ((m.alpha_total ?? 0) * 100).toFixed(2) + "%", cls: cls(m.alpha_total) }],
+        ["Info ratio",      { v: fmt(m.info_ratio, 2), cls: cls(m.info_ratio) }],
+        ["Max relative DD", {
+          v: ((m.max_relative_drawdown ?? 0) * 100).toFixed(2) + "% / "
+             + ((m.max_relative_drawdown_pct ?? 0.05) * 100).toFixed(0) + "%",
+          cls: (m.max_relative_drawdown ?? 0) >= (m.max_relative_drawdown_pct ?? 0.05) ? "num-neg" : ""
+        }],
+        ["Sharpe (strat)",  { v: fmt(m.sharpe, 2) }],
+        ["Sharpe (SPY)",    { v: fmt(m.benchmark_sharpe, 2) }],
+        ["Win rate",        { v: ((m.win_rate ?? 0) * 100).toFixed(1) + "%" }],
+        ["Avg pick alpha",  { v: ((m.avg_pick_alpha ?? 0) * 100).toFixed(2) + "%",
+                              cls: cls(m.avg_pick_alpha) }],
+        ["# Picks",         { v: String(m.n_trades ?? "—") }],
       ];
-      c.innerHTML = items.map(([k, v]) => `
+      c.innerHTML = items.map(([k, x]) => `
         <div class="gl-tile">
           <div class="l">${k}</div>
-          <div class="v">${v}</div>
+          <div class="v ${x.cls || ""}">${x.v}</div>
         </div>`).join("");
     }
 
