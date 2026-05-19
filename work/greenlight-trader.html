@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GreenLight Trader | Sirius Zhang</title>
+  <meta name="description" content="An AI-supervised paper-trading research system on a $1,000 risk-controlled portfolio. Stock pitcher, hot-swappable strategy registry, EOD review." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+
+  <style>
+    /* GreenLight-specific helpers that extend the site stylesheet. */
+    .gl-page .panel { padding: 22px 24px; }
+    .gl-kpi {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (min-width: 700px) { .gl-kpi.three { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) {
+      .gl-kpi.five { grid-template-columns: repeat(5, 1fr); }
+      .gl-kpi.six  { grid-template-columns: repeat(6, 1fr); }
+    }
+    .gl-tile {
+      padding: 14px 16px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--paper);
+    }
+    .gl-tile .l {
+      font-family: var(--mono); font-size: 10.5px;
+      letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute);
+    }
+    .gl-tile .v {
+      font-family: var(--display); font-weight: 600;
+      font-size: 22px; letter-spacing: -.015em;
+      margin-top: 4px; font-variant-numeric: tabular-nums;
+      color: var(--ink);
+    }
+    .gl-tile .s {
+      font-family: var(--mono); font-size: 11px; color: var(--ink-mute);
+    }
+    .gl-tile.accent .v { color: var(--accent); }
+
+    .num-pos { color: var(--ok); }
+    .num-neg { color: #9b2c1f; }
+
+    .gl-status {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 22px;
+      border: 1px solid var(--rule); border-radius: var(--radius-md);
+      background: var(--panel);
+    }
+    .gl-status .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+    .gl-status.green  { background: rgba(47,106,74,.06); border-color: rgba(47,106,74,.25); }
+    .gl-status.yellow { background: rgba(180,83,9,.06);  border-color: rgba(180,83,9,.25); }
+    .gl-status.red    { background: rgba(155,44,31,.06); border-color: rgba(155,44,31,.3); }
+    .gl-status.black  { background: var(--paper-deep); }
+    .gl-status .label {
+      font-family: var(--serif); font-weight: 600; font-size: 19px;
+      letter-spacing: -.01em;
+    }
+    .gl-status .label.green  { color: var(--ok); }
+    .gl-status .label.yellow { color: var(--warn); }
+    .gl-status .label.red    { color: #9b2c1f; }
+    .gl-status .label.black  { color: var(--ink-soft); }
+    .gl-status .reason { color: var(--ink-soft); font-size: 14px; margin-top: 2px; }
+
+    .gl-pill {
+      display: inline-block; padding: 3px 10px 4px;
+      font-family: var(--mono); font-size: 10.5px;
+      letter-spacing: .12em; text-transform: uppercase;
+      border-radius: 999px; border: 1px solid var(--rule-strong); color: var(--ink-mute);
+    }
+    .gl-pill.green  { color: var(--ok);   border-color: rgba(47,106,74,.4); }
+    .gl-pill.yellow { color: var(--warn); border-color: rgba(180,83,9,.4); }
+    .gl-pill.red    { color: #9b2c1f;     border-color: rgba(155,44,31,.4); }
+
+    .gl-table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--panel); }
+    table.gl { width: 100%; border-collapse: collapse; min-width: 720px; font-variant-numeric: tabular-nums; }
+    table.gl th {
+      background: var(--paper-deep); font-family: var(--mono);
+      font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 600; text-align: left;
+      padding: 10px 14px; border-bottom: 1px solid var(--rule);
+    }
+    table.gl td {
+      padding: 11px 14px; border-bottom: 1px solid var(--rule);
+      color: var(--ink-soft); font-size: 13.5px;
+    }
+    table.gl tr:hover td { background: rgba(31,58,95,.025); }
+    table.gl td.right { text-align: right; }
+    table.gl td.sym { font-family: var(--display); font-weight: 600; color: var(--ink); }
+    .gl-tag { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); letter-spacing: .06em; }
+    .gl-tag.accent { color: var(--accent); }
+
+    .gl-pitch {
+      padding: 18px 20px;
+      border: 1px solid var(--accent-line);
+      border-radius: var(--radius-md);
+      background: var(--accent-soft);
+      margin-bottom: 12px;
+    }
+    .gl-pitch h4 {
+      margin: 0; font-family: var(--serif); font-weight: 600;
+      font-size: 17px; letter-spacing: -.01em; color: var(--accent);
+    }
+    .gl-pitch .meta { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); letter-spacing: .06em; }
+    .gl-pitch .thesis { color: var(--ink); font-size: 14.5px; line-height: 1.55; margin: 8px 0 0; }
+
+    .arch {
+      font-family: var(--mono); font-size: 12.5px;
+      white-space: pre; line-height: 1.55; color: var(--ink-soft);
+      background: var(--paper-deep); border: 1px solid var(--rule);
+      border-radius: var(--radius-md); padding: 18px 22px;
+      overflow-x: auto;
+    }
+
+    .gl-loading {
+      padding: 28px; text-align: center;
+      font-family: var(--mono); font-size: 12px; color: var(--ink-mute);
+      letter-spacing: .12em; text-transform: uppercase;
+    }
+
+    .gl-callout { border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--panel); padding: 18px 20px; }
+    .gl-callout.note-left {
+      border-left: 3px solid var(--accent); background: var(--accent-soft);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .gl-github {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 20px; border-radius: 999px;
+      border: 1px solid var(--rule-strong);
+      font-family: var(--sans); font-size: 14px; color: var(--ink);
+      transition: all 160ms ease;
+    }
+    .gl-github:hover { border-color: var(--accent); color: var(--accent); }
+    .gl-github svg { width: 18px; height: 18px; }
+  </style>
+</head>
+<body class="gl-page">
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
+        <div class="nav-links">
+          <a href="../work.html">Work</a>
+          <a href="../writing.html">Writing</a>
+          <a href="../cv.html">CV</a>
+          <a href="../contact.html">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============= HERO ============= -->
+    <section class="container">
+      <div class="page-head">
+        <div class="eyebrow">Paper-trading research · live</div>
+        <h1>GreenLight Trader: a $1,000 disciplined AI trader.</h1>
+        <p class="lede">
+          A research system that runs a paper portfolio after the US close every weekday,
+          generates a "stock pitcher" rank of next-day candidates from a multi-factor
+          relative-strength model, applies rule-based momentum and mean-reversion overlays,
+          gates everything through a strict risk engine, and writes a human-readable EOD
+          review. Strategy modules are hot-swappable: drop a new file, bump the registry,
+          the next cron picks it up. Capital preservation first — not investment advice.
+        </p>
+        <div class="contact-strip">
+          <span class="gl-pill">paper trading</span>
+          <span class="gl-pill">$1,000 book</span>
+          <span class="gl-pill">3 strategies</span>
+          <span class="gl-pill">1% / trade · 10% DD stop</span>
+          <span class="gl-pill" id="gl-source-pill">loading…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= WHAT IT DOES ============= -->
+    <section class="container" style="padding-top: 36px;">
+      <div class="topic-head">
+        <div class="eyebrow">What it does</div>
+        <h2>From OHLCV to a defensible next-day shortlist.</h2>
+        <p class="blurb">
+          Free OHLCV from yfinance plus Yahoo Finance RSS headlines feed a daily pipeline.
+          The pipeline computes signals once, runs every active strategy across every
+          symbol, ranks the resulting candidates by composite score, and pushes them
+          through a risk gate. The risk gate is the final word: it rejects a candidate
+          if it would breach the 1% per-trade or 10% portfolio drawdown limits, if the
+          name is already in the book, or if the system is in red or black state.
+          Whatever survives is opened on tomorrow's open in the backtest and on today's
+          close in the live job. Every trade keeps its rationale; the EOD review can call
+          an LLM (Claude Haiku by default) to write the daily wrap or, with no API key
+          set, fall through to a deterministic template that fills in the same fields.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============= ARCHITECTURE ============= -->
+    <section class="container" style="padding-top: 36px;">
+      <div class="topic-head">
+        <div class="eyebrow">Architecture</div>
+        <h2>Engine writes, dashboard reads.</h2>
+        <p class="blurb">
+          One source of truth — the Python engine — and a public read-only dashboard.
+          The cron runs daily on a GitHub Actions runner; it pulls fresh data,
+          recomputes signals, advances the book, writes JSON snapshots to the repo,
+          and (optionally) mirrors them into a Supabase Postgres database. The
+          dashboard is a static page that fetches those snapshots over HTTPS.
+        </p>
+      </div>
+      <pre class="arch">      GitHub Actions (weekdays after the US close)
+              │
+              ▼
+       Python engine ── yfinance (OHLCV) ── Yahoo RSS (sentiment)
+        data ▸ signals ▸ strategies/* ▸ risk ▸ portfolio
+                                │
+                                ├── EOD review (Anthropic, w/ template fallback)
+                                ▼
+                  data/*.json ──► Supabase (optional) ──► this dashboard
+                                                          (read-only)</pre>
+    </section>
+
+    <!-- ============= HOT-SWAP DESIGN ============= -->
+    <section class="container" style="padding-top: 36px;">
+      <div class="topic-head">
+        <div class="eyebrow">Hot-swappable logic</div>
+        <h2>Strategies are files, not branches.</h2>
+        <p class="blurb">
+          Every strategy lives in its own module under <span class="inline-code">python/strategies/</span>.
+          Each file exposes a manifest (id, version, rules, parameters) and a
+          <span class="inline-code">run()</span> entrypoint. On startup the package
+          auto-discovers every module — no central register to edit. To activate a
+          new strategy, list its id in <span class="inline-code">config.ACTIVE_IDS</span>.
+          To upgrade, drop a file with a bumped version next to the old one and switch
+          the id. Old versions stay readable for audit and back-comparison; nothing
+          mutates rules at runtime.
+        </p>
+      </div>
+
+      <div class="gl-callout note-left" style="margin-top: 14px;">
+        <div class="eyebrow" style="color: var(--accent);">Why the friction is the feature</div>
+        <p style="margin: 8px 0 0; color: var(--ink); font-size: 14.5px; line-height: 1.6;">
+          Friction stops the system from chasing today's losing trade with tomorrow's
+          new rule. The EOD reviewer can <em>propose</em> a change (logged in the
+          decision log below), but it cannot apply one. A human runs a comparison
+          backtest, accepts or rejects, and bumps the version. This is how strategy
+          drift is controlled.
+        </p>
+      </div>
+
+      <div class="gl-table-wrap" style="margin-top: 14px;">
+        <table class="gl">
+          <thead>
+            <tr><th>Strategy</th><th>Version</th><th>Kind</th><th>Status</th><th>Rules</th></tr>
+          </thead>
+          <tbody id="gl-strategies"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============= RISK FRAMEWORK ============= -->
+    <section class="container" style="padding-top: 36px;">
+      <div class="topic-head">
+        <div class="eyebrow">Risk framework</div>
+        <h2>The $1,000 book has the discipline turned up.</h2>
+        <p class="blurb">
+          On a small book, position sizing is the only line of defense — there is no
+          alpha that survives a 20% drawdown. Caps below are tight and surfaced on
+          the live dashboard so the system's behavior is always auditable against them.
+        </p>
+      </div>
+
+      <div class="gl-kpi five" id="gl-caps" style="margin-top: 12px;"></div>
+    </section>
+
+    <!-- ============= LIVE DASHBOARD ============= -->
+    <section class="container" style="padding-top: 48px;">
+      <div class="topic-head">
+        <div class="eyebrow">Live dashboard</div>
+        <h2>System state, portfolio, and tomorrow's pitch sheet.</h2>
+        <p class="blurb">
+          Everything below is fetched live from the engine's output snapshots. Updated
+          on every successful GitHub Actions run after the US close.
+        </p>
+      </div>
+
+      <div id="gl-status" class="gl-status" style="margin-top: 12px;">
+        <div class="gl-loading">Loading status…</div>
+      </div>
+
+      <div style="display: grid; gap: 14px; margin-top: 14px;" id="gl-overview-row">
+        <div class="panel">
+          <div class="eyebrow" style="margin-bottom: 14px;">Portfolio overview</div>
+          <div class="gl-kpi three" id="gl-kpis"></div>
+        </div>
+        <div class="panel">
+          <div class="eyebrow" style="margin-bottom: 14px;">Equity curve</div>
+          <div style="height: 240px;"><canvas id="gl-equity"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Pitches for tomorrow — featured -->
+      <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Pitches for tomorrow</div>
+        <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
+          The top-ranked candidates from <span class="inline-code">stock_pitcher_v1</span>
+          that survived the risk gate. Each pitch lists composite z-score, trend t-stat,
+          R² quality of the trend regression, 63-day relative strength vs SPY,
+          projected 5-day move, and the proposed stop and target.
+        </p>
+        <div id="gl-pitches"></div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 14px;">Current positions</div>
+        <div class="gl-table-wrap">
+          <table class="gl">
+            <thead>
+              <tr>
+                <th>Symbol</th><th>Strategy</th><th class="right">Qty</th>
+                <th class="right">Entry</th><th class="right">Last</th>
+                <th class="right">Stop</th><th class="right">Target</th>
+                <th class="right">Unrealized</th>
+              </tr>
+            </thead>
+            <tbody id="gl-positions"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 14px;">Realized risk metrics</div>
+        <div class="gl-kpi five" id="gl-metrics"></div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 14px;">Recent closed trades</div>
+        <div class="gl-table-wrap">
+          <table class="gl">
+            <thead>
+              <tr>
+                <th>Exit</th><th>Symbol</th><th>Strategy</th>
+                <th class="right">Qty</th><th class="right">Entry</th><th class="right">Exit</th>
+                <th class="right">PnL</th><th class="right">Days</th><th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="gl-trades"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 10px;">AI decision log</div>
+        <div id="gl-reviews"></div>
+      </div>
+    </section>
+
+    <!-- ============= GITHUB ============= -->
+    <section class="container" style="padding-top: 48px; padding-bottom: 36px;">
+      <div class="topic-head">
+        <div class="eyebrow">Code</div>
+        <h2>Open source.</h2>
+        <p class="blurb">
+          The full engine, schema, GitHub Actions workflow, and Next.js variant of the
+          dashboard live in the repo. PRs and issues welcome — particularly on the
+          risk engine, the pitcher's factor design, and the strategy governance flow.
+        </p>
+        <div style="margin-top: 18px;">
+          <a class="gl-github" href="https://github.com/yuz047/greenlight-trader" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.01c-3.2.7-3.87-1.37-3.87-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.66.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/>
+            </svg>
+            github.com/yuz047/greenlight-trader
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row">
+        <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
+        <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* =================================================================
+     Live data loader for the GreenLight Trader dashboard.
+
+     Data sources, in priority order:
+     1. ./data/greenlight-trader/{file}.json — local mirror in this repo
+     2. https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data/{file}.json
+        — the public engine repo, refreshed by GitHub Actions daily
+     Whichever responds first with a 200 is used. The page falls back to
+     informative "no data" states if both fail.
+  ===================================================================== */
+  (function () {
+    const DATA_SOURCES = [
+      "../data/greenlight-trader",
+      "https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data",
+    ];
+
+    const fmt = (n, d = 2) =>
+      Number.isFinite(n) ? n.toLocaleString(undefined, {
+        minimumFractionDigits: d, maximumFractionDigits: d,
+      }) : "—";
+    const fmtUsd = (n) => "$" + fmt(n);
+    const pcls = (n) =>
+      !Number.isFinite(n) || n === 0 ? "" : n > 0 ? "num-pos" : "num-neg";
+
+    async function fetchOne(name) {
+      for (const base of DATA_SOURCES) {
+        try {
+          const r = await fetch(`${base}/${name}.json`, { cache: "no-store" });
+          if (r.ok) return { data: await r.json(), source: base };
+        } catch (e) { /* try next */ }
+      }
+      return { data: null, source: null };
+    }
+
+    function setSource(src) {
+      const p = document.getElementById("gl-source-pill");
+      if (!p) return;
+      if (!src) { p.textContent = "no data"; return; }
+      if (src.includes("raw.githubusercontent")) p.textContent = "via github";
+      else p.textContent = "via local mirror";
+    }
+
+    // ---- Strategies ----
+    function renderStrategies(manifests) {
+      const tb = document.getElementById("gl-strategies");
+      if (!tb || !manifests) return;
+      tb.innerHTML = manifests.map(m => `
+        <tr>
+          <td class="sym">${m.id}</td>
+          <td><span class="gl-tag">v${m.version}</span></td>
+          <td><span class="gl-tag accent">${m.kind || "signal"}</span></td>
+          <td><span class="gl-pill green">${m.status || "active"}</span></td>
+          <td style="white-space: normal;">${m.rules || ""}</td>
+        </tr>
+      `).join("");
+    }
+
+    // ---- Risk caps ----
+    function renderCaps(cfg) {
+      const c = document.getElementById("gl-caps");
+      if (!c || !cfg) return;
+      const items = [
+        ["Risk / trade", (cfg.max_risk_per_trade_pct * 100).toFixed(2) + "%"],
+        ["Daily loss cap", (cfg.max_daily_loss_pct * 100).toFixed(2) + "%"],
+        ["Max DD cap", (cfg.max_drawdown_pct * 100).toFixed(2) + "%"],
+        ["Max open positions", String(cfg.max_open_positions ?? "—")],
+        ["Max single position", (cfg.max_single_position_pct * 100).toFixed(0) + "%"],
+      ];
+      c.innerHTML = items.map(([k, v]) => `
+        <div class="gl-tile accent">
+          <div class="l">${k}</div>
+          <div class="v">${v}</div>
+        </div>
+      `).join("");
+    }
+
+    // ---- System status ----
+    function renderStatus(s) {
+      const el = document.getElementById("gl-status");
+      if (!el) return;
+      if (!s) { el.innerHTML = `<div class="gl-loading">No status available</div>`; return; }
+      const k = ["green","yellow","red","black"].includes(s.light) ? s.light : "green";
+      const label = k.toUpperCase() + " LIGHT";
+      const color =
+        k === "green"  ? "var(--ok)" :
+        k === "yellow" ? "var(--warn)" :
+        k === "red"    ? "#9b2c1f"   : "var(--ink-soft)";
+      el.className = `gl-status ${k}`;
+      el.innerHTML = `
+        <div class="dot" style="background:${color}; box-shadow: 0 0 12px ${color}88;"></div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="eyebrow">System status</div>
+          <div class="label ${k}">${label}</div>
+          <div class="reason">${s.reason || ""}</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="gl-tag">regime · <span class="gl-tag accent">${s.regime || "n/a"}</span></div>
+          <div class="gl-tag" style="margin-top: 4px;">data ·
+            <span class="${s.data?.ok ? "num-pos" : "num-neg"}">
+              ${s.data?.ok ? "ok" : "stale"}
+            </span>
+            ${s.data?.synthetic ? `<span style="color: var(--warn);"> · synthetic</span>` : ""}
+          </div>
+          ${s.as_of ? `<div class="gl-tag" style="margin-top: 4px;">as of ${s.as_of}</div>` : ""}
+        </div>`;
+    }
+
+    // ---- KPIs ----
+    function renderKpis(snapshots, startingCapital) {
+      const c = document.getElementById("gl-kpis");
+      if (!c) return;
+      if (!snapshots || !snapshots.length) {
+        c.innerHTML = `<div class="gl-loading">No snapshots yet</div>`; return;
+      }
+      const last = snapshots[snapshots.length - 1];
+      const cumPct = (last.equity / startingCapital - 1) * 100;
+      const dailyPct = last.equity > 0
+        ? (last.daily_pnl / (last.equity - last.daily_pnl)) * 100 : 0;
+      const items = [
+        { k: "Equity",        v: fmtUsd(last.equity),       s: `inception ${fmtUsd(startingCapital)}` },
+        { k: "Cash",          v: fmtUsd(last.cash),         s: "available" },
+        { k: "Market value",  v: fmtUsd(last.market_value), s: "open positions" },
+        { k: "Daily PnL",     v: (last.daily_pnl >= 0 ? "+" : "") + fmtUsd(last.daily_pnl),
+          s: `${dailyPct >= 0 ? "+" : ""}${dailyPct.toFixed(2)}%`, cls: pcls(last.daily_pnl) },
+        { k: "Cumulative PnL", v: (last.cumulative_pnl >= 0 ? "+" : "") + fmtUsd(last.cumulative_pnl),
+          s: `${cumPct >= 0 ? "+" : ""}${cumPct.toFixed(2)}%`, cls: pcls(last.cumulative_pnl) },
+        { k: "Drawdown",      v: (last.drawdown * 100).toFixed(2) + "%",
+          s: "from peak", cls: last.drawdown > 0 ? "num-neg" : "" },
+      ];
+      c.innerHTML = items.map(it => `
+        <div class="gl-tile">
+          <div class="l">${it.k}</div>
+          <div class="v ${it.cls || ""}">${it.v}</div>
+          <div class="s">${it.s}</div>
+        </div>`).join("");
+    }
+
+    // ---- Equity chart ----
+    function renderChart(snapshots, startingCapital) {
+      const canvas = document.getElementById("gl-equity");
+      if (!canvas || typeof Chart === "undefined") return;
+      if (!snapshots || !snapshots.length) { return; }
+      const labels = snapshots.map(s => s.date);
+      const data = snapshots.map(s => s.equity);
+      new Chart(canvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            data,
+            borderColor: "#1f3a5f",
+            backgroundColor: "rgba(31,58,95,.08)",
+            borderWidth: 1.8,
+            tension: 0.18,
+            pointRadius: 0,
+            fill: true,
+          }],
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "#ffffff",
+              titleColor: "#45494f",
+              bodyColor: "#14161a",
+              borderColor: "#e6e1d3",
+              borderWidth: 1,
+              titleFont: { family: "JetBrains Mono", size: 11 },
+              bodyFont:  { family: "JetBrains Mono", size: 12 },
+              callbacks: { label: (ctx) => " " + fmtUsd(ctx.parsed.y) },
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: "#767a82", maxRotation: 0, autoSkipPadding: 24,
+                       font: { family: "JetBrains Mono", size: 10 } },
+              grid:  { color: "#e6e1d3" },
+            },
+            y: {
+              ticks: { color: "#767a82", callback: (v) => fmtUsd(v, 0),
+                       font: { family: "JetBrains Mono", size: 10 } },
+              grid:  { color: "#e6e1d3" },
+            },
+          },
+        },
+      });
+    }
+
+    // ---- Pitches ----
+    function renderPitches(pitches) {
+      const c = document.getElementById("gl-pitches");
+      if (!c) return;
+      if (!pitches || !pitches.length) {
+        c.innerHTML = `<div class="gl-loading">No pitches for tomorrow. The pitcher passed today.</div>`;
+        return;
+      }
+      c.innerHTML = pitches.map(p => `
+        <div class="gl-pitch">
+          <div style="display:flex; align-items:baseline; justify-content:space-between; gap: 10px;">
+            <h4>${p.symbol} · rank #${p.rank ?? "?"}</h4>
+            <span class="meta">composite z ${p.composite_z >= 0 ? "+" : ""}${(p.composite_z ?? 0).toFixed(2)}</span>
+          </div>
+          <div class="meta" style="margin-top:6px;">
+            entry ≈ $${fmt(p.entry_ref_price)} · stop $${fmt(p.stop_distance)} · target $${fmt(p.target_distance)}
+            · projected 5d move ${p.projected_5d_move >= 0 ? "+" : ""}$${fmt(p.projected_5d_move)}
+            · max hold ${p.max_hold_days}d
+          </div>
+          <p class="thesis">${p.rationale}</p>
+        </div>`).join("");
+    }
+
+    // ---- Positions ----
+    function renderPositions(positions) {
+      const tb = document.getElementById("gl-positions");
+      if (!tb) return;
+      if (!positions || !positions.length) {
+        tb.innerHTML = `<tr><td colspan="8" style="color: var(--ink-mute); text-align:center;">No open positions.</td></tr>`;
+        return;
+      }
+      tb.innerHTML = positions.map(p => `
+        <tr>
+          <td class="sym">${p.symbol}</td>
+          <td><span class="gl-tag accent">${p.strategy_id}</span></td>
+          <td class="right">${p.quantity}</td>
+          <td class="right">$${fmt(p.entry_price)}</td>
+          <td class="right">$${fmt(p.last_price)}</td>
+          <td class="right">$${fmt(p.stop_price)}</td>
+          <td class="right">$${fmt(p.target_price)}</td>
+          <td class="right ${pcls(p.unrealized_pnl)}">$${fmt(p.unrealized_pnl)}</td>
+        </tr>`).join("");
+    }
+
+    // ---- Risk metrics ----
+    function renderMetrics(m) {
+      const c = document.getElementById("gl-metrics");
+      if (!c) return;
+      if (!m) { c.innerHTML = `<div class="gl-loading">No metrics</div>`; return; }
+      const items = [
+        ["Sharpe (ann.)", fmt(m.sharpe, 2)],
+        ["Sortino (ann.)", fmt(m.sortino, 2)],
+        ["Max DD", ((m.max_drawdown ?? 0) * 100).toFixed(2) + "%"],
+        ["Vol (ann.)", ((m.vol_annualized ?? 0) * 100).toFixed(2) + "%"],
+        ["Win rate", ((m.win_rate ?? 0) * 100).toFixed(1) + "%"],
+        ["Profit factor", m.profit_factor == null ? "—" : fmt(m.profit_factor, 2)],
+        ["Avg win", "$" + fmt(m.avg_win ?? 0)],
+        ["Avg loss", "$" + fmt(m.avg_loss ?? 0)],
+        ["Largest loss", "$" + fmt(m.largest_loss ?? 0)],
+        ["# Trades", String(m.n_trades ?? "—")],
+      ];
+      c.innerHTML = items.map(([k, v]) => `
+        <div class="gl-tile">
+          <div class="l">${k}</div>
+          <div class="v">${v}</div>
+        </div>`).join("");
+    }
+
+    // ---- Trades ----
+    function renderTrades(trades) {
+      const tb = document.getElementById("gl-trades");
+      if (!tb) return;
+      if (!trades || !trades.length) {
+        tb.innerHTML = `<tr><td colspan="9" style="color: var(--ink-mute); text-align:center;">No closed trades.</td></tr>`;
+        return;
+      }
+      const recent = trades
+        .filter(t => t.exit_time)
+        .sort((a, b) => (a.exit_time < b.exit_time ? 1 : -1))
+        .slice(0, 25);
+      tb.innerHTML = recent.map(t => `
+        <tr>
+          <td><span class="gl-tag">${(t.exit_time || "").slice(0, 10)}</span></td>
+          <td class="sym">${t.symbol}</td>
+          <td><span class="gl-tag accent">${t.strategy_id}</span></td>
+          <td class="right">${t.quantity}</td>
+          <td class="right">$${fmt(t.entry_price)}</td>
+          <td class="right">$${fmt(t.exit_price)}</td>
+          <td class="right ${pcls(t.pnl)}">$${fmt(t.pnl)}</td>
+          <td class="right">${t.holding_days}</td>
+          <td><span class="gl-tag">${t.exit_reason || ""}</span></td>
+        </tr>`).join("");
+    }
+
+    // ---- Reviews ----
+    function renderReviews(reviews) {
+      const c = document.getElementById("gl-reviews");
+      if (!c) return;
+      if (!reviews || !reviews.length) {
+        c.innerHTML = `<div class="gl-loading">No reviews yet.</div>`;
+        return;
+      }
+      const ordered = [...reviews]
+        .sort((a, b) => (a.review_date < b.review_date ? 1 : -1))
+        .slice(0, 5);
+      c.innerHTML = ordered.map(r => {
+        const k = ["green","yellow","red","black"].includes(r.light) ? r.light : "green";
+        return `
+        <div class="gl-callout" style="margin-bottom: 10px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
+            <span class="gl-tag" style="color: var(--ink-soft);">${r.review_date} · EOD review</span>
+            <span style="display:flex; gap:6px; align-items:center;">
+              <span class="gl-tag">via ${r.source || "template"}</span>
+              <span class="gl-pill ${k}">${(r.light || "").toUpperCase()}</span>
+            </span>
+          </div>
+          <p style="margin: 8px 0 0; color: var(--ink); font-size: 14.5px; line-height: 1.55;">
+            ${r.summary || ""}
+          </p>
+          ${(Array.isArray(r.proposed_changes) && r.proposed_changes.length) ? `
+            <div class="gl-callout note-left" style="margin-top: 10px;">
+              <div class="eyebrow" style="color: var(--accent);">Proposed · needs backtest approval</div>
+              <ul style="margin: 6px 0 0; padding-left: 18px; color: var(--ink); font-size: 14px;">
+                ${r.proposed_changes.map(c =>
+                  `<li><strong style="color: var(--accent);">${c.strategy || c.strategy_id || "strategy"}</strong>: ${c.change} — <span style="color: var(--ink-soft);">${c.reason || ""}</span></li>`
+                ).join("")}
+              </ul>
+            </div>` : ""}
+        </div>`;
+      }).join("");
+    }
+
+    // ---- Boot ----
+    (async function () {
+      const names = [
+        "snapshots", "trades", "positions", "pitches", "metrics",
+        "ai_reviews", "system_status", "risk_config", "strategy_manifests",
+      ];
+      const results = await Promise.all(names.map(fetchOne));
+      const [snaps, trades, positions, pitches, metrics, reviews, status, cfg, manifests] = results.map(r => r.data);
+
+      // first non-null source wins for the badge
+      const firstSource = results.find(r => r.source);
+      setSource(firstSource?.source);
+
+      const startingCapital = (cfg && cfg.starting_capital) || 1000;
+
+      renderStrategies(manifests || []);
+      renderCaps(cfg || {});
+      renderStatus(status || null);
+      renderKpis(snaps || [], startingCapital);
+      renderChart(snaps || [], startingCapital);
+      renderPitches(pitches || []);
+      renderPositions(positions || []);
+      renderMetrics(metrics || null);
+      renderTrades(trades || []);
+      renderReviews(reviews || []);
+    })();
+  })();
+  </script>
+</body>
+</html>
