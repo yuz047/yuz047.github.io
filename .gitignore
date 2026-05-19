@@ -28,3 +28,8 @@ claude.md
 # Local screenshot / scratch artefacts that sometimes get co-located
 v2-screens/
 *.bundle
+
+# Personal scratch / bootstrap — never in the public repo
+AGENTS.md
+PUSH_TO_GITHUB.md
+setup-git.sh
