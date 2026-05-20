@@ -324,8 +324,8 @@
 
     // ---- data load: embedded seed first, then try fresh sources ----
     const SOURCES=[
-      "../data",
-      "https://raw.githubusercontent.com/yuz047/high-risk-symbols/main/data"
+      "https://raw.githubusercontent.com/yuz047/high-risk-symbols/main/data",
+      "../data"
     ];
     let SYMBOLS=JSON.parse(document.getElementById("embedSymbols").textContent);
     let META=JSON.parse(document.getElementById("embedMeta").textContent);
