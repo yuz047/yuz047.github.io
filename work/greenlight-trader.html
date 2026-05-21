@@ -404,20 +404,20 @@
   /* =================================================================
      Live data loader for the GreenLight Trader dashboard.
 
-     Source: raw.githubusercontent.com/yuz047/greenlight-trader/main/data
+     Source: latest greenlight-trader commit via GitHub API, then
+     raw.githubusercontent.com/yuz047/greenlight-trader/<sha>/data.
      The engine repo is the single source of truth. GitHub Actions
      refreshes the JSON files there every weekday after the US close.
      If the source is unreachable, the page shows informative "no data"
      states rather than fall back to stale or synthetic data.
 
-     Cache buster `?v=<minute>` keeps the dashboard from reading a
-     stale CDN copy after a fresh GH Actions push.
+     Fetching by immutable commit SHA avoids raw.githubusercontent.com's
+     stale branch-cache window after a fresh GH Actions push.
   ===================================================================== */
   (function () {
-    const DATA_SOURCES = [
-      "https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data",
-    ];
-    const CACHE_BUSTER = "?v=" + Math.floor(Date.now() / 60000);
+    const REPO_API = "https://api.github.com/repos/yuz047/greenlight-trader/commits/main";
+    const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader";
+    let resolvedDataSource = null;
 
     const fmt = (n, d = 2) =>
       Number.isFinite(n) ? n.toLocaleString(undefined, {
@@ -427,10 +427,22 @@
     const pcls = (n) =>
       !Number.isFinite(n) || n === 0 ? "" : n > 0 ? "num-pos" : "num-neg";
 
+    async function resolveDataSource() {
+      if (resolvedDataSource) return resolvedDataSource;
+      const r = await fetch(`${REPO_API}?v=${Date.now()}`, { cache: "no-store" });
+      if (!r.ok) throw new Error(`Could not resolve GreenLight data SHA: ${r.status}`);
+      const commit = await r.json();
+      resolvedDataSource = `${RAW_BASE}/${commit.sha}/data`;
+      return resolvedDataSource;
+    }
+
     async function fetchOne(name) {
-      for (const base of DATA_SOURCES) {
+      const sources = [];
+      try { sources.push(await resolveDataSource()); } catch (e) { /* fall back below */ }
+      sources.push(`${RAW_BASE}/main/data`);
+      for (const base of sources) {
         try {
-          const r = await fetch(`${base}/${name}.json${CACHE_BUSTER}`, { cache: "no-store" });
+          const r = await fetch(`${base}/${name}.json?v=${Date.now()}`, { cache: "no-store" });
           if (r.ok) return { data: await r.json(), source: base };
         } catch (e) { /* try next */ }
       }
@@ -441,7 +453,11 @@
       const p = document.getElementById("gl-source-pill");
       if (!p) return;
       if (!src) { p.textContent = "no data"; return; }
-      if (src.includes("raw.githubusercontent")) p.textContent = "via github";
+      if (src.includes("raw.githubusercontent")) {
+        const parts = src.split("/");
+        const ref = parts[5] || "github";
+        p.textContent = ref === "main" ? "via github" : `via ${ref.slice(0, 7)}`;
+      }
       else p.textContent = "via local mirror";
     }
 
