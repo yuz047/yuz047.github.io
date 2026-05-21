@@ -10,11 +10,11 @@
   },
   {
     "date": "2026-05-21",
-    "scanned": 210,
-    "rule": 53,
-    "pca": 42,
-    "both": 22,
-    "combined": 73,
-    "source": "synthetic"
+    "scanned": 5580,
+    "rule": 1,
+    "pca": 1116,
+    "both": 1,
+    "combined": 1116,
+    "source": "massive"
   }
 ]
