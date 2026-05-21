@@ -562,9 +562,19 @@
       const canvas = document.getElementById("gl-equity");
       if (!canvas || typeof Chart === "undefined") return;
       if (!snapshots || !snapshots.length) { return; }
-      const labels = snapshots.map(s => s.date);
-      const data = snapshots.map(s => s.equity);
-      const bench = snapshots.map(s => s.benchmark_equity ?? s.equity);
+      const chartSnapshots = snapshots.length === 1
+        ? [
+            {
+              date: "Start",
+              equity: startingCapital,
+              benchmark_equity: startingCapital,
+            },
+            snapshots[0],
+          ]
+        : snapshots;
+      const labels = chartSnapshots.map(s => s.date);
+      const data = chartSnapshots.map(s => s.equity);
+      const bench = chartSnapshots.map(s => s.benchmark_equity ?? s.equity);
       new Chart(canvas, {
         type: "line",
         data: {
@@ -577,7 +587,7 @@
               backgroundColor: "rgba(31,58,95,.08)",
               borderWidth: 1.8,
               tension: 0.18,
-              pointRadius: 0,
+              pointRadius: snapshots.length === 1 ? 3 : 0,
               fill: true,
             },
             {
@@ -587,7 +597,7 @@
               borderDash: [4, 4],
               borderWidth: 1.4,
               tension: 0.18,
-              pointRadius: 0,
+              pointRadius: snapshots.length === 1 ? 3 : 0,
               fill: false,
             },
           ],
