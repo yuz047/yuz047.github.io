@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GreenLight Trader | Sirius Zhang</title>
-  <meta name="description" content="An AI-supervised paper-trading research system on a $1,000 risk-controlled portfolio. Stock pitcher, hot-swappable strategy registry, EOD review." />
+  <meta name="description" content="An AI-supervised paper-trading research system on a $5,000 adaptive allocation book. SPY, QQQ, semiconductors, safety sleeves, cash reserve, and VIX-aware risk." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -78,6 +78,48 @@
     .gl-pill.green  { color: var(--ok);   border-color: rgba(47,106,74,.4); }
     .gl-pill.yellow { color: var(--warn); border-color: rgba(180,83,9,.4); }
     .gl-pill.red    { color: #9b2c1f;     border-color: rgba(155,44,31,.4); }
+
+    .gl-hero-readout {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 18px;
+    }
+    @media (min-width: 760px) { .gl-hero-readout { grid-template-columns: repeat(4, 1fr); } }
+    .gl-hero-metric {
+      padding: 12px 14px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+    }
+    .gl-hero-metric .label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--ink-mute);
+    }
+    .gl-hero-metric .value {
+      margin-top: 4px;
+      font-family: var(--display); font-weight: 600;
+      font-size: 20px; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .gl-hero-allocation {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--paper);
+    }
+    .gl-allocation-track {
+      display: flex; width: 100%; height: 12px; overflow: hidden;
+      border-radius: 999px; background: var(--paper-deep);
+    }
+    .gl-allocation-segment { min-width: 2px; }
+    .gl-allocation-legend {
+      display: flex; flex-wrap: wrap; gap: 8px 14px;
+      margin-top: 10px;
+      font-family: var(--mono); font-size: 11px; color: var(--ink-soft);
+    }
+    .gl-allocation-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .gl-swatch { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
 
     .gl-table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--panel); }
     table.gl { width: 100%; border-collapse: collapse; min-width: 720px; font-variant-numeric: tabular-nums; }
@@ -162,24 +204,42 @@
     <!-- ============= HERO ============= -->
     <section class="container">
       <div class="page-head">
-        <div class="eyebrow">Paper-trading research · live</div>
-        <h1>GreenLight Trader: a $1,000 SPY-anchored alpha overlay.</h1>
+        <div class="eyebrow">Adaptive allocation lab · live</div>
+        <h1>GreenLight Trader</h1>
         <p class="lede">
-          Mandate: <strong>beat SPY by 10%</strong>, trail SPY by no more than 5%.
-          The book holds SPY as the always-on baseline. A multi-factor pitcher
-          identifies high-conviction names (composite z ≥ 1.0) and substitutes
-          them for portions of the SPY core. When a pick underperforms SPY by
-          more than 2% on a closing basis, it's force-exited and the SPY
-          allocation is restored. Strategy modules are hot-swappable; the EOD
-          reviewer can propose changes but cannot apply them. Not investment
-          advice.
+          A $5,000 paper book that shifts between SPY ballast, QQQ and
+          semiconductor exposure, safety sleeves, and cash when volatility says
+          the next dollar should wait. It can buy growth when the tape allows it,
+          trim crowded risk when prices stretch, and keep dry powder for better
+          entries. Not investment advice.
         </p>
         <div class="contact-strip">
           <span class="gl-pill">paper trading</span>
-          <span class="gl-pill">$1,000 book</span>
-          <span class="gl-pill">target SPY + 10%</span>
-          <span class="gl-pill">max −5% vs SPY</span>
+          <span class="gl-pill">$5,000 book</span>
+          <span class="gl-pill">SPY / QQQ / SMH</span>
+          <span class="gl-pill">VIX stress gate</span>
+          <span class="gl-pill">cash reserve</span>
           <span class="gl-pill" id="gl-source-pill">loading…</span>
+        </div>
+        <div class="gl-hero-readout" id="gl-hero-readout">
+          <div class="gl-hero-metric"><div class="label">Equity</div><div class="value">$5,000.00</div></div>
+          <div class="gl-hero-metric"><div class="label">Return</div><div class="value">+0.00%</div></div>
+          <div class="gl-hero-metric"><div class="label">Alpha vs SPY</div><div class="value">+0.00%</div></div>
+          <div class="gl-hero-metric"><div class="label">Regime</div><div class="value">loading</div></div>
+        </div>
+        <div class="gl-hero-allocation" id="gl-hero-allocation">
+          <div class="gl-allocation-track">
+            <div class="gl-allocation-segment" style="width:40%; background:#1f3a5f;"></div>
+            <div class="gl-allocation-segment" style="width:25%; background:#2f6a4a;"></div>
+            <div class="gl-allocation-segment" style="width:20%; background:#b45309;"></div>
+            <div class="gl-allocation-segment" style="width:15%; background:#767a82;"></div>
+          </div>
+          <div class="gl-allocation-legend">
+            <span><i class="gl-swatch" style="background:#1f3a5f;"></i>SPY 40%</span>
+            <span><i class="gl-swatch" style="background:#2f6a4a;"></i>QQQ 25%</span>
+            <span><i class="gl-swatch" style="background:#b45309;"></i>SMH 20%</span>
+            <span><i class="gl-swatch" style="background:#767a82;"></i>CASH 15%</span>
+          </div>
         </div>
       </div>
     </section>
@@ -188,18 +248,15 @@
     <section class="container" style="padding-top: 36px;">
       <div class="topic-head">
         <div class="eyebrow">What it does</div>
-        <h2>From OHLCV to a defensible next-day shortlist.</h2>
+        <h2>From market regime to target allocation.</h2>
         <p class="blurb">
-          Free OHLCV from yfinance plus Yahoo Finance RSS headlines feed a daily pipeline.
-          The pipeline computes signals once, runs every active strategy across every
-          symbol, ranks the resulting candidates by composite score, and pushes them
-          through a risk gate. The risk gate is the final word: it rejects a candidate
-          if it would breach the 1% per-trade or 10% portfolio drawdown limits, if the
-          name is already in the book, or if the system is in red or black state.
-          Whatever survives is opened on tomorrow's open in the backtest and on today's
-          close in the live job. Every trade keeps its rationale; the EOD review can call
-          an LLM (Claude Haiku by default) to write the daily wrap or, with no API key
-          set, fall through to a deterministic template that fills in the same fields.
+          Free OHLCV from yfinance plus volatility and benchmark signals feed a daily
+          allocation engine. The strategy decides what the next dollar deserves:
+          SPY ballast, QQQ, semiconductor beta through SMH, selective Mag7 and chip
+          sleeves when the setup is clean, SHY in defensive regimes, or cash when
+          VIX is high and better dip entries may arrive. The book does not need to
+          spend all buying power in one trade. Every run writes target weights,
+          live positions, risk state, and an EOD review for audit.
         </p>
       </div>
     </section>
@@ -222,7 +279,7 @@
               │
               ▼
        Python engine ── yfinance (OHLCV) ── Yahoo RSS (sentiment)
-        data ▸ signals ▸ strategies/* ▸ risk ▸ portfolio
+        data ▸ signals ▸ allocation strategy ▸ risk/status ▸ portfolio
                                 │
                                 ├── EOD review (Anthropic, w/ template fallback)
                                 ▼
@@ -237,8 +294,9 @@
         <h2>Strategies are files, not branches.</h2>
         <p class="blurb">
           Every strategy lives in its own module under <span class="inline-code">python/strategies/</span>.
-          Each file exposes a manifest (id, version, rules, parameters) and a
-          <span class="inline-code">run()</span> entrypoint. On startup the package
+          Each file exposes a manifest (id, version, rules, parameters) and either a
+          <span class="inline-code">target_weights()</span> allocator or a
+          <span class="inline-code">run()</span> pitcher entrypoint. On startup the package
           auto-discovers every module — no central register to edit. To activate a
           new strategy, list its id in <span class="inline-code">config.ACTIVE_IDS</span>.
           To upgrade, drop a file with a bumped version next to the old one and switch
@@ -274,13 +332,12 @@
         <div class="eyebrow">Risk framework</div>
         <h2>Relative to SPY, not absolute.</h2>
         <p class="blurb">
-          The V2 risk gate is benchmarked. The mandate is to beat SPY by 10% over
-          two years and to never trail SPY by more than 5%. The system enforces
-          this at three levels: each pick has a 2% relative stop vs SPY (kills
-          the pick if it lags); the portfolio has a 4% relative-DD yellow gate
-          (reduces to one pick) and a 4% red gate (closes all picks, holds
-          100% SPY for 20 trading days); per-pick weight is capped at 20% of NAV,
-          floor at 60% SPY when any picks are active.
+          The newer risk gate starts with allocation. SPY remains the benchmark,
+          but the book can lean into QQQ and semiconductors in risk-on regimes,
+          throttle single-name sleeves, move to SHY when trend breaks, and leave
+          cash when VIX says patience is worth more than exposure. The mandate is
+          still to beat SPY by 10%, but the relative drawdown budget is now 8% and
+          the default single-stock sleeve is capped around 10% of NAV.
         </p>
       </div>
 
@@ -291,7 +348,7 @@
     <section class="container" style="padding-top: 48px;">
       <div class="topic-head">
         <div class="eyebrow">Live dashboard</div>
-        <h2>System state, portfolio, and tomorrow's pitch sheet.</h2>
+        <h2>System state, allocation, and review log.</h2>
         <p class="blurb">
           Everything below is fetched live from the engine's output snapshots. Updated
           on every successful GitHub Actions run after the US close.
@@ -313,14 +370,14 @@
         </div>
       </div>
 
-      <!-- Pitches for tomorrow — featured -->
+      <!-- Target allocation — featured -->
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Pitches for tomorrow</div>
+        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Target allocation</div>
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The top-ranked candidates from <span class="inline-code">stock_pitcher_v2</span>
-          that survived the risk gate. Each pitch lists composite z-score, trend t-stat,
-          R² quality of the trend regression, 63-day relative strength vs SPY,
-          projected 5-day move, and the proposed stop and target.
+          The latest allocator output from <span class="inline-code">adaptive_tech_semis_v1</span>.
+          It favors SPY, QQQ, and semiconductors when the regime is friendly, adds
+          safety when trend breaks, and keeps cash available instead of forcing the
+          whole book into one entry.
         </p>
         <div id="gl-pitches"></div>
       </div>
@@ -332,9 +389,8 @@
             <thead>
               <tr>
                 <th>Symbol</th><th>Strategy</th><th class="right">Qty</th>
-                <th class="right">Entry</th><th class="right">Last</th>
-                <th class="right">Stop</th><th class="right">Target</th>
-                <th class="right">Unrealized</th>
+                <th class="right">Last</th><th class="right">Weight</th>
+                <th class="right">Notional</th><th class="right">Unrealized</th><th>Thesis</th>
               </tr>
             </thead>
             <tbody id="gl-positions"></tbody>
@@ -424,8 +480,25 @@
         minimumFractionDigits: d, maximumFractionDigits: d,
       }) : "—";
     const fmtUsd = (n) => "$" + fmt(n);
+    const fmtPct = (n, d = 2) =>
+      Number.isFinite(n) ? `${n >= 0 ? "+" : ""}${(n * 100).toFixed(d)}%` : "—";
     const pcls = (n) =>
       !Number.isFinite(n) || n === 0 ? "" : n > 0 ? "num-pos" : "num-neg";
+    const allocationColors = {
+      SPY: "#1f3a5f",
+      QQQ: "#2f6a4a",
+      SMH: "#b45309",
+      NVDA: "#4f7f58",
+      AAPL: "#5d6f89",
+      MSFT: "#38627a",
+      AMZN: "#8a5b2c",
+      META: "#276b68",
+      GOOGL: "#7a6a2f",
+      GOOG: "#7a6a2f",
+      TSLA: "#9b2c1f",
+      SHY: "#9aa7b8",
+      CASH: "#767a82",
+    };
 
     async function resolveDataSource() {
       if (resolvedDataSource) return resolvedDataSource;
@@ -476,17 +549,90 @@
       `).join("");
     }
 
-    // ---- Risk caps (V2 — relative mandate) ----
+    // ---- Hero ----
+    function renderHero(snapshots, positions, pitches, status, cfg) {
+      const readout = document.getElementById("gl-hero-readout");
+      const allocation = document.getElementById("gl-hero-allocation");
+      const startingCapital = (cfg && cfg.starting_capital) || 5000;
+      const last = snapshots && snapshots.length ? snapshots[snapshots.length - 1] : null;
+      const equity = last?.equity ?? startingCapital;
+      const strategyReturn = last?.portfolio_return ?? (equity / startingCapital - 1);
+      const alpha = last?.alpha ?? status?.relative_pnl_pct ?? 0;
+      const regime = (status?.regime || "loading").replaceAll("_", " ");
+
+      if (readout) {
+        const items = [
+          ["Equity", fmtUsd(equity), ""],
+          ["Return", fmtPct(strategyReturn), pcls(strategyReturn)],
+          ["Alpha vs SPY", fmtPct(alpha), pcls(alpha)],
+          ["Regime", regime, ""],
+        ];
+        readout.innerHTML = items.map(([label, value, cls]) => `
+          <div class="gl-hero-metric">
+            <div class="label">${label}</div>
+            <div class="value ${cls}">${value}</div>
+          </div>
+        `).join("");
+      }
+
+      let weights = Array.isArray(pitches)
+        ? pitches
+            .filter(p => Number.isFinite(p.target_weight) && p.target_weight > 0)
+            .map(p => ({ symbol: p.symbol, weight: p.target_weight }))
+        : [];
+
+      if (!weights.length && Array.isArray(positions) && positions.length) {
+        weights = positions.map(p => ({
+          symbol: p.symbol,
+          weight: Number.isFinite(p.target_weight)
+            ? p.target_weight
+            : (Number.isFinite(p.notional) && equity > 0 ? p.notional / equity : 0),
+        })).filter(p => p.weight > 0);
+        const allocated = weights.reduce((sum, p) => sum + p.weight, 0);
+        const cashWeight = last && equity > 0 ? last.cash / equity : Math.max(0, 1 - allocated);
+        if (cashWeight > 0.01) weights.push({ symbol: "CASH", weight: cashWeight });
+      }
+
+      if (!weights.length) {
+        weights = [
+          { symbol: "SPY", weight: 0.4 },
+          { symbol: "QQQ", weight: 0.25 },
+          { symbol: "SMH", weight: 0.2 },
+          { symbol: "CASH", weight: 0.15 },
+        ];
+      }
+
+      if (allocation) {
+        const total = weights.reduce((sum, p) => sum + p.weight, 0) || 1;
+        allocation.innerHTML = `
+          <div class="gl-allocation-track">
+            ${weights.map(p => {
+              const width = Math.max(0, p.weight / total * 100);
+              const color = allocationColors[p.symbol] || "#6f7785";
+              return `<div class="gl-allocation-segment" style="width:${width.toFixed(2)}%; background:${color};"></div>`;
+            }).join("")}
+          </div>
+          <div class="gl-allocation-legend">
+            ${weights.map(p => {
+              const color = allocationColors[p.symbol] || "#6f7785";
+              return `<span><i class="gl-swatch" style="background:${color};"></i>${p.symbol} ${(p.weight * 100).toFixed(0)}%</span>`;
+            }).join("")}
+          </div>
+        `;
+      }
+    }
+
+    // ---- Risk caps ----
     function renderCaps(cfg) {
       const c = document.getElementById("gl-caps");
       if (!c || !cfg) return;
       const items = [
         ["Benchmark",            String(cfg.benchmark ?? "SPY")],
         ["Target alpha",         "+" + ((cfg.target_alpha_pct ?? 0.1) * 100).toFixed(0) + "%"],
-        ["Max rel. drawdown",    ((cfg.max_relative_drawdown_pct ?? 0.05) * 100).toFixed(1) + "%"],
-        ["Max picks open",       String(cfg.max_picks_open ?? "—")],
-        ["Weight / pick",        ((cfg.pick_weight_per_position ?? 0.2) * 100).toFixed(0) + "%"],
-        ["SPY core floor",       ((cfg.spy_core_min_weight ?? 0.6) * 100).toFixed(0) + "%"],
+        ["Max rel. drawdown",    ((cfg.max_relative_drawdown_pct ?? 0.08) * 100).toFixed(1) + "%"],
+        ["Max sleeves",          String(cfg.max_picks_open ?? "—")],
+        ["Default sleeve",       ((cfg.pick_weight_per_position ?? 0.1) * 100).toFixed(0) + "%"],
+        ["Min SPY ballast",      ((cfg.spy_core_min_weight ?? 0.25) * 100).toFixed(0) + "%"],
       ];
       c.innerHTML = items.map(([k, v]) => `
         <div class="gl-tile accent">
@@ -641,24 +787,24 @@
       });
     }
 
-    // ---- Pitches ----
+    // ---- Target allocation ----
     function renderPitches(pitches) {
       const c = document.getElementById("gl-pitches");
       if (!c) return;
       if (!pitches || !pitches.length) {
-        c.innerHTML = `<div class="gl-loading">No pitches for tomorrow. The pitcher passed today.</div>`;
+        c.innerHTML = `<div class="gl-loading">No allocation published yet. Current positions and status remain live.</div>`;
         return;
       }
       c.innerHTML = pitches.map(p => `
         <div class="gl-pitch">
           <div style="display:flex; align-items:baseline; justify-content:space-between; gap: 10px;">
-            <h4>${p.symbol} · rank #${p.rank ?? "?"}</h4>
-            <span class="meta">composite z ${p.composite_z >= 0 ? "+" : ""}${(p.composite_z ?? 0).toFixed(2)}</span>
+            <h4>${p.symbol}</h4>
+            <span class="meta">${Number.isFinite(p.target_weight) ? (p.target_weight * 100).toFixed(1) + "% target" : "candidate"}</span>
           </div>
           <div class="meta" style="margin-top:6px;">
-            entry ≈ $${fmt(p.entry_ref_price)} · stop $${fmt(p.stop_distance)} · target $${fmt(p.target_distance)}
-            · projected 5d move ${p.projected_5d_move >= 0 ? "+" : ""}$${fmt(p.projected_5d_move)}
-            · max hold ${p.max_hold_days}d
+            strategy ${p.strategy_id || "allocator"}
+            ${Number.isFinite(p.score) ? ` · score ${fmt(p.score, 2)}` : ""}
+            ${Number.isFinite(p.composite_z) ? ` · composite z ${p.composite_z >= 0 ? "+" : ""}${fmt(p.composite_z, 2)}` : ""}
           </div>
           <p class="thesis">${p.rationale}</p>
         </div>`).join("");
@@ -677,11 +823,11 @@
           <td class="sym">${p.symbol}</td>
           <td><span class="gl-tag accent">${p.strategy_id}</span></td>
           <td class="right">${p.quantity}</td>
-          <td class="right">$${fmt(p.entry_price)}</td>
           <td class="right">$${fmt(p.last_price)}</td>
-          <td class="right">$${fmt(p.stop_price)}</td>
-          <td class="right">$${fmt(p.target_price)}</td>
+          <td class="right">${Number.isFinite(p.target_weight) ? (p.target_weight * 100).toFixed(1) + "%" : "—"}</td>
+          <td class="right">${Number.isFinite(p.notional) ? fmtUsd(p.notional) : "—"}</td>
           <td class="right ${pcls(p.unrealized_pnl)}">$${fmt(p.unrealized_pnl)}</td>
+          <td style="white-space: normal;">${p.thesis || ""}</td>
         </tr>`).join("");
     }
 
@@ -692,15 +838,15 @@
       if (!m) { c.innerHTML = `<div class="gl-loading">No metrics</div>`; return; }
       const cls = (x) => !Number.isFinite(x) || x === 0 ? "" : x > 0 ? "num-pos" : "num-neg";
       const items = [
-        // V2 relative metrics — the most important ones up front
+        // Relative metrics — the most important ones up front.
         ["Strategy return", { v: ((m.total_return ?? 0) * 100).toFixed(2) + "%", cls: cls(m.total_return) }],
         ["SPY return",      { v: ((m.benchmark_total_return ?? 0) * 100).toFixed(2) + "%" }],
         ["Alpha vs SPY",    { v: ((m.alpha_total ?? 0) * 100).toFixed(2) + "%", cls: cls(m.alpha_total) }],
         ["Info ratio",      { v: fmt(m.info_ratio, 2), cls: cls(m.info_ratio) }],
         ["Max relative DD", {
           v: ((m.max_relative_drawdown ?? 0) * 100).toFixed(2) + "% / "
-             + ((m.max_relative_drawdown_pct ?? 0.05) * 100).toFixed(0) + "%",
-          cls: (m.max_relative_drawdown ?? 0) >= (m.max_relative_drawdown_pct ?? 0.05) ? "num-neg" : ""
+             + ((m.max_relative_drawdown_pct ?? 0.08) * 100).toFixed(0) + "%",
+          cls: (m.max_relative_drawdown ?? 0) >= (m.max_relative_drawdown_pct ?? 0.08) ? "num-neg" : ""
         }],
         ["Sharpe (strat)",  { v: fmt(m.sharpe, 2) }],
         ["Sharpe (SPY)",    { v: fmt(m.benchmark_sharpe, 2) }],
@@ -793,9 +939,10 @@
       const firstSource = results.find(r => r.source);
       setSource(firstSource?.source);
 
-      const startingCapital = (cfg && cfg.starting_capital) || 1000;
+      const startingCapital = (cfg && cfg.starting_capital) || 5000;
 
       renderStrategies(manifests || []);
+      renderHero(snaps || [], positions || [], pitches || [], status || null, cfg || {});
       renderCaps(cfg || {});
       renderStatus(status || null);
       renderKpis(snaps || [], startingCapital);
