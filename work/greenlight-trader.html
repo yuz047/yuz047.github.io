@@ -213,8 +213,9 @@
           One source of truth — the Python engine — and a public read-only dashboard.
           The cron runs daily on a GitHub Actions runner; it pulls fresh data,
           recomputes signals, advances the book, writes JSON snapshots to the repo,
-          and (optionally) mirrors them into a Supabase Postgres database. The
-          dashboard is a static page that fetches those snapshots over HTTPS.
+          persists the paper-book state, and (optionally) mirrors them into a
+          Supabase Postgres database. The dashboard is a static page that fetches
+          those snapshots over HTTPS.
         </p>
       </div>
       <pre class="arch">      GitHub Actions (weekdays after the US close)
@@ -316,7 +317,7 @@
       <div class="panel" style="margin-top: 14px;">
         <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Pitches for tomorrow</div>
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The top-ranked candidates from <span class="inline-code">stock_pitcher_v1</span>
+          The top-ranked candidates from <span class="inline-code">stock_pitcher_v2</span>
           that survived the risk gate. Each pitch lists composite z-score, trend t-stat,
           R² quality of the trend regression, 63-day relative strength vs SPY,
           projected 5-day move, and the proposed stop and target.
