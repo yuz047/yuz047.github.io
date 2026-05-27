@@ -53,7 +53,6 @@ the site, edit `:root`.
 
 ## License
 
-The text and code in this repo are MIT-licensed (see `LICENSE`).
-Project-specific data files in `data/` and `work/*.json` are public
-research artifacts shared under the same license unless noted otherwise
-in the file.
+Individual personal use only. Business, institutional, commercial, hosted,
+production, or internal organizational use requires prior written consent from
+Yunhan "Sirius" Zhang. See `LICENSE`.
