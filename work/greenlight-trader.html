@@ -685,7 +685,7 @@
       const dailyPct = last.equity > 0
         ? (last.daily_pnl / (last.equity - last.daily_pnl)) * 100 : 0;
       const items = [
-        { k: "Equity",        v: fmtUsd(last.equity),       s: `inception ${fmtUsd(startingCapital)}` },
+        { k: "Equity",        v: fmtUsd(last.equity),       s: `starting ${fmtUsd(startingCapital)}` },
         { k: "Cash",          v: fmtUsd(last.cash),         s: "available" },
         { k: "Market value",  v: fmtUsd(last.market_value), s: "open positions" },
         { k: "Daily PnL",     v: (last.daily_pnl >= 0 ? "+" : "") + fmtUsd(last.daily_pnl),
