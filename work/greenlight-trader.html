@@ -387,17 +387,19 @@
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
           The broader daily choice set. The engine now ranks semiconductors, AI
           infrastructure, software, platforms, fintech, electrification names, and
-          quality healthcare by market reward, relative strength, valuation health,
-          and forecast health when Massive/Benzinga data is available.
+          quality healthcare by trend, breakout quality, pullback quality, volume,
+          valuation health, and forecast upside from Massive/Benzinga when available
+          with a local fundamentals fallback.
         </p>
         <div class="gl-table-wrap">
           <table class="gl">
             <thead>
               <tr>
-                <th>Rank</th><th>Symbol</th><th class="right">Score</th>
+                <th>Rank</th><th>Symbol</th><th>Setup</th><th class="right">Score</th>
+                <th class="right">Tech</th>
                 <th class="right">RS 63d</th><th class="right">20d</th>
-                <th class="right">Forecast</th><th class="right">Valuation</th>
-                <th class="right">P/E</th><th class="right">P/S</th><th>Source</th>
+                <th class="right">Upside</th><th class="right">Forecast</th>
+                <th class="right">P/E</th><th>Source</th>
               </tr>
             </thead>
             <tbody id="gl-candidates"></tbody>
@@ -861,20 +863,21 @@
       const tb = document.getElementById("gl-candidates");
       if (!tb) return;
       if (!candidates || !candidates.length) {
-        tb.innerHTML = `<tr><td colspan="10" style="color: var(--ink-mute); text-align:center;">No opportunity list published yet.</td></tr>`;
+        tb.innerHTML = `<tr><td colspan="11" style="color: var(--ink-mute); text-align:center;">No opportunity list published yet.</td></tr>`;
         return;
       }
       tb.innerHTML = candidates.slice(0, 12).map(c => `
         <tr>
           <td><span class="gl-tag">#${c.rank ?? "—"}</span></td>
           <td class="sym">${c.symbol}${c.healthy_prediction ? ` <span class="gl-pill green">healthy</span>` : ""}</td>
+          <td><span class="gl-tag">${c.setup || "trend"}</span></td>
           <td class="right ${pcls(c.opportunity_score)}">${fmtSigned(c.opportunity_score, 2)}</td>
+          <td class="right ${pcls(c.technical_score ?? c.market_reward_score)}">${fmtSigned(c.technical_score ?? c.market_reward_score, 2)}</td>
           <td class="right ${pcls(c.relative_strength_63d)}">${fmtPct(c.relative_strength_63d, 1)}</td>
           <td class="right ${pcls(c.return_20d)}">${fmtPct(c.return_20d, 1)}</td>
+          <td class="right ${pcls(c.consensus_upside)}">${fmtPct(c.consensus_upside, 1)}</td>
           <td class="right ${pcls(c.forecast_health_score)}">${fmtSigned(c.forecast_health_score, 2)}</td>
-          <td class="right ${pcls(c.valuation_health_score)}">${fmtSigned(c.valuation_health_score, 2)}</td>
           <td class="right">${fmt(c.price_to_earnings, 1)}</td>
-          <td class="right">${fmt(c.price_to_sales, 1)}</td>
           <td><span class="gl-tag accent">${c.source || "local"}</span></td>
         </tr>`).join("");
     }
