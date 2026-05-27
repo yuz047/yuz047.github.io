@@ -385,11 +385,12 @@
       <div class="panel" style="margin-top: 14px;">
         <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Opportunity list</div>
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The broader daily choice set. The engine now ranks semiconductors, AI
-          infrastructure, software, platforms, fintech, electrification names, and
-          quality healthcare by trend, breakout quality, pullback quality, volume,
-          valuation health, and forecast upside from Massive/Benzinga when available
-          with a local fundamentals fallback.
+          The broader daily choice set. Mega-cap leaders, trillion-club candidates,
+          semiconductors, AI infrastructure, software, platforms, fintech,
+          electrification names, and quality healthcare stay visible, then get
+          ranked by trend, breakout quality, pullback quality, volume, valuation
+          health, and forecast upside from Massive/Benzinga when available with a
+          local fundamentals fallback.
         </p>
         <div class="gl-table-wrap">
           <table class="gl">
@@ -866,10 +867,10 @@
         tb.innerHTML = `<tr><td colspan="11" style="color: var(--ink-mute); text-align:center;">No opportunity list published yet.</td></tr>`;
         return;
       }
-      tb.innerHTML = candidates.slice(0, 12).map(c => `
+      tb.innerHTML = candidates.map(c => `
         <tr>
           <td><span class="gl-tag">#${c.rank ?? "—"}</span></td>
-          <td class="sym">${c.symbol}${c.healthy_prediction ? ` <span class="gl-pill green">healthy</span>` : ""}</td>
+          <td class="sym">${c.symbol}${c.healthy_prediction ? ` <span class="gl-pill green">healthy</span>` : ""}${c.must_review ? ` <span class="gl-pill">watch</span>` : ""}</td>
           <td><span class="gl-tag">${c.setup || "trend"}</span></td>
           <td class="right ${pcls(c.opportunity_score)}">${fmtSigned(c.opportunity_score, 2)}</td>
           <td class="right ${pcls(c.technical_score ?? c.market_reward_score)}">${fmtSigned(c.technical_score ?? c.market_reward_score, 2)}</td>
