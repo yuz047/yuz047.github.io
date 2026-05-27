@@ -396,11 +396,11 @@
           <table class="gl">
             <thead>
               <tr>
-                <th>Rank</th><th>Symbol</th><th>Setup</th><th class="right">Score</th>
+                <th>Rank</th><th>Symbol</th><th>Status</th><th>Setup</th><th class="right">Score</th>
                 <th class="right">Tech</th>
                 <th class="right">RS 63d</th><th class="right">20d</th>
                 <th class="right">Upside</th><th class="right">Forecast</th>
-                <th class="right">P/E</th><th>Source</th>
+                <th class="right">P/E</th>
               </tr>
             </thead>
             <tbody id="gl-candidates"></tbody>
@@ -870,7 +870,11 @@
       tb.innerHTML = candidates.map(c => `
         <tr>
           <td><span class="gl-tag">#${c.rank ?? "—"}</span></td>
-          <td class="sym">${c.symbol}${c.healthy_prediction ? ` <span class="gl-pill green">healthy</span>` : ""}${c.must_review ? ` <span class="gl-pill">watch</span>` : ""}</td>
+          <td class="sym">${c.symbol}</td>
+          <td>${[
+            c.healthy_prediction ? `<span class="gl-pill green">healthy</span>` : "",
+            c.must_review ? `<span class="gl-pill">watch</span>` : "",
+          ].filter(Boolean).join(" ") || `<span class="gl-pill">review</span>`}</td>
           <td><span class="gl-tag">${c.setup || "trend"}</span></td>
           <td class="right ${pcls(c.opportunity_score)}">${fmtSigned(c.opportunity_score, 2)}</td>
           <td class="right ${pcls(c.technical_score ?? c.market_reward_score)}">${fmtSigned(c.technical_score ?? c.market_reward_score, 2)}</td>
@@ -879,7 +883,6 @@
           <td class="right ${pcls(c.consensus_upside)}">${fmtPct(c.consensus_upside, 1)}</td>
           <td class="right ${pcls(c.forecast_health_score)}">${fmtSigned(c.forecast_health_score, 2)}</td>
           <td class="right">${fmt(c.price_to_earnings, 1)}</td>
-          <td><span class="gl-tag accent">${c.source || "local"}</span></td>
         </tr>`).join("");
     }
 
