@@ -383,6 +383,29 @@
       </div>
 
       <div class="panel" style="margin-top: 14px;">
+        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Opportunity list</div>
+        <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
+          The broader daily choice set. The engine now ranks semiconductors, AI
+          infrastructure, software, platforms, fintech, electrification names, and
+          quality healthcare by market reward, relative strength, valuation health,
+          and forecast health when Massive/Benzinga data is available.
+        </p>
+        <div class="gl-table-wrap">
+          <table class="gl">
+            <thead>
+              <tr>
+                <th>Rank</th><th>Symbol</th><th class="right">Score</th>
+                <th class="right">RS 63d</th><th class="right">20d</th>
+                <th class="right">Forecast</th><th class="right">Valuation</th>
+                <th class="right">P/E</th><th class="right">P/S</th><th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="gl-candidates"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
         <div class="eyebrow" style="margin-bottom: 14px;">Current positions</div>
         <div class="gl-table-wrap">
           <table class="gl">
@@ -482,6 +505,8 @@
     const fmtUsd = (n) => "$" + fmt(n);
     const fmtPct = (n, d = 2) =>
       Number.isFinite(n) ? `${n >= 0 ? "+" : ""}${(n * 100).toFixed(d)}%` : "—";
+    const fmtSigned = (n, d = 2) =>
+      Number.isFinite(n) ? `${n >= 0 ? "+" : ""}${fmt(n, d)}` : "—";
     const pcls = (n) =>
       !Number.isFinite(n) || n === 0 ? "" : n > 0 ? "num-pos" : "num-neg";
     const allocationColors = {
@@ -831,6 +856,29 @@
         </tr>`).join("");
     }
 
+    // ---- Opportunity list ----
+    function renderCandidates(candidates) {
+      const tb = document.getElementById("gl-candidates");
+      if (!tb) return;
+      if (!candidates || !candidates.length) {
+        tb.innerHTML = `<tr><td colspan="10" style="color: var(--ink-mute); text-align:center;">No opportunity list published yet.</td></tr>`;
+        return;
+      }
+      tb.innerHTML = candidates.slice(0, 12).map(c => `
+        <tr>
+          <td><span class="gl-tag">#${c.rank ?? "—"}</span></td>
+          <td class="sym">${c.symbol}${c.healthy_prediction ? ` <span class="gl-pill green">healthy</span>` : ""}</td>
+          <td class="right ${pcls(c.opportunity_score)}">${fmtSigned(c.opportunity_score, 2)}</td>
+          <td class="right ${pcls(c.relative_strength_63d)}">${fmtPct(c.relative_strength_63d, 1)}</td>
+          <td class="right ${pcls(c.return_20d)}">${fmtPct(c.return_20d, 1)}</td>
+          <td class="right ${pcls(c.forecast_health_score)}">${fmtSigned(c.forecast_health_score, 2)}</td>
+          <td class="right ${pcls(c.valuation_health_score)}">${fmtSigned(c.valuation_health_score, 2)}</td>
+          <td class="right">${fmt(c.price_to_earnings, 1)}</td>
+          <td class="right">${fmt(c.price_to_sales, 1)}</td>
+          <td><span class="gl-tag accent">${c.source || "local"}</span></td>
+        </tr>`).join("");
+    }
+
     // ---- Risk metrics ----
     function renderMetrics(m) {
       const c = document.getElementById("gl-metrics");
@@ -931,9 +979,10 @@
       const names = [
         "snapshots", "trades", "positions", "pitches", "metrics",
         "ai_reviews", "system_status", "risk_config", "strategy_manifests",
+        "candidate_research",
       ];
       const results = await Promise.all(names.map(fetchOne));
-      const [snaps, trades, positions, pitches, metrics, reviews, status, cfg, manifests] = results.map(r => r.data);
+      const [snaps, trades, positions, pitches, metrics, reviews, status, cfg, manifests, candidates] = results.map(r => r.data);
 
       // first non-null source wins for the badge
       const firstSource = results.find(r => r.source);
@@ -949,6 +998,7 @@
       renderChart(snaps || [], startingCapital);
       renderPitches(pitches || []);
       renderPositions(positions || []);
+      renderCandidates(candidates || []);
       renderMetrics(metrics || null);
       renderTrades(trades || []);
       renderReviews(reviews || []);
