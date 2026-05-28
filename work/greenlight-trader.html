@@ -15,6 +15,26 @@
   <style>
     /* GreenLight-specific helpers that extend the site stylesheet. */
     .gl-page .panel { padding: 22px 24px; }
+    .gl-section {
+      padding-top: 18px;
+      margin-top: 18px;
+      border-top: 1px solid var(--rule);
+    }
+    .gl-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+    .gl-section-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px; margin-bottom: 12px;
+    }
+    .gl-section-title {
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .gl-split {
+      display: grid; gap: 18px;
+    }
+    @media (min-width: 900px) {
+      .gl-split.two { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+    }
     .gl-kpi {
       display: grid; gap: 12px;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -25,10 +45,11 @@
       .gl-kpi.six  { grid-template-columns: repeat(6, 1fr); }
     }
     .gl-tile {
-      padding: 14px 16px;
-      border: 1px solid var(--rule);
-      border-radius: var(--radius-sm);
-      background: var(--paper);
+      padding: 4px 14px 10px 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      border-bottom: 1px solid var(--rule);
     }
     .gl-tile .l {
       font-family: var(--mono); font-size: 10.5px;
@@ -50,15 +71,16 @@
 
     .gl-status {
       display: flex; align-items: center; gap: 16px;
-      padding: 20px 22px;
-      border: 1px solid var(--rule); border-radius: var(--radius-md);
-      background: var(--panel);
+      padding: 0 0 18px;
+      border: 0; border-radius: 0;
+      border-bottom: 1px solid var(--rule);
+      background: transparent;
     }
     .gl-status .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .gl-status.green  { background: rgba(47,106,74,.06); border-color: rgba(47,106,74,.25); }
-    .gl-status.yellow { background: rgba(180,83,9,.06);  border-color: rgba(180,83,9,.25); }
-    .gl-status.red    { background: rgba(155,44,31,.06); border-color: rgba(155,44,31,.3); }
-    .gl-status.black  { background: var(--paper-deep); }
+    .gl-status.green,
+    .gl-status.yellow,
+    .gl-status.red,
+    .gl-status.black { background: transparent; }
     .gl-status .label {
       font-family: var(--serif); font-weight: 600; font-size: 19px;
       letter-spacing: -.01em;
@@ -83,13 +105,13 @@
       display: grid; gap: 12px;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
     }
     @media (min-width: 760px) { .gl-hero-readout { grid-template-columns: repeat(4, 1fr); } }
     .gl-hero-metric {
-      padding: 12px 14px;
-      border: 1px solid var(--rule);
-      border-radius: var(--radius-sm);
-      background: var(--panel);
+      padding: 0 10px 8px 0;
+      border-bottom: 1px solid var(--rule);
     }
     .gl-hero-metric .label {
       font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
@@ -102,11 +124,8 @@
       font-variant-numeric: tabular-nums;
     }
     .gl-hero-allocation {
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid var(--rule);
-      border-radius: var(--radius-sm);
-      background: var(--paper);
+      margin-top: 12px;
+      padding-top: 10px;
     }
     .gl-allocation-track {
       display: flex; width: 100%; height: 12px; overflow: hidden;
@@ -140,11 +159,9 @@
     .gl-tag.accent { color: var(--accent); }
 
     .gl-pitch {
-      padding: 18px 20px;
-      border: 1px solid var(--accent-line);
-      border-radius: var(--radius-md);
-      background: var(--accent-soft);
-      margin-bottom: 12px;
+      padding: 0 0 14px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 14px;
     }
     .gl-pitch h4 {
       margin: 0; font-family: var(--serif); font-weight: 600;
@@ -288,96 +305,118 @@
         </p>
       </div>
 
-      <div id="gl-status" class="gl-status" style="margin-top: 12px;">
-        <div class="gl-loading">Loading status…</div>
-      </div>
-
-      <div style="display: grid; gap: 14px; margin-top: 14px;" id="gl-overview-row">
-        <div class="panel">
-          <div class="eyebrow" style="margin-bottom: 14px;">Portfolio overview</div>
-          <div class="gl-kpi three" id="gl-kpis"></div>
-        </div>
-        <div class="panel">
-          <div class="eyebrow" style="margin-bottom: 14px;">Equity curve</div>
-          <div style="height: 240px;"><canvas id="gl-equity"></canvas></div>
-        </div>
-      </div>
-
-      <!-- Target allocation — featured -->
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Target allocation</div>
-        <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The latest target weights express the model's preferred balance between
-          benchmark ballast, growth exposure, semiconductor exposure, safety, and
-          cash.
-        </p>
-        <div id="gl-pitches"></div>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Opportunity list</div>
-        <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          A maintained universe of mega-cap leaders, semiconductor names, AI
-          infrastructure, software, platforms, fintech, electrification, and
-          quality healthcare. The rank blends technical setup, relative strength,
-          forecast upside, valuation health, and risk flags.
-        </p>
-        <div class="gl-table-wrap">
-          <table class="gl">
-            <thead>
-              <tr>
-                <th>Rank</th><th>Symbol</th><th>Status</th><th>Setup</th><th class="right">Score</th>
-                <th class="right">Tech</th>
-                <th class="right">RS 63d</th><th class="right">20d</th>
-                <th class="right">Upside</th><th class="right">Forecast</th>
-                <th class="right">P/E</th>
-              </tr>
-            </thead>
-            <tbody id="gl-candidates"></tbody>
-          </table>
+        <div class="gl-section">
+          <div id="gl-status" class="gl-status">
+            <div class="gl-loading">Loading status…</div>
+          </div>
+          <div class="gl-split two" id="gl-overview-row" style="margin-top: 18px;">
+            <div>
+              <div class="gl-section-title" style="margin-bottom: 12px;">Portfolio overview</div>
+              <div class="gl-kpi three" id="gl-kpis"></div>
+            </div>
+            <div>
+              <div class="gl-section-title" style="margin-bottom: 12px;">Equity curve</div>
+              <div style="height: 240px;"><canvas id="gl-equity"></canvas></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 14px;">Current positions</div>
-        <div class="gl-table-wrap">
-          <table class="gl">
-            <thead>
-              <tr>
-                <th>Symbol</th><th>Strategy</th><th class="right">Qty</th>
-                <th class="right">Last</th><th class="right">Weight</th>
-                <th class="right">Notional</th><th class="right">Unrealized</th><th>Thesis</th>
-              </tr>
-            </thead>
-            <tbody id="gl-positions"></tbody>
-          </table>
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Target allocation</div>
+          </div>
+          <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
+            The latest target weights express the model's preferred balance between
+            benchmark ballast, growth exposure, semiconductor exposure, safety, and
+            cash.
+          </p>
+          <div id="gl-pitches"></div>
+        </div>
+
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Current positions</div>
+          </div>
+          <div class="gl-table-wrap">
+            <table class="gl">
+              <thead>
+                <tr>
+                  <th>Symbol</th><th>Strategy</th><th class="right">Qty</th>
+                  <th class="right">Last</th><th class="right">Weight</th>
+                  <th class="right">Notional</th><th class="right">Unrealized</th><th>Thesis</th>
+                </tr>
+              </thead>
+              <tbody id="gl-positions"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 14px;">Realized risk metrics</div>
-        <div class="gl-kpi five" id="gl-metrics"></div>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 14px;">Recent closed trades</div>
-        <div class="gl-table-wrap">
-          <table class="gl">
-            <thead>
-              <tr>
-                <th>Exit</th><th>Symbol</th><th>Strategy</th>
-                <th class="right">Qty</th><th class="right">Entry</th><th class="right">Exit</th>
-                <th class="right">PnL</th><th class="right">Days</th><th>Reason</th>
-              </tr>
-            </thead>
-            <tbody id="gl-trades"></tbody>
-          </table>
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div>
+              <div class="gl-section-title">Opportunity list</div>
+            </div>
+          </div>
+          <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
+            A maintained universe of mega-cap leaders, semiconductor names, AI
+            infrastructure, software, platforms, fintech, electrification, and
+            quality healthcare. The rank blends technical setup, relative strength,
+            forecast upside, valuation health, and risk flags.
+          </p>
+          <div class="gl-table-wrap">
+            <table class="gl">
+              <thead>
+                <tr>
+                  <th>Rank</th><th>Symbol</th><th>Status</th><th>Setup</th><th class="right">Score</th>
+                  <th class="right">Tech</th>
+                  <th class="right">RS 63d</th><th class="right">20d</th>
+                  <th class="right">Upside</th><th class="right">Forecast</th>
+                  <th class="right">P/E</th>
+                </tr>
+              </thead>
+              <tbody id="gl-candidates"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 10px;">Daily review</div>
-        <div id="gl-reviews"></div>
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Realized risk metrics</div>
+          </div>
+          <div class="gl-kpi five" id="gl-metrics"></div>
+        </div>
+
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Recent closed trades</div>
+          </div>
+          <div class="gl-table-wrap">
+            <table class="gl">
+              <thead>
+                <tr>
+                  <th>Exit</th><th>Symbol</th><th>Strategy</th>
+                  <th class="right">Qty</th><th class="right">Entry</th><th class="right">Exit</th>
+                  <th class="right">PnL</th><th class="right">Days</th><th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="gl-trades"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Daily review</div>
+          </div>
+          <div id="gl-reviews"></div>
+        </div>
       </div>
     </section>
 
