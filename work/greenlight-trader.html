@@ -51,6 +51,12 @@
       background: transparent;
       border-bottom: 1px solid var(--rule);
     }
+    #gl-caps .gl-tile {
+      padding: 14px 16px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--paper);
+    }
     .gl-tile .l {
       font-family: var(--mono); font-size: 10.5px;
       letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute);
@@ -620,7 +626,6 @@
       const c = document.getElementById("gl-caps");
       if (!c || !cfg) return;
       const items = [
-        ["Benchmark",            String(cfg.benchmark ?? "SPY")],
         ["Target alpha",         "+" + ((cfg.target_alpha_pct ?? 0.1) * 100).toFixed(0) + "%"],
         ["Max rel. drawdown",    ((cfg.max_relative_drawdown_pct ?? 0.08) * 100).toFixed(1) + "%"],
         ["Max sleeves",          String(cfg.max_picks_open ?? "—")],
