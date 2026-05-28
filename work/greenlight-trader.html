@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GreenLight Trader | Sirius Zhang</title>
-  <meta name="description" content="An AI-supervised paper-trading research system on a $5,000 adaptive allocation book. SPY, QQQ, semiconductors, safety sleeves, cash reserve, and VIX-aware risk." />
+  <title>GreenLight Trader | Adaptive Allocation Dashboard</title>
+  <meta name="description" content="A public dashboard for a $5,000 simulated allocation strategy that tracks SPY-relative performance, risk controls, current target weights, and ranked equity opportunities." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -204,21 +204,20 @@
     <!-- ============= HERO ============= -->
     <section class="container">
       <div class="page-head">
-        <div class="eyebrow">Adaptive allocation lab · live</div>
+        <div class="eyebrow">Adaptive allocation dashboard</div>
         <h1>GreenLight Trader</h1>
         <p class="lede">
-          A $5,000 paper book that shifts between SPY ballast, QQQ and
-          semiconductor exposure, safety sleeves, and cash when volatility says
-          the next dollar should wait. It can buy growth when the tape allows it,
-          trim crowded risk when prices stretch, and keep dry powder for better
-          entries. Not investment advice.
+          A public, simulated $5,000 allocation strategy that tracks when to hold
+          SPY ballast, lean into QQQ and semiconductor exposure, move toward safety,
+          or keep cash available for better entries. The dashboard shows current
+          targets, risk state, ranked opportunities, and SPY-relative performance.
         </p>
         <div class="contact-strip">
-          <span class="gl-pill">paper trading</span>
-          <span class="gl-pill">$5,000 book</span>
-          <span class="gl-pill">SPY / QQQ / SMH</span>
-          <span class="gl-pill">VIX stress gate</span>
-          <span class="gl-pill">cash reserve</span>
+          <span class="gl-pill">simulated capital</span>
+          <span class="gl-pill">$5,000 model</span>
+          <span class="gl-pill">SPY-relative</span>
+          <span class="gl-pill">risk controlled</span>
+          <span class="gl-pill">daily refresh</span>
           <span class="gl-pill" id="gl-source-pill">loading…</span>
         </div>
         <div class="gl-hero-readout" id="gl-hero-readout">
@@ -244,100 +243,33 @@
       </div>
     </section>
 
-    <!-- ============= WHAT IT DOES ============= -->
+    <!-- ============= METHOD ============= -->
     <section class="container" style="padding-top: 36px;">
       <div class="topic-head">
-        <div class="eyebrow">What it does</div>
-        <h2>From market regime to target allocation.</h2>
+        <div class="eyebrow">Method</div>
+        <h2>A daily allocation process with visible guardrails.</h2>
         <p class="blurb">
-          Free OHLCV from yfinance plus volatility and benchmark signals feed a daily
-          allocation engine. The strategy decides what the next dollar deserves:
-          SPY ballast, QQQ, semiconductor beta through SMH, selective Mag7 and chip
-          sleeves when the setup is clean, SHY in defensive regimes, or cash when
-          VIX is high and better dip entries may arrive. The book does not need to
-          spend all buying power in one trade. Every run writes target weights,
-          live positions, risk state, and an EOD review for audit.
+          Each market day is treated as a new allocation decision. The model reviews
+          trend, relative strength, volatility, pullback quality, breakout behavior,
+          forecast upside, valuation health, and current market stress. It can hold
+          SPY as the baseline, add QQQ or semiconductor beta when conditions support
+          risk, select smaller single-stock sleeves, rotate toward SHY in defensive
+          regimes, or leave buying power in cash.
         </p>
-      </div>
-    </section>
-
-    <!-- ============= ARCHITECTURE ============= -->
-    <section class="container" style="padding-top: 36px;">
-      <div class="topic-head">
-        <div class="eyebrow">Architecture</div>
-        <h2>Engine writes, dashboard reads.</h2>
-        <p class="blurb">
-          One source of truth — the Python engine — and a public read-only dashboard.
-          The cron runs daily on a GitHub Actions runner; it pulls fresh data,
-          recomputes signals, advances the book, writes JSON snapshots to the repo,
-          persists the paper-book state, and (optionally) mirrors them into a
-          Supabase Postgres database. The dashboard is a static page that fetches
-          those snapshots over HTTPS.
-        </p>
-      </div>
-      <pre class="arch">      GitHub Actions (weekdays after the US close)
-              │
-              ▼
-       Python engine ── yfinance (OHLCV) ── Yahoo RSS (sentiment)
-        data ▸ signals ▸ allocation strategy ▸ risk/status ▸ portfolio
-                                │
-                                ├── EOD review (Anthropic, w/ template fallback)
-                                ▼
-                  data/*.json ──► Supabase (optional) ──► this dashboard
-                                                          (read-only)</pre>
-    </section>
-
-    <!-- ============= HOT-SWAP DESIGN ============= -->
-    <section class="container" style="padding-top: 36px;">
-      <div class="topic-head">
-        <div class="eyebrow">Hot-swappable logic</div>
-        <h2>Strategies are files, not branches.</h2>
-        <p class="blurb">
-          Every strategy lives in its own module under <span class="inline-code">python/strategies/</span>.
-          Each file exposes a manifest (id, version, rules, parameters) and either a
-          <span class="inline-code">target_weights()</span> allocator or a
-          <span class="inline-code">run()</span> pitcher entrypoint. On startup the package
-          auto-discovers every module — no central register to edit. To activate a
-          new strategy, list its id in <span class="inline-code">config.ACTIVE_IDS</span>.
-          To upgrade, drop a file with a bumped version next to the old one and switch
-          the id. Old versions stay readable for audit and back-comparison; nothing
-          mutates rules at runtime.
-        </p>
-      </div>
-
-      <div class="gl-callout note-left" style="margin-top: 14px;">
-        <div class="eyebrow" style="color: var(--accent);">Why the friction is the feature</div>
-        <p style="margin: 8px 0 0; color: var(--ink); font-size: 14.5px; line-height: 1.6;">
-          Friction stops the system from chasing today's losing trade with tomorrow's
-          new rule. The EOD reviewer can <em>propose</em> a change (logged in the
-          decision log below), but it cannot apply one. A human runs a comparison
-          backtest, accepts or rejects, and bumps the version. This is how strategy
-          drift is controlled.
-        </p>
-      </div>
-
-      <div class="gl-table-wrap" style="margin-top: 14px;">
-        <table class="gl">
-          <thead>
-            <tr><th>Strategy</th><th>Version</th><th>Kind</th><th>Status</th><th>Rules</th></tr>
-          </thead>
-          <tbody id="gl-strategies"></tbody>
-        </table>
       </div>
     </section>
 
     <!-- ============= RISK FRAMEWORK ============= -->
     <section class="container" style="padding-top: 36px;">
       <div class="topic-head">
-        <div class="eyebrow">Risk framework</div>
-        <h2>Relative to SPY, not absolute.</h2>
+        <div class="eyebrow">Risk controls</div>
+        <h2>Designed around SPY-relative performance.</h2>
         <p class="blurb">
-          The newer risk gate starts with allocation. SPY remains the benchmark,
-          but the book can lean into QQQ and semiconductors in risk-on regimes,
-          throttle single-name sleeves, move to SHY when trend breaks, and leave
-          cash when VIX says patience is worth more than exposure. The mandate is
-          still to beat SPY by 10%, but the relative drawdown budget is now 8% and
-          the default single-stock sleeve is capped around 10% of NAV.
+          The strategy is measured against SPY rather than against cash alone.
+          The goal is to outperform the benchmark while keeping relative drawdown
+          within a defined budget. Single-stock exposure is deliberately small,
+          cash is allowed, and defensive allocations can replace growth exposure
+          when volatility or trend conditions deteriorate.
         </p>
       </div>
 
@@ -347,11 +279,12 @@
     <!-- ============= LIVE DASHBOARD ============= -->
     <section class="container" style="padding-top: 48px;">
       <div class="topic-head">
-        <div class="eyebrow">Live dashboard</div>
-        <h2>System state, allocation, and review log.</h2>
+        <div class="eyebrow">Dashboard</div>
+        <h2>Current state, allocation, and opportunity set.</h2>
         <p class="blurb">
-          Everything below is fetched live from the engine's output snapshots. Updated
-          on every successful GitHub Actions run after the US close.
+          The sections below show the latest published model state: risk signal,
+          equity curve, target sleeves, ranked choices, open positions, realized
+          risk metrics, and daily review notes.
         </p>
       </div>
 
@@ -374,10 +307,9 @@
       <div class="panel" style="margin-top: 14px;">
         <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Target allocation</div>
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The latest allocator output from <span class="inline-code">adaptive_tech_semis_v1</span>.
-          It favors SPY, QQQ, and semiconductors when the regime is friendly, adds
-          safety when trend breaks, and keeps cash available instead of forcing the
-          whole book into one entry.
+          The latest target weights express the model's preferred balance between
+          benchmark ballast, growth exposure, semiconductor exposure, safety, and
+          cash.
         </p>
         <div id="gl-pitches"></div>
       </div>
@@ -385,12 +317,10 @@
       <div class="panel" style="margin-top: 14px;">
         <div class="eyebrow" style="margin-bottom: 10px; color: var(--accent);">Opportunity list</div>
         <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-          The broader daily choice set. Mega-cap leaders, trillion-club candidates,
-          semiconductors, AI infrastructure, software, platforms, fintech,
-          electrification names, and quality healthcare stay visible, then get
-          ranked by trend, breakout quality, pullback quality, volume, valuation
-          health, and forecast upside from Massive/Benzinga when available with a
-          local fundamentals fallback.
+          A maintained universe of mega-cap leaders, semiconductor names, AI
+          infrastructure, software, platforms, fintech, electrification, and
+          quality healthcare. The rank blends technical setup, relative strength,
+          forecast upside, valuation health, and risk flags.
         </p>
         <div class="gl-table-wrap">
           <table class="gl">
@@ -446,27 +376,29 @@
       </div>
 
       <div class="panel" style="margin-top: 14px;">
-        <div class="eyebrow" style="margin-bottom: 10px;">AI decision log</div>
+        <div class="eyebrow" style="margin-bottom: 10px;">Daily review</div>
         <div id="gl-reviews"></div>
       </div>
     </section>
 
-    <!-- ============= GITHUB ============= -->
+    <!-- ============= DISCLOSURE ============= -->
     <section class="container" style="padding-top: 48px; padding-bottom: 36px;">
       <div class="topic-head">
-        <div class="eyebrow">Code</div>
-        <h2>Open source.</h2>
+        <div class="eyebrow">Disclosure</div>
+        <h2>Research dashboard, not investment advice.</h2>
         <p class="blurb">
-          The full engine, schema, GitHub Actions workflow, and Next.js variant of the
-          dashboard live in the repo. PRs and issues welcome — particularly on the
-          risk engine, the pitcher's factor design, and the strategy governance flow.
+          GreenLight Trader is a simulated allocation model for research and
+          demonstration. It does not place real orders, does not manage outside
+          capital, and should not be treated as a recommendation to buy or sell
+          securities. Results are model outputs and historical simulations, not a
+          guarantee of future performance.
         </p>
         <div style="margin-top: 18px;">
           <a class="gl-github" href="https://github.com/yuz047/greenlight-trader" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.01c-3.2.7-3.87-1.37-3.87-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.66.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/>
             </svg>
-            github.com/yuz047/greenlight-trader
+            View methodology and source
           </a>
         </div>
       </div>
@@ -553,13 +485,7 @@
     function setSource(src) {
       const p = document.getElementById("gl-source-pill");
       if (!p) return;
-      if (!src) { p.textContent = "no data"; return; }
-      if (src.includes("raw.githubusercontent")) {
-        const parts = src.split("/");
-        const ref = parts[5] || "github";
-        p.textContent = ref === "main" ? "via github" : `via ${ref.slice(0, 7)}`;
-      }
-      else p.textContent = "via local mirror";
+      p.textContent = src ? "data current" : "data unavailable";
     }
 
     // ---- Strategies ----
@@ -959,9 +885,8 @@
         return `
         <div class="gl-callout" style="margin-bottom: 10px;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
-            <span class="gl-tag" style="color: var(--ink-soft);">${r.review_date} · EOD review</span>
+            <span class="gl-tag" style="color: var(--ink-soft);">${r.review_date} · daily review</span>
             <span style="display:flex; gap:6px; align-items:center;">
-              <span class="gl-tag">via ${r.source || "template"}</span>
               <span class="gl-pill ${k}">${(r.light || "").toUpperCase()}</span>
             </span>
           </div>
@@ -970,7 +895,7 @@
           </p>
           ${(Array.isArray(r.proposed_changes) && r.proposed_changes.length) ? `
             <div class="gl-callout note-left" style="margin-top: 10px;">
-              <div class="eyebrow" style="color: var(--accent);">Proposed · needs backtest approval</div>
+              <div class="eyebrow" style="color: var(--accent);">Proposed model change</div>
               <ul style="margin: 6px 0 0; padding-left: 18px; color: var(--ink); font-size: 14px;">
                 ${r.proposed_changes.map(c =>
                   `<li><strong style="color: var(--accent);">${c.strategy || c.strategy_id || "strategy"}</strong>: ${c.change} — <span style="color: var(--ink-soft);">${c.reason || ""}</span></li>`
