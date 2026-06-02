@@ -28,6 +28,7 @@
     .gl-heading {
       min-width: 0;
       display: grid;
+      grid-template-rows: auto minmax(42px, auto) auto;
       gap: 4px;
     }
     .gl-section-title {
@@ -38,6 +39,9 @@
       color: var(--accent);
     }
     .gl-heading h3 {
+      display: flex;
+      align-items: flex-start;
+      min-height: 42px;
       margin: 0;
       font-family: var(--display);
       font-size: 17px;
@@ -342,10 +346,13 @@
       color: var(--accent);
     }
     .gl-architecture-card h3 {
+      min-height: 40px;
       margin: 18px 0 8px;
       font-family: var(--display);
       font-size: 16px;
       line-height: 1.25;
+      display: flex;
+      align-items: flex-start;
     }
     .gl-architecture-card p {
       margin: 0;
@@ -392,6 +399,9 @@
     .gl-chart-shell.modal { height: min(72vh, 720px); padding: 4px 10px 12px; }
     @media (max-width: 680px) {
       .gl-section-head { grid-template-columns: 1fr; }
+      .gl-heading { grid-template-rows: auto; }
+      .gl-heading h3,
+      .gl-architecture-card h3 { min-height: 0; }
       .gl-section-head .gl-pill { text-align: left; }
       .gl-chart-actions { justify-content: flex-start; flex-wrap: wrap; }
       .gl-chart-shell,
