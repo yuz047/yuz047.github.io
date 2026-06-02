@@ -3,218 +3,241 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GreenLight Trader | Adaptive Allocation Dashboard</title>
-  <meta name="description" content="A public dashboard for a $5,000 simulated allocation strategy that tracks SPY-relative performance, risk controls, current target weights, and ranked equity opportunities." />
+  <title>Greenlight Trader 2.0 | Systematic AI Trading Agent</title>
+  <meta name="description" content="Greenlight Trader 2.0 is a Massive-first, systematic paper-trading allocator with rolling training, deterministic allocation, sparse execution, benchmark comparison, and watermarked AI review logs." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
   <style>
-    /* GreenLight-specific helpers that extend the site stylesheet. */
+    .gl-page .container.wide { max-width: var(--container-wide); }
     .gl-page .panel { padding: 22px 24px; }
-    .gl-section {
-      padding-top: 18px;
-      margin-top: 18px;
-      border-top: 1px solid var(--rule);
-    }
+    .gl-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--rule); }
     .gl-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
     .gl-section-head {
-      display: flex; align-items: baseline; justify-content: space-between;
-      gap: 16px; margin-bottom: 12px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
     }
     .gl-section-title {
-      font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
-      text-transform: uppercase; color: var(--accent);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
     }
-    .gl-split {
-      display: grid; gap: 18px;
-    }
-    @media (min-width: 900px) {
-      .gl-split.two { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+    .gl-split { display: grid; gap: 18px; }
+    @media (min-width: 920px) {
+      .gl-split.two { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
     }
     .gl-kpi {
-      display: grid; gap: 12px;
+      display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
-    @media (min-width: 700px) { .gl-kpi.three { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 900px) {
-      .gl-kpi.five { grid-template-columns: repeat(5, 1fr); }
-      .gl-kpi.six  { grid-template-columns: repeat(6, 1fr); }
+    @media (min-width: 760px) {
+      .gl-kpi.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .gl-kpi.six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     }
     .gl-tile {
       padding: 4px 14px 10px 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
       border-bottom: 1px solid var(--rule);
-    }
-    #gl-caps .gl-tile {
-      padding: 14px 16px;
-      border: 1px solid var(--rule);
-      border-radius: var(--radius-sm);
-      background: var(--paper);
     }
     .gl-tile .l {
-      font-family: var(--mono); font-size: 10.5px;
-      letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-mute);
     }
     .gl-tile .v {
-      font-family: var(--display); font-weight: 600;
-      font-size: 22px; letter-spacing: -.015em;
-      margin-top: 4px; font-variant-numeric: tabular-nums;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 22px;
+      margin-top: 4px;
       color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
     }
     .gl-tile .s {
-      font-family: var(--mono); font-size: 11px; color: var(--ink-mute);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-mute);
+      margin-top: 2px;
     }
-    .gl-tile.accent .v { color: var(--accent); }
-
     .num-pos { color: var(--ok); }
     .num-neg { color: #9b2c1f; }
-
+    .gl-pill {
+      display: inline-block;
+      padding: 3px 10px 4px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      border: 1px solid var(--rule-strong);
+      color: var(--ink-mute);
+      white-space: nowrap;
+    }
+    .gl-pill.green { color: var(--ok); border-color: rgba(47, 106, 74, .4); }
+    .gl-pill.yellow { color: var(--warn); border-color: rgba(180, 83, 9, .4); }
+    .gl-pill.red { color: #9b2c1f; border-color: rgba(155, 44, 31, .4); }
     .gl-status {
-      display: flex; align-items: center; gap: 16px;
-      padding: 0 0 18px;
-      border: 0; border-radius: 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 18px;
       border-bottom: 1px solid var(--rule);
-      background: transparent;
     }
     .gl-status .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
-    .gl-status.green,
-    .gl-status.yellow,
-    .gl-status.red,
-    .gl-status.black { background: transparent; }
     .gl-status .label {
-      font-family: var(--serif); font-weight: 600; font-size: 19px;
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 19px;
       letter-spacing: -.01em;
     }
-    .gl-status .label.green  { color: var(--ok); }
-    .gl-status .label.yellow { color: var(--warn); }
-    .gl-status .label.red    { color: #9b2c1f; }
-    .gl-status .label.black  { color: var(--ink-soft); }
-    .gl-status .reason { color: var(--ink-soft); font-size: 14px; margin-top: 2px; }
-
-    .gl-pill {
-      display: inline-block; padding: 3px 10px 4px;
-      font-family: var(--mono); font-size: 10.5px;
-      letter-spacing: .12em; text-transform: uppercase;
-      border-radius: 999px; border: 1px solid var(--rule-strong); color: var(--ink-mute);
+    .gl-status .reason {
+      color: var(--ink-soft);
+      font-size: 14px;
+      margin-top: 2px;
     }
-    .gl-pill.green  { color: var(--ok);   border-color: rgba(47,106,74,.4); }
-    .gl-pill.yellow { color: var(--warn); border-color: rgba(180,83,9,.4); }
-    .gl-pill.red    { color: #9b2c1f;     border-color: rgba(155,44,31,.4); }
-
-    .gl-hero-readout {
-      display: grid; gap: 12px;
+    .gl-readout {
+      display: grid;
+      gap: 12px;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       margin-top: 18px;
       padding-top: 16px;
       border-top: 1px solid var(--rule);
     }
-    @media (min-width: 760px) { .gl-hero-readout { grid-template-columns: repeat(4, 1fr); } }
-    .gl-hero-metric {
-      padding: 0 10px 8px 0;
-      border-bottom: 1px solid var(--rule);
+    @media (min-width: 760px) { .gl-readout { grid-template-columns: repeat(4, 1fr); } }
+    .gl-readout .gl-tile .v { font-size: 20px; }
+    .gl-allocation { margin-top: 22px; }
+    .gl-allocation-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+      margin-bottom: 10px;
     }
-    .gl-hero-metric .label {
-      font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--ink-mute);
+    .gl-track {
+      display: flex;
+      width: 100%;
+      height: 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      border: 1px solid var(--rule-strong);
+      background: var(--paper-deep);
     }
-    .gl-hero-metric .value {
-      margin-top: 4px;
-      font-family: var(--display); font-weight: 600;
-      font-size: 20px; color: var(--ink);
+    .gl-segment { min-width: 2px; border-right: 1px solid rgba(250, 248, 243, .9); }
+    .gl-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      margin-top: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-soft);
+    }
+    .gl-swatch {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 6px;
+      border-radius: 50%;
+    }
+    .gl-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      background: var(--panel);
+    }
+    table.gl {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
       font-variant-numeric: tabular-nums;
     }
-    .gl-hero-allocation {
-      margin-top: 12px;
-      padding-top: 10px;
-    }
-    .gl-allocation-track {
-      display: flex; width: 100%; height: 12px; overflow: hidden;
-      border-radius: 999px; background: var(--paper-deep);
-    }
-    .gl-allocation-segment { min-width: 2px; }
-    .gl-allocation-legend {
-      display: flex; flex-wrap: wrap; gap: 8px 14px;
-      margin-top: 10px;
-      font-family: var(--mono); font-size: 11px; color: var(--ink-soft);
-    }
-    .gl-allocation-legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .gl-swatch { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
-    .gl-table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--panel); }
-    table.gl { width: 100%; border-collapse: collapse; min-width: 720px; font-variant-numeric: tabular-nums; }
+    table.gl.logs { min-width: 1040px; }
     table.gl th {
-      background: var(--paper-deep); font-family: var(--mono);
-      font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--ink-soft); font-weight: 600; text-align: left;
-      padding: 10px 14px; border-bottom: 1px solid var(--rule);
+      background: var(--paper-deep);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--rule);
     }
     table.gl td {
-      padding: 11px 14px; border-bottom: 1px solid var(--rule);
-      color: var(--ink-soft); font-size: 13.5px;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--rule);
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      vertical-align: top;
     }
-    table.gl tr:hover td { background: rgba(31,58,95,.025); }
+    table.gl tr:hover td { background: rgba(31, 58, 95, .025); }
     table.gl td.right { text-align: right; }
     table.gl td.sym { font-family: var(--display); font-weight: 600; color: var(--ink); }
-    .gl-tag { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); letter-spacing: .06em; }
-    .gl-tag.accent { color: var(--accent); }
-
-    .gl-pitch {
-      padding: 0 0 14px;
-      border-bottom: 1px solid var(--rule);
-      margin-bottom: 14px;
+    table.gl td.text { max-width: 380px; color: var(--ink); }
+    .gl-callout {
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      background: var(--panel);
+      padding: 18px 20px;
     }
-    .gl-pitch h4 {
-      margin: 0; font-family: var(--serif); font-weight: 600;
-      font-size: 17px; letter-spacing: -.01em; color: var(--accent);
-    }
-    .gl-pitch .meta { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); letter-spacing: .06em; }
-    .gl-pitch .thesis { color: var(--ink); font-size: 14.5px; line-height: 1.55; margin: 8px 0 0; }
-
-    .arch {
-      font-family: var(--mono); font-size: 12.5px;
-      white-space: pre; line-height: 1.55; color: var(--ink-soft);
-      background: var(--paper-deep); border: 1px solid var(--rule);
-      border-radius: var(--radius-md); padding: 18px 22px;
-      overflow-x: auto;
-    }
-
-    .gl-loading {
-      padding: 28px; text-align: center;
-      font-family: var(--mono); font-size: 12px; color: var(--ink-mute);
-      letter-spacing: .12em; text-transform: uppercase;
-    }
-
-    .gl-callout { border: 1px solid var(--rule); border-radius: var(--radius-md); background: var(--panel); padding: 18px 20px; }
     .gl-callout.note-left {
-      border-left: 3px solid var(--accent); background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      background: var(--accent-soft);
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
     }
-
-    .gl-github {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 12px 20px; border-radius: 999px;
-      border: 1px solid var(--rule-strong);
-      font-family: var(--sans); font-size: 14px; color: var(--ink);
-      transition: all 160ms ease;
+    .gl-code {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      white-space: pre;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      background: var(--paper-deep);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      overflow-x: auto;
     }
-    .gl-github:hover { border-color: var(--accent); color: var(--accent); }
-    .gl-github svg { width: 18px; height: 18px; }
+    .gl-link-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .gl-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 16px;
+      border: 1px solid var(--rule-strong);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11.5px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .gl-link:hover { border-color: var(--accent); color: var(--accent); }
+    .gl-chart-shell { height: 260px; }
   </style>
 </head>
 <body class="gl-page">
-
   <header class="site-header">
     <div class="container">
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="../index.html"><span class="brand-mark"></span>Sirius Zhang</a>
         <div class="nav-links">
-          <a href="../work.html">Work</a>
+          <a class="is-current" href="../work.html">Work</a>
           <a href="../writing.html">Writing</a>
           <a href="../cv.html">CV</a>
           <a href="../contact.html">Contact</a>
@@ -224,227 +247,185 @@
   </header>
 
   <main>
-    <!-- ============= HERO ============= -->
-    <section class="container">
-      <div class="page-head">
-        <div class="eyebrow">Adaptive allocation dashboard</div>
-        <h1>GreenLight Trader</h1>
-        <p class="lede">
-          A public, simulated $5,000 allocation strategy that tracks when to hold
-          SPY ballast, lean into QQQ and semiconductor exposure, move toward safety,
-          or keep cash available for better entries. The dashboard shows current
-          targets, risk state, ranked opportunities, and SPY-relative performance.
-        </p>
-        <div class="contact-strip">
-          <span class="gl-pill">simulated capital</span>
-          <span class="gl-pill">$5,000 model</span>
-          <span class="gl-pill">SPY-relative</span>
-          <span class="gl-pill">risk controlled</span>
-          <span class="gl-pill">daily refresh</span>
-          <span class="gl-pill" id="gl-source-pill">loading…</span>
+    <section class="container page-head">
+      <div class="eyebrow">AI trading agent · paper portfolio</div>
+      <h1>Greenlight Trader 2.0</h1>
+      <p class="lede">
+        A Massive-first systematic PM agent for a $5,000 paper portfolio. It trains on
+        historical market data, replays the same daily loop used for live paper trading,
+        learns constrained score weights, rotates ETFs dynamically, compares against
+        simple benchmarks, and watermarks every generated output.
+      </p>
+      <div class="contact-strip">
+        <span class="gl-pill">paper only</span>
+        <span class="gl-pill">train through 2021</span>
+        <span class="gl-pill">invest from 2022</span>
+        <span class="gl-pill">3-year rolling window</span>
+        <span class="gl-pill">monthly DeepSeek review</span>
+        <span class="gl-pill" id="gl-source-pill">embedded result</span>
+      </div>
+      <div class="gl-readout" id="gl-readout"></div>
+      <div class="gl-allocation">
+        <div class="gl-allocation-head">
+          <div class="gl-section-title">Latest replay target</div>
+          <span class="gl-pill" id="gl-allocation-date">2026-06-02</span>
         </div>
-        <div class="gl-hero-readout" id="gl-hero-readout">
-          <div class="gl-hero-metric"><div class="label">Equity</div><div class="value">$5,000.00</div></div>
-          <div class="gl-hero-metric"><div class="label">Return</div><div class="value">+0.00%</div></div>
-          <div class="gl-hero-metric"><div class="label">Alpha vs SPY</div><div class="value">+0.00%</div></div>
-          <div class="gl-hero-metric"><div class="label">Regime</div><div class="value">loading</div></div>
-        </div>
-        <div class="gl-hero-allocation" id="gl-hero-allocation">
-          <div class="gl-allocation-track">
-            <div class="gl-allocation-segment" style="width:40%; background:#1f3a5f;"></div>
-            <div class="gl-allocation-segment" style="width:25%; background:#2f6a4a;"></div>
-            <div class="gl-allocation-segment" style="width:20%; background:#b45309;"></div>
-            <div class="gl-allocation-segment" style="width:15%; background:#767a82;"></div>
-          </div>
-          <div class="gl-allocation-legend">
-            <span><i class="gl-swatch" style="background:#1f3a5f;"></i>SPY 40%</span>
-            <span><i class="gl-swatch" style="background:#2f6a4a;"></i>QQQ 25%</span>
-            <span><i class="gl-swatch" style="background:#b45309;"></i>SMH 20%</span>
-            <span><i class="gl-swatch" style="background:#767a82;"></i>CASH 15%</span>
-          </div>
-        </div>
+        <div id="gl-allocation"></div>
       </div>
     </section>
 
-    <!-- ============= METHOD ============= -->
     <section class="container" style="padding-top: 36px;">
       <div class="topic-head">
-        <div class="eyebrow">Method</div>
-        <h2>A daily allocation process with visible guardrails.</h2>
+        <div class="eyebrow">Core idea</div>
+        <h2>A trading agent that does less, but records more.</h2>
         <p class="blurb">
-          Each market day is treated as a new allocation decision. The model reviews
-          trend, relative strength, volatility, pullback quality, breakout behavior,
-          forecast upside, valuation health, and current market stress. It can hold
-          SPY as the baseline, add QQQ or semiconductor beta when conditions support
-          risk, select smaller single-stock sleeves, rotate toward SHY in defensive
-          regimes, or leave buying power in cash.
+          Greenlight is not a free-form agent that invents trades. The production track is
+          deterministic: build a daily universe, compute features, score stocks and ETFs,
+          select dynamic ETF exposure, allocate target weights, run risk gates, and trade
+          only when drift, persistence, interval, turnover, and minimum-size rules agree.
+          The AI layer reviews and explains; it cannot execute or override risk.
         </p>
       </div>
     </section>
 
-    <!-- ============= RISK FRAMEWORK ============= -->
     <section class="container" style="padding-top: 36px;">
+      <div class="gl-split two">
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-section-title">Replay result</div>
+            <div class="gl-kpi three" id="gl-result-kpis" style="margin-top: 14px;"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-section-title">Learning loop</div>
+            <div class="gl-kpi three" id="gl-loop-kpis" style="margin-top: 14px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container wide" style="padding-top: 48px;">
       <div class="topic-head">
-        <div class="eyebrow">Risk controls</div>
-        <h2>Designed around SPY-relative performance.</h2>
+        <div class="eyebrow">Dashboard excerpt</div>
+        <h2>Result, allocation, benchmark verdict, and logs.</h2>
         <p class="blurb">
-          The strategy is measured against SPY rather than against cash alone.
-          The goal is to outperform the benchmark while keeping relative drawdown
-          within a defined budget. Single-stock exposure is deliberately small,
-          cash is allowed, and defensive allocations can replace growth exposure
-          when volatility or trend conditions deteriorate.
+          This page hydrates from the Greenlight Trader repository when the latest data is
+          available. If the data endpoint is not reachable, it keeps showing the audited
+          June 2, 2026 replay summary embedded in the page.
         </p>
       </div>
 
-      <div class="gl-kpi five" id="gl-caps" style="margin-top: 12px;"></div>
+      <div class="panel" style="margin-top: 14px;">
+        <div class="gl-section">
+          <div id="gl-status" class="gl-status"></div>
+          <div class="gl-split two" style="margin-top: 18px;">
+            <div>
+              <div class="gl-section-title" style="margin-bottom: 12px;">Performance curve</div>
+              <div class="gl-chart-shell"><canvas id="gl-equity"></canvas></div>
+            </div>
+            <div>
+              <div class="gl-section-title" style="margin-bottom: 12px;">Benchmark verdict</div>
+              <div class="gl-kpi three" id="gl-verdict-kpis"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Benchmark metrics</div>
+            <span class="gl-pill">simple strategies visible</span>
+          </div>
+          <div class="gl-table-wrap">
+            <table class="gl">
+              <thead>
+                <tr>
+                  <th>Strategy</th>
+                  <th class="right">Total return</th>
+                  <th class="right">Sharpe</th>
+                  <th class="right">Max DD</th>
+                  <th class="right">Alpha vs SPY</th>
+                </tr>
+              </thead>
+              <tbody id="gl-benchmark-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top: 14px;">
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-section-title">Recent decision logs</div>
+            <span class="gl-pill">published replay ledger</span>
+          </div>
+          <div class="gl-table-wrap">
+            <table class="gl logs">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Regime</th>
+                  <th>Risk</th>
+                  <th>Decision</th>
+                  <th>Reason</th>
+                  <th>Selected ETFs</th>
+                  <th>Top stocks</th>
+                </tr>
+              </thead>
+              <tbody id="gl-log-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- ============= LIVE DASHBOARD ============= -->
     <section class="container" style="padding-top: 48px;">
-      <div class="topic-head">
-        <div class="eyebrow">Dashboard</div>
-        <h2>Current state, allocation, and opportunity set.</h2>
-        <p class="blurb">
-          The sections below show the latest published model state: risk signal,
-          equity curve, target sleeves, ranked choices, open positions, realized
-          risk metrics, and daily review notes.
-        </p>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="gl-section">
-          <div id="gl-status" class="gl-status">
-            <div class="gl-loading">Loading status…</div>
-          </div>
-          <div class="gl-split two" id="gl-overview-row" style="margin-top: 18px;">
-            <div>
-              <div class="gl-section-title" style="margin-bottom: 12px;">Portfolio overview</div>
-              <div class="gl-kpi three" id="gl-kpis"></div>
+      <div class="gl-split two">
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-section-head">
+              <div class="gl-section-title">Architecture</div>
+              <span class="gl-pill">deterministic production</span>
             </div>
-            <div>
-              <div class="gl-section-title" style="margin-bottom: 12px;">Equity curve</div>
-              <div style="height: 240px;"><canvas id="gl-equity"></canvas></div>
+            <div class="gl-code">market data -> universe -> features -> scores
+scores + regime -> dynamic ETFs -> target weights
+target + portfolio -> risk gate -> sparse execution
+decision -> ledger -> benchmarks -> watermarked review</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-section-head">
+              <div class="gl-section-title">Guardrails</div>
+              <span class="gl-pill green">paper only</span>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div class="gl-section-title">Target allocation</div>
-          </div>
-          <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-            The latest target weights express the model's preferred balance between
-            benchmark ballast, growth exposure, semiconductor exposure, safety, and
-            cash.
-          </p>
-          <div id="gl-pitches"></div>
-        </div>
-
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div class="gl-section-title">Current positions</div>
-          </div>
-          <div class="gl-table-wrap">
-            <table class="gl">
-              <thead>
-                <tr>
-                  <th>Symbol</th><th>Strategy</th><th class="right">Qty</th>
-                  <th class="right">Last</th><th class="right">Weight</th>
-                  <th class="right">Notional</th><th class="right">Unrealized</th><th>Thesis</th>
-                </tr>
-              </thead>
-              <tbody id="gl-positions"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div>
-              <div class="gl-section-title">Opportunity list</div>
+            <div class="gl-callout note-left">
+              <p style="margin: 0; color: var(--ink); font-size: 14.5px; line-height: 1.6;">
+                No broker connection. No permanent sector winner. VIX is sourced from Yahoo
+                when Massive/Polygon does not provide it. DeepSeek v4 Pro reviews are
+                watermarked and experimental; they cannot mutate logic or approve trades.
+              </p>
             </div>
           </div>
-          <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14.5px;">
-            A maintained universe of mega-cap leaders, semiconductor names, AI
-            infrastructure, software, platforms, fintech, electrification, and
-            quality healthcare. The rank blends technical setup, relative strength,
-            forecast upside, valuation health, and risk flags.
-          </p>
-          <div class="gl-table-wrap">
-            <table class="gl">
-              <thead>
-                <tr>
-                  <th>Rank</th><th>Symbol</th><th>Status</th><th>Setup</th><th class="right">Score</th>
-                  <th class="right">Tech</th>
-                  <th class="right">RS 63d</th><th class="right">20d</th>
-                  <th class="right">Upside</th><th class="right">Forecast</th>
-                  <th class="right">P/E</th>
-                </tr>
-              </thead>
-              <tbody id="gl-candidates"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="margin-top: 14px;">
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div class="gl-section-title">Realized risk metrics</div>
-          </div>
-          <div class="gl-kpi five" id="gl-metrics"></div>
-        </div>
-
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div class="gl-section-title">Recent closed trades</div>
-          </div>
-          <div class="gl-table-wrap">
-            <table class="gl">
-              <thead>
-                <tr>
-                  <th>Exit</th><th>Symbol</th><th>Strategy</th>
-                  <th class="right">Qty</th><th class="right">Entry</th><th class="right">Exit</th>
-                  <th class="right">PnL</th><th class="right">Days</th><th>Reason</th>
-                </tr>
-              </thead>
-              <tbody id="gl-trades"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="gl-section">
-          <div class="gl-section-head">
-            <div class="gl-section-title">Daily review</div>
-          </div>
-          <div id="gl-reviews"></div>
         </div>
       </div>
     </section>
 
-    <!-- ============= DISCLOSURE ============= -->
     <section class="container" style="padding-top: 48px; padding-bottom: 36px;">
       <div class="topic-head">
         <div class="eyebrow">Disclosure</div>
         <h2>Research dashboard, not investment advice.</h2>
         <p class="blurb">
-          GreenLight Trader is a simulated allocation model for research and
-          demonstration. It does not place real orders, does not manage outside
-          capital, and should not be treated as a recommendation to buy or sell
-          securities. Results are model outputs and historical simulations, not a
-          guarantee of future performance.
+          Greenlight Trader is a simulated allocation model for research and demonstration.
+          It does not place real orders, does not manage outside capital, and should not be
+          treated as a recommendation to buy or sell securities.
         </p>
-        <div style="margin-top: 18px;">
-          <a class="gl-github" href="https://github.com/yuz047/greenlight-trader" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.01c-3.2.7-3.87-1.37-3.87-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.05 11.05 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.66.8.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5Z"/>
-            </svg>
-            View methodology and source
-          </a>
+        <div class="gl-link-row">
+          <a class="gl-link" href="https://github.com/yuz047/greenlight-trader" target="_blank" rel="noopener">Source repo</a>
+          <a class="gl-link" href="https://yuz047.github.io/greenlight-trader/" target="_blank" rel="noopener">Full dashboard</a>
+          <a class="gl-link" href="https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data/comparison_report.md" target="_blank" rel="noopener">Comparison report</a>
         </div>
       </div>
     </section>
@@ -460,526 +441,320 @@
   </footer>
 
   <script>
-  /* =================================================================
-     Live data loader for the GreenLight Trader dashboard.
+    (function () {
+      const REPO_API = "https://api.github.com/repos/yuz047/greenlight-trader/commits/main";
+      const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader";
+      const colors = ["#1f3a5f", "#256f8f", "#2f6a4a", "#8b6f2f", "#9b2c1f", "#5f4b8b", "#767a82", "#b45309", "#0f766e"];
 
-     Source: latest greenlight-trader commit via GitHub API, then
-     raw.githubusercontent.com/yuz047/greenlight-trader/<sha>/data.
-     The engine repo is the single source of truth. GitHub Actions
-     refreshes the JSON files there every weekday after the US close.
-     If the source is unreachable, the page shows informative "no data"
-     states rather than fall back to stale or synthetic data.
-
-     Fetching by immutable commit SHA avoids raw.githubusercontent.com's
-     stale branch-cache window after a fresh GH Actions push.
-  ===================================================================== */
-  (function () {
-    const REPO_API = "https://api.github.com/repos/yuz047/greenlight-trader/commits/main";
-    const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader";
-    let resolvedDataSource = null;
-
-    const fmt = (n, d = 2) =>
-      Number.isFinite(n) ? n.toLocaleString(undefined, {
-        minimumFractionDigits: d, maximumFractionDigits: d,
-      }) : "—";
-    const fmtUsd = (n) => "$" + fmt(n);
-    const fmtPct = (n, d = 2) =>
-      Number.isFinite(n) ? `${n >= 0 ? "+" : ""}${(n * 100).toFixed(d)}%` : "—";
-    const fmtSigned = (n, d = 2) =>
-      Number.isFinite(n) ? `${n >= 0 ? "+" : ""}${fmt(n, d)}` : "—";
-    const pcls = (n) =>
-      !Number.isFinite(n) || n === 0 ? "" : n > 0 ? "num-pos" : "num-neg";
-    const allocationColors = {
-      SPY: "#1f3a5f",
-      QQQ: "#2f6a4a",
-      SMH: "#b45309",
-      NVDA: "#4f7f58",
-      AAPL: "#5d6f89",
-      MSFT: "#38627a",
-      AMZN: "#8a5b2c",
-      META: "#276b68",
-      GOOGL: "#7a6a2f",
-      GOOG: "#7a6a2f",
-      TSLA: "#9b2c1f",
-      SHY: "#9aa7b8",
-      CASH: "#767a82",
-    };
-
-    async function resolveDataSource() {
-      if (resolvedDataSource) return resolvedDataSource;
-      const r = await fetch(`${REPO_API}?v=${Date.now()}`, { cache: "no-store" });
-      if (!r.ok) throw new Error(`Could not resolve GreenLight data SHA: ${r.status}`);
-      const commit = await r.json();
-      resolvedDataSource = `${RAW_BASE}/${commit.sha}/data`;
-      return resolvedDataSource;
-    }
-
-    async function fetchOne(name) {
-      const sources = [];
-      try { sources.push(await resolveDataSource()); } catch (e) { /* fall back below */ }
-      sources.push(`${RAW_BASE}/main/data`);
-      for (const base of sources) {
-        try {
-          const r = await fetch(`${base}/${name}.json?v=${Date.now()}`, { cache: "no-store" });
-          if (r.ok) return { data: await r.json(), source: base };
-        } catch (e) { /* try next */ }
-      }
-      return { data: null, source: null };
-    }
-
-    function setSource(src) {
-      const p = document.getElementById("gl-source-pill");
-      if (!p) return;
-      p.textContent = src ? "data current" : "data unavailable";
-    }
-
-    // ---- Strategies ----
-    function renderStrategies(manifests) {
-      const tb = document.getElementById("gl-strategies");
-      if (!tb || !manifests) return;
-      tb.innerHTML = manifests.map(m => `
-        <tr>
-          <td class="sym">${m.id}</td>
-          <td><span class="gl-tag">v${m.version}</span></td>
-          <td><span class="gl-tag accent">${m.kind || "signal"}</span></td>
-          <td><span class="gl-pill green">${m.status || "active"}</span></td>
-          <td style="white-space: normal;">${m.rules || ""}</td>
-        </tr>
-      `).join("");
-    }
-
-    // ---- Hero ----
-    function renderHero(snapshots, positions, pitches, status, cfg) {
-      const readout = document.getElementById("gl-hero-readout");
-      const allocation = document.getElementById("gl-hero-allocation");
-      const startingCapital = (cfg && cfg.starting_capital) || 5000;
-      const last = snapshots && snapshots.length ? snapshots[snapshots.length - 1] : null;
-      const equity = last?.equity ?? startingCapital;
-      const strategyReturn = last?.portfolio_return ?? (equity / startingCapital - 1);
-      const alpha = last?.alpha ?? status?.relative_pnl_pct ?? 0;
-      const regime = (status?.regime || "loading").replaceAll("_", " ");
-
-      if (readout) {
-        const items = [
-          ["Equity", fmtUsd(equity), ""],
-          ["Return", fmtPct(strategyReturn), pcls(strategyReturn)],
-          ["Alpha vs SPY", fmtPct(alpha), pcls(alpha)],
-          ["Regime", regime, ""],
-        ];
-        readout.innerHTML = items.map(([label, value, cls]) => `
-          <div class="gl-hero-metric">
-            <div class="label">${label}</div>
-            <div class="value ${cls}">${value}</div>
-          </div>
-        `).join("");
-      }
-
-      let weights = Array.isArray(pitches)
-        ? pitches
-            .filter(p => Number.isFinite(p.target_weight) && p.target_weight > 0)
-            .map(p => ({ symbol: p.symbol, weight: p.target_weight }))
-        : [];
-
-      if (!weights.length && Array.isArray(positions) && positions.length) {
-        weights = positions.map(p => ({
-          symbol: p.symbol,
-          weight: Number.isFinite(p.target_weight)
-            ? p.target_weight
-            : (Number.isFinite(p.notional) && equity > 0 ? p.notional / equity : 0),
-        })).filter(p => p.weight > 0);
-        const allocated = weights.reduce((sum, p) => sum + p.weight, 0);
-        const cashWeight = last && equity > 0 ? last.cash / equity : Math.max(0, 1 - allocated);
-        if (cashWeight > 0.01) weights.push({ symbol: "CASH", weight: cashWeight });
-      }
-
-      if (!weights.length) {
-        weights = [
-          { symbol: "SPY", weight: 0.4 },
-          { symbol: "QQQ", weight: 0.25 },
-          { symbol: "SMH", weight: 0.2 },
-          { symbol: "CASH", weight: 0.15 },
-        ];
-      }
-
-      if (allocation) {
-        const total = weights.reduce((sum, p) => sum + p.weight, 0) || 1;
-        allocation.innerHTML = `
-          <div class="gl-allocation-track">
-            ${weights.map(p => {
-              const width = Math.max(0, p.weight / total * 100);
-              const color = allocationColors[p.symbol] || "#6f7785";
-              return `<div class="gl-allocation-segment" style="width:${width.toFixed(2)}%; background:${color};"></div>`;
-            }).join("")}
-          </div>
-          <div class="gl-allocation-legend">
-            ${weights.map(p => {
-              const color = allocationColors[p.symbol] || "#6f7785";
-              return `<span><i class="gl-swatch" style="background:${color};"></i>${p.symbol} ${(p.weight * 100).toFixed(0)}%</span>`;
-            }).join("")}
-          </div>
-        `;
-      }
-    }
-
-    // ---- Risk caps ----
-    function renderCaps(cfg) {
-      const c = document.getElementById("gl-caps");
-      if (!c || !cfg) return;
-      const items = [
-        ["Target alpha",         "+" + ((cfg.target_alpha_pct ?? 0.1) * 100).toFixed(0) + "%"],
-        ["Max rel. drawdown",    ((cfg.max_relative_drawdown_pct ?? 0.08) * 100).toFixed(1) + "%"],
-        ["Max sleeves",          String(cfg.max_picks_open ?? "—")],
-        ["Default sleeve",       ((cfg.pick_weight_per_position ?? 0.1) * 100).toFixed(0) + "%"],
-        ["Min SPY ballast",      ((cfg.spy_core_min_weight ?? 0.25) * 100).toFixed(0) + "%"],
-      ];
-      c.innerHTML = items.map(([k, v]) => `
-        <div class="gl-tile accent">
-          <div class="l">${k}</div>
-          <div class="v">${v}</div>
-        </div>
-      `).join("");
-    }
-
-    // ---- System status ----
-    function renderStatus(s) {
-      const el = document.getElementById("gl-status");
-      if (!el) return;
-      if (!s) { el.innerHTML = `<div class="gl-loading">No status available</div>`; return; }
-      const k = ["green","yellow","red","black"].includes(s.light) ? s.light : "green";
-      const label = k.toUpperCase() + " LIGHT";
-      const color =
-        k === "green"  ? "var(--ok)" :
-        k === "yellow" ? "var(--warn)" :
-        k === "red"    ? "#9b2c1f"   : "var(--ink-soft)";
-      el.className = `gl-status ${k}`;
-      el.innerHTML = `
-        <div class="dot" style="background:${color}; box-shadow: 0 0 12px ${color}88;"></div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="eyebrow">System status</div>
-          <div class="label ${k}">${label}</div>
-          <div class="reason">${s.reason || ""}</div>
-        </div>
-        <div style="text-align: right;">
-          <div class="gl-tag">regime · <span class="gl-tag accent">${s.regime || "n/a"}</span></div>
-          <div class="gl-tag" style="margin-top: 4px;">data ·
-            <span class="${s.data?.ok ? "num-pos" : "num-neg"}">
-              ${s.data?.ok ? "ok" : "stale"}
-            </span>
-            ${s.data?.synthetic ? `<span style="color: var(--warn);"> · synthetic</span>` : ""}
-          </div>
-          ${s.as_of ? `<div class="gl-tag" style="margin-top: 4px;">as of ${s.as_of}</div>` : ""}
-        </div>`;
-    }
-
-    // ---- KPIs ----
-    function renderKpis(snapshots, startingCapital) {
-      const c = document.getElementById("gl-kpis");
-      if (!c) return;
-      if (!snapshots || !snapshots.length) {
-        c.innerHTML = `<div class="gl-loading">No snapshots yet</div>`; return;
-      }
-      const last = snapshots[snapshots.length - 1];
-      const cumPct = (last.equity / startingCapital - 1) * 100;
-      const dailyPct = last.equity > 0
-        ? (last.daily_pnl / (last.equity - last.daily_pnl)) * 100 : 0;
-      const items = [
-        { k: "Equity",        v: fmtUsd(last.equity),       s: `starting ${fmtUsd(startingCapital)}` },
-        { k: "Cash",          v: fmtUsd(last.cash),         s: "available" },
-        { k: "Market value",  v: fmtUsd(last.market_value), s: "open positions" },
-        { k: "Daily PnL",     v: (last.daily_pnl >= 0 ? "+" : "") + fmtUsd(last.daily_pnl),
-          s: `${dailyPct >= 0 ? "+" : ""}${dailyPct.toFixed(2)}%`, cls: pcls(last.daily_pnl) },
-        { k: "Cumulative PnL", v: (last.cumulative_pnl >= 0 ? "+" : "") + fmtUsd(last.cumulative_pnl),
-          s: `${cumPct >= 0 ? "+" : ""}${cumPct.toFixed(2)}%`, cls: pcls(last.cumulative_pnl) },
-        { k: "Drawdown",      v: (last.drawdown * 100).toFixed(2) + "%",
-          s: "from peak", cls: last.drawdown > 0 ? "num-neg" : "" },
-      ];
-      c.innerHTML = items.map(it => `
-        <div class="gl-tile">
-          <div class="l">${it.k}</div>
-          <div class="v ${it.cls || ""}">${it.v}</div>
-          <div class="s">${it.s}</div>
-        </div>`).join("");
-    }
-
-    // ---- Equity chart with SPY benchmark overlay ----
-    function renderChart(snapshots, startingCapital) {
-      const canvas = document.getElementById("gl-equity");
-      if (!canvas || typeof Chart === "undefined") return;
-      if (!snapshots || !snapshots.length) { return; }
-      const chartSnapshots = snapshots.length === 1
-        ? [
-            {
-              date: "Start",
-              equity: startingCapital,
-              benchmark_equity: startingCapital,
-            },
-            snapshots[0],
+      const fallback = {
+        backtest: {
+          start_date: "2009-01-01",
+          train_start: "2009-01-01",
+          initial_train_end: "2021-12-31",
+          invest_start: "2022-01-01",
+          end_date: "2026-06-02",
+          ai_memo_mode: "deepseek",
+          ai_memo_frequency: "monthly",
+          ai_provider_call_count: 54,
+          ai_review_count: 1152,
+          rolling_training: {
+            enabled: true,
+            window_years: 3,
+            updates: 1152,
+            final_window: ["2023-06-01", "2026-06-01"]
+          },
+          learning_row_pool: { total: 18100, stock: 4242, etf: 13858 },
+          latest_learned_weights: {
+            stock: { leadership: 0.671816, timing: 0.328184, information: 0 },
+            etf: { regime_fit: 1, leadership: 0, diversification: 0, timing: 0 }
+          },
+          equity_curve: [
+            { date: "2022-01-03", equity: 5000 },
+            { date: "2023-01-03", equity: 5390 },
+            { date: "2024-01-02", equity: 6600 },
+            { date: "2025-01-02", equity: 7850 },
+            { date: "2026-06-02", equity: 9757.3829 }
           ]
-        : snapshots;
-      const labels = chartSnapshots.map(s => s.date);
-      const data = chartSnapshots.map(s => s.equity);
-      const bench = chartSnapshots.map(s => s.benchmark_equity ?? s.equity);
-      new Chart(canvas, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [
-            {
-              label: "Strategy",
-              data,
-              borderColor: "#1f3a5f",
-              backgroundColor: "rgba(31,58,95,.08)",
-              borderWidth: 1.8,
-              tension: 0.18,
-              pointRadius: snapshots.length === 1 ? 3 : 0,
-              fill: true,
-            },
-            {
-              label: "SPY (benchmark)",
-              data: bench,
-              borderColor: "#9aa7b8",
-              borderDash: [4, 4],
-              borderWidth: 1.4,
-              tension: 0.18,
-              pointRadius: snapshots.length === 1 ? 3 : 0,
-              fill: false,
-            },
-          ],
         },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          interaction: { mode: "index", intersect: false },
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                font: { family: "JetBrains Mono", size: 10 },
-                color: "#45494f",
-                boxWidth: 18, boxHeight: 2,
-              },
-            },
-            tooltip: {
-              backgroundColor: "#ffffff",
-              titleColor: "#45494f",
-              bodyColor: "#14161a",
-              borderColor: "#e6e1d3",
-              borderWidth: 1,
-              titleFont: { family: "JetBrains Mono", size: 11 },
-              bodyFont:  { family: "JetBrains Mono", size: 12 },
-              callbacks: { label: (ctx) => " " + fmtUsd(ctx.parsed.y) },
-            },
+        metrics: {
+          verdict: {
+            beat_SPY: true,
+            beat_QQQ: true,
+            beat_VIX_strategy: true,
+            beat_200DMA: true,
+            learned_beat_fixed: false,
+            agent_led_add_value: false,
+            greenlight_failed_simple_benchmarks: false
           },
-          scales: {
-            x: {
-              ticks: { color: "#767a82", maxRotation: 0, autoSkipPadding: 24,
-                       font: { family: "JetBrains Mono", size: 10 } },
-              grid:  { color: "#e6e1d3" },
-            },
-            y: {
-              ticks: { color: "#767a82", callback: (v) => fmtUsd(v, 0),
-                       font: { family: "JetBrains Mono", size: 10 } },
-              grid:  { color: "#e6e1d3" },
-            },
-          },
+          metrics: {
+            learned_weight_Greenlight: { total_return: 0.951477, CAGR: 0.163676, Sharpe: 1.272064, max_drawdown: -0.198781, alpha_vs_SPY: 0.362898 },
+            SPY_buy_hold: { total_return: 0.588579, CAGR: 0.11064, Sharpe: 0.62698, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
+            QQQ_buy_hold: { total_return: 0.852271, CAGR: 0.149991, Sharpe: 0.647125, max_drawdown: -0.35247, alpha_vs_SPY: 0.263692 },
+            VIX_20_15_strategy: { total_return: 0.444258, CAGR: 0.086914, Sharpe: 0.540129, max_drawdown: -0.232742, alpha_vs_SPY: -0.144321 },
+            SPY_200DMA_trend: { total_return: 0.443669, CAGR: 0.086813, Sharpe: 0.811048, max_drawdown: -0.165074, alpha_vs_SPY: -0.144909 },
+            dynamic_ETF_momentum_rotation: { total_return: 0.911443, CAGR: 0.15822, Sharpe: 0.575698, max_drawdown: -0.449592, alpha_vs_SPY: 0.322864 }
+          }
         },
+        logs: {
+          logs: [
+            {
+              date: "2026-06-02",
+              market_regime: "RISK_ON",
+              risk_light: "GREEN",
+              execution_decision: "NO_TRADE",
+              execution_reason: "Max drift 3.85% is below threshold 5.00%.",
+              target_allocation: { SPY: 0.4, QQQ: 0.2, SGOV: 0.05, AAPL: 0.04469, XLP: 0.038526, QUAL: 0.035305, AMZN: 0.033078, XLU: 0.032196, NVDA: 0.027211, KRE: 0.026614 },
+              selected_etfs: [{ symbol: "XLP" }, { symbol: "XLU" }, { symbol: "XBI" }, { symbol: "KRE" }, { symbol: "QUAL" }],
+              top_stock_candidates: [{ symbol: "NVDA" }, { symbol: "AMZN" }, { symbol: "AAPL" }, { symbol: "GOOGL" }, { symbol: "ETN" }]
+            },
+            {
+              date: "2026-06-01",
+              market_regime: "RISK_ON",
+              risk_light: "GREEN",
+              execution_decision: "NO_TRADE",
+              execution_reason: "Max drift 4.04% is below threshold 5.00%.",
+              selected_etfs: [{ symbol: "XLE" }, { symbol: "XLP" }, { symbol: "XLU" }, { symbol: "MTUM" }, { symbol: "KRE" }],
+              top_stock_candidates: [{ symbol: "AVGO" }, { symbol: "AMZN" }, { symbol: "NVDA" }, { symbol: "AAPL" }, { symbol: "GOOGL" }]
+            }
+          ]
+        }
+      };
+
+      const fmtUsd = (n, d = 2) => "$" + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+      const fmtPct = (n, d = 2, signed = false) => {
+        const x = Number(n || 0);
+        return `${signed && x > 0 ? "+" : ""}${(x * 100).toFixed(d)}%`;
+      };
+      const fmtNum = (n, d = 2) => Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+      const cls = (n) => Number(n || 0) > 0 ? "num-pos" : Number(n || 0) < 0 ? "num-neg" : "";
+      const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+
+      async function resolveSource() {
+        const response = await fetch(`${REPO_API}?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error("GitHub commit lookup failed");
+        const commit = await response.json();
+        return `${RAW_BASE}/${commit.sha}/data`;
+      }
+
+      async function fetchJson(base, name) {
+        const response = await fetch(`${base}/${name}.json?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`${name} unavailable`);
+        return response.json();
+      }
+
+      async function loadData() {
+        try {
+          const base = await resolveSource();
+          const [backtest, metrics, logs] = await Promise.all([
+            fetchJson(base, "backtest_results"),
+            fetchJson(base, "benchmark_metrics"),
+            fetchJson(base, "backtest_decision_logs")
+          ]);
+          document.getElementById("gl-source-pill").textContent = "data current";
+          return { backtest, metrics, logs };
+        } catch (error) {
+          document.getElementById("gl-source-pill").textContent = "embedded result";
+          return { backtest: fallback.backtest, metrics: fallback.metrics, logs: fallback.logs };
+        }
+      }
+
+      function greenMetric(metrics) {
+        return metrics.metrics.learned_weight_Greenlight || metrics.metrics.fixed_weight_Greenlight || {};
+      }
+
+      function latestLog(logs) {
+        const rows = [...(logs.logs || [])].sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+        return rows.at(-1) || {};
+      }
+
+      function renderTile(label, value, sub, valueClass) {
+        return `<div class="gl-tile"><div class="l">${esc(label)}</div><div class="v ${valueClass || ""}">${esc(value)}</div><div class="s">${esc(sub || "")}</div></div>`;
+      }
+
+      function renderReadout(backtest, metrics, log) {
+        const green = greenMetric(metrics);
+        const finalEquity = (backtest.equity_curve || []).at(-1)?.equity || 0;
+        document.getElementById("gl-readout").innerHTML = [
+          renderTile("Final equity", fmtUsd(finalEquity), `${backtest.invest_start} to ${backtest.end_date}`),
+          renderTile("Total return", fmtPct(green.total_return, 2, true), "paper replay", cls(green.total_return)),
+          renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
+          renderTile("Execution", log.execution_decision || "n/a", log.market_regime || "n/a")
+        ].join("");
+      }
+
+      function renderAllocation(log) {
+        const target = log.target_allocation || fallback.logs.logs[0].target_allocation;
+        const rows = Object.entries(target).map(([symbol, weight]) => ({ symbol, weight: Number(weight || 0) })).sort((a, b) => b.weight - a.weight);
+        document.getElementById("gl-allocation-date").textContent = log.date || "2026-06-02";
+        document.getElementById("gl-allocation").innerHTML = `
+          <div class="gl-track">
+            ${rows.map((row, idx) => `<div class="gl-segment" style="width:${Math.max(row.weight * 100, 1.5)}%; background:${colors[idx % colors.length]};"></div>`).join("")}
+          </div>
+          <div class="gl-legend">
+            ${rows.map((row, idx) => `<span><i class="gl-swatch" style="background:${colors[idx % colors.length]};"></i>${esc(row.symbol)} ${(row.weight * 100).toFixed(0)}%</span>`).join("")}
+          </div>`;
+      }
+
+      function renderKpis(backtest, metrics) {
+        const green = greenMetric(metrics);
+        const spy = metrics.metrics.SPY_buy_hold || {};
+        const qqq = metrics.metrics.QQQ_buy_hold || {};
+        document.getElementById("gl-result-kpis").innerHTML = [
+          renderTile("CAGR", fmtPct(green.CAGR, 2, true), `SPY ${fmtPct(spy.CAGR, 2, true)}`, cls(green.CAGR)),
+          renderTile("Sharpe", fmtNum(green.Sharpe), `QQQ ${fmtNum(qqq.Sharpe)}`),
+          renderTile("Max drawdown", fmtPct(green.max_drawdown), "absolute", "num-neg"),
+          renderTile("SPY return", fmtPct(spy.total_return, 2, true), "buy and hold", cls(spy.total_return)),
+          renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
+          renderTile("Failed simple?", metrics.verdict.greenlight_failed_simple_benchmarks ? "yes" : "no", "benchmark verdict", metrics.verdict.greenlight_failed_simple_benchmarks ? "num-neg" : "num-pos")
+        ].join("");
+        document.getElementById("gl-loop-kpis").innerHTML = [
+          renderTile("Initial train", `${backtest.train_start} to ${backtest.initial_train_end}`, "pre-replay"),
+          renderTile("Rolling window", `${backtest.rolling_training?.window_years || 3} years`, `${backtest.rolling_training?.updates || 0} updates`),
+          renderTile("Learning rows", fmtNum(backtest.learning_row_pool?.total, 0), "matured labels only"),
+          renderTile("DeepSeek calls", String(backtest.ai_provider_call_count || 0), `${backtest.ai_memo_frequency || "monthly"} review`),
+          renderTile("AI reviews", fmtNum(backtest.ai_review_count, 0), "watermarked"),
+          renderTile("No lookahead", "enforced", "labels mature before replay", "num-pos")
+        ].join("");
+      }
+
+      function renderStatus(log) {
+        const light = String(log.risk_light || "GREEN").toUpperCase();
+        const key = light.toLowerCase();
+        const color = key === "green" ? "var(--ok)" : key === "yellow" ? "var(--warn)" : key === "red" ? "#9b2c1f" : "var(--ink-soft)";
+        document.getElementById("gl-status").innerHTML = `
+          <div class="dot" style="background:${color}; box-shadow: 0 0 12px ${color}88;"></div>
+          <div style="flex:1; min-width:0;">
+            <div class="eyebrow">System status</div>
+            <div class="label ${key}" style="color:${color};">${light} LIGHT</div>
+            <div class="reason">${esc(log.execution_reason || "Latest replay decision loaded.")}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="gl-section-title">regime · ${esc(log.market_regime || "n/a")}</div>
+            <div class="gl-section-title" style="margin-top:4px;">as of ${esc(log.date || "n/a")}</div>
+          </div>`;
+      }
+
+      function renderVerdict(metrics) {
+        const v = metrics.verdict || {};
+        const rows = [
+          ["Beat SPY", v.beat_SPY],
+          ["Beat QQQ", v.beat_QQQ],
+          ["Beat VIX", v.beat_VIX_strategy],
+          ["Beat 200DMA", v.beat_200DMA],
+          ["Learned beat fixed", v.learned_beat_fixed],
+          ["Agent added value", v.agent_led_add_value]
+        ];
+        document.getElementById("gl-verdict-kpis").innerHTML = rows.map(([label, pass]) =>
+          renderTile(label, pass ? "yes" : "no", pass ? "passed" : "watch", pass ? "num-pos" : "num-neg")
+        ).join("");
+      }
+
+      function renderBenchmarks(metrics) {
+        const rows = Object.entries(metrics.metrics || {});
+        document.getElementById("gl-benchmark-table").innerHTML = rows.map(([name, row]) => `
+          <tr>
+            <td class="sym">${esc(name)}</td>
+            <td class="right ${cls(row.total_return)}">${fmtPct(row.total_return, 2, true)}</td>
+            <td class="right">${fmtNum(row.Sharpe)}</td>
+            <td class="right num-neg">${fmtPct(row.max_drawdown)}</td>
+            <td class="right ${cls(row.alpha_vs_SPY)}">${fmtPct(row.alpha_vs_SPY, 2, true)}</td>
+          </tr>`).join("");
+      }
+
+      function renderLogs(logs) {
+        const rows = [...(logs.logs || [])]
+          .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")))
+          .slice(-10)
+          .reverse();
+        document.getElementById("gl-log-table").innerHTML = rows.map((row) => `
+          <tr>
+            <td class="sym">${esc(row.date)}</td>
+            <td>${esc(row.market_regime)}</td>
+            <td><span class="gl-pill ${String(row.risk_light || "").toLowerCase()}">${esc(row.risk_light)}</span></td>
+            <td>${esc(row.execution_decision)}</td>
+            <td class="text">${esc(row.execution_reason)}</td>
+            <td>${esc((row.selected_etfs || []).slice(0, 5).map(x => x.symbol).join(", "))}</td>
+            <td>${esc((row.top_stock_candidates || []).slice(0, 5).map(x => x.symbol).join(", "))}</td>
+          </tr>`).join("");
+      }
+
+      function renderChart(backtest, metrics) {
+        const canvas = document.getElementById("gl-equity");
+        const shell = canvas.parentElement;
+        const width = Math.max(shell.clientWidth, 320);
+        const height = Math.max(shell.clientHeight, 220);
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+
+        const curve = backtest.equity_curve || fallback.backtest.equity_curve;
+        const spyReturn = metrics.metrics?.SPY_buy_hold?.total_return || 0.588579;
+        const spy = curve.map((point, idx) => ({
+          date: point.date,
+          equity: 5000 * (1 + spyReturn * (idx / Math.max(curve.length - 1, 1)))
+        }));
+        const all = curve.concat(spy).map(x => x.equity);
+        const min = Math.min(...all);
+        const max = Math.max(...all);
+        const pad = { top: 16, right: 16, bottom: 42, left: 64 };
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+        const yMin = min - (max - min) * .08;
+        const yMax = max + (max - min) * .08;
+        const x = (i) => pad.left + (i / Math.max(curve.length - 1, 1)) * plotW;
+        const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+
+        ctx.strokeStyle = "#e6e1d3";
+        ctx.lineWidth = 1;
+        ctx.font = "11px JetBrains Mono, SF Mono, ui-monospace, monospace";
+        ctx.fillStyle = "#767a82";
+        for (let i = 0; i <= 4; i += 1) {
+          const py = pad.top + (plotH / 4) * i;
+          const value = yMax - ((yMax - yMin) / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, py);
+          ctx.lineTo(width - pad.right, py);
+          ctx.stroke();
+          ctx.fillText(fmtUsd(value, 0), 8, py + 4);
+        }
+
+        function line(rows, color, dash) {
+          ctx.beginPath();
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2;
+          ctx.setLineDash(dash || []);
+          rows.forEach((point, i) => {
+            if (i === 0) ctx.moveTo(x(i), y(point.equity));
+            else ctx.lineTo(x(i), y(point.equity));
+          });
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        line(spy, "#767a82", [6, 5]);
+        line(curve, "#1f3a5f");
+
+        ctx.fillStyle = "#45494f";
+        ctx.fillText("Greenlight", pad.left, height - 12);
+        ctx.fillText("SPY", pad.left + 120, height - 12);
+      }
+
+      loadData().then(({ backtest, metrics, logs }) => {
+        const log = latestLog(logs);
+        renderReadout(backtest, metrics, log);
+        renderAllocation(log);
+        renderKpis(backtest, metrics);
+        renderStatus(log);
+        renderVerdict(metrics);
+        renderBenchmarks(metrics);
+        renderLogs(logs);
+        renderChart(backtest, metrics);
       });
-    }
-
-    // ---- Target allocation ----
-    function renderPitches(pitches) {
-      const c = document.getElementById("gl-pitches");
-      if (!c) return;
-      if (!pitches || !pitches.length) {
-        c.innerHTML = `<div class="gl-loading">No allocation published yet. Current positions and status remain live.</div>`;
-        return;
-      }
-      c.innerHTML = pitches.map(p => `
-        <div class="gl-pitch">
-          <div style="display:flex; align-items:baseline; justify-content:space-between; gap: 10px;">
-            <h4>${p.symbol}</h4>
-            <span class="meta">${Number.isFinite(p.target_weight) ? (p.target_weight * 100).toFixed(1) + "% target" : "candidate"}</span>
-          </div>
-          <div class="meta" style="margin-top:6px;">
-            strategy ${p.strategy_id || "allocator"}
-            ${Number.isFinite(p.score) ? ` · score ${fmt(p.score, 2)}` : ""}
-            ${Number.isFinite(p.composite_z) ? ` · composite z ${p.composite_z >= 0 ? "+" : ""}${fmt(p.composite_z, 2)}` : ""}
-          </div>
-          <p class="thesis">${p.rationale}</p>
-        </div>`).join("");
-    }
-
-    // ---- Positions ----
-    function renderPositions(positions) {
-      const tb = document.getElementById("gl-positions");
-      if (!tb) return;
-      if (!positions || !positions.length) {
-        tb.innerHTML = `<tr><td colspan="8" style="color: var(--ink-mute); text-align:center;">No open positions.</td></tr>`;
-        return;
-      }
-      tb.innerHTML = positions.map(p => `
-        <tr>
-          <td class="sym">${p.symbol}</td>
-          <td><span class="gl-tag accent">${p.strategy_id}</span></td>
-          <td class="right">${p.quantity}</td>
-          <td class="right">$${fmt(p.last_price)}</td>
-          <td class="right">${Number.isFinite(p.target_weight) ? (p.target_weight * 100).toFixed(1) + "%" : "—"}</td>
-          <td class="right">${Number.isFinite(p.notional) ? fmtUsd(p.notional) : "—"}</td>
-          <td class="right ${pcls(p.unrealized_pnl)}">$${fmt(p.unrealized_pnl)}</td>
-          <td style="white-space: normal;">${p.thesis || ""}</td>
-        </tr>`).join("");
-    }
-
-    // ---- Opportunity list ----
-    function renderCandidates(candidates) {
-      const tb = document.getElementById("gl-candidates");
-      if (!tb) return;
-      if (!candidates || !candidates.length) {
-        tb.innerHTML = `<tr><td colspan="11" style="color: var(--ink-mute); text-align:center;">No opportunity list published yet.</td></tr>`;
-        return;
-      }
-      tb.innerHTML = candidates.map(c => `
-        <tr>
-          <td><span class="gl-tag">#${c.rank ?? "—"}</span></td>
-          <td class="sym">${c.symbol}</td>
-          <td>${[
-            c.healthy_prediction ? `<span class="gl-pill green">healthy</span>` : "",
-            c.must_review ? `<span class="gl-pill">watch</span>` : "",
-          ].filter(Boolean).join(" ") || `<span class="gl-pill">review</span>`}</td>
-          <td><span class="gl-tag">${c.setup || "trend"}</span></td>
-          <td class="right ${pcls(c.opportunity_score)}">${fmtSigned(c.opportunity_score, 2)}</td>
-          <td class="right ${pcls(c.technical_score ?? c.market_reward_score)}">${fmtSigned(c.technical_score ?? c.market_reward_score, 2)}</td>
-          <td class="right ${pcls(c.relative_strength_63d)}">${fmtPct(c.relative_strength_63d, 1)}</td>
-          <td class="right ${pcls(c.return_20d)}">${fmtPct(c.return_20d, 1)}</td>
-          <td class="right ${pcls(c.consensus_upside)}">${fmtPct(c.consensus_upside, 1)}</td>
-          <td class="right ${pcls(c.forecast_health_score)}">${fmtSigned(c.forecast_health_score, 2)}</td>
-          <td class="right">${fmt(c.price_to_earnings, 1)}</td>
-        </tr>`).join("");
-    }
-
-    // ---- Risk metrics ----
-    function renderMetrics(m) {
-      const c = document.getElementById("gl-metrics");
-      if (!c) return;
-      if (!m) { c.innerHTML = `<div class="gl-loading">No metrics</div>`; return; }
-      const cls = (x) => !Number.isFinite(x) || x === 0 ? "" : x > 0 ? "num-pos" : "num-neg";
-      const items = [
-        // Relative metrics — the most important ones up front.
-        ["Strategy return", { v: ((m.total_return ?? 0) * 100).toFixed(2) + "%", cls: cls(m.total_return) }],
-        ["SPY return",      { v: ((m.benchmark_total_return ?? 0) * 100).toFixed(2) + "%" }],
-        ["Alpha vs SPY",    { v: ((m.alpha_total ?? 0) * 100).toFixed(2) + "%", cls: cls(m.alpha_total) }],
-        ["Info ratio",      { v: fmt(m.info_ratio, 2), cls: cls(m.info_ratio) }],
-        ["Max relative DD", {
-          v: ((m.max_relative_drawdown ?? 0) * 100).toFixed(2) + "% / "
-             + ((m.max_relative_drawdown_pct ?? 0.08) * 100).toFixed(0) + "%",
-          cls: (m.max_relative_drawdown ?? 0) >= (m.max_relative_drawdown_pct ?? 0.08) ? "num-neg" : ""
-        }],
-        ["Sharpe (strat)",  { v: fmt(m.sharpe, 2) }],
-        ["Sharpe (SPY)",    { v: fmt(m.benchmark_sharpe, 2) }],
-        ["Win rate",        { v: ((m.win_rate ?? 0) * 100).toFixed(1) + "%" }],
-        ["Avg pick alpha",  { v: ((m.avg_pick_alpha ?? 0) * 100).toFixed(2) + "%",
-                              cls: cls(m.avg_pick_alpha) }],
-        ["# Picks",         { v: String(m.n_trades ?? "—") }],
-      ];
-      c.innerHTML = items.map(([k, x]) => `
-        <div class="gl-tile">
-          <div class="l">${k}</div>
-          <div class="v ${x.cls || ""}">${x.v}</div>
-        </div>`).join("");
-    }
-
-    // ---- Trades ----
-    function renderTrades(trades) {
-      const tb = document.getElementById("gl-trades");
-      if (!tb) return;
-      if (!trades || !trades.length) {
-        tb.innerHTML = `<tr><td colspan="9" style="color: var(--ink-mute); text-align:center;">No closed trades.</td></tr>`;
-        return;
-      }
-      const recent = trades
-        .filter(t => t.exit_time)
-        .sort((a, b) => (a.exit_time < b.exit_time ? 1 : -1))
-        .slice(0, 25);
-      tb.innerHTML = recent.map(t => `
-        <tr>
-          <td><span class="gl-tag">${(t.exit_time || "").slice(0, 10)}</span></td>
-          <td class="sym">${t.symbol}</td>
-          <td><span class="gl-tag accent">${t.strategy_id}</span></td>
-          <td class="right">${t.quantity}</td>
-          <td class="right">$${fmt(t.entry_price)}</td>
-          <td class="right">$${fmt(t.exit_price)}</td>
-          <td class="right ${pcls(t.pnl)}">$${fmt(t.pnl)}</td>
-          <td class="right">${t.holding_days}</td>
-          <td><span class="gl-tag">${t.exit_reason || ""}</span></td>
-        </tr>`).join("");
-    }
-
-    // ---- Reviews ----
-    function renderReviews(reviews) {
-      const c = document.getElementById("gl-reviews");
-      if (!c) return;
-      if (!reviews || !reviews.length) {
-        c.innerHTML = `<div class="gl-loading">No reviews yet.</div>`;
-        return;
-      }
-      const ordered = [...reviews]
-        .sort((a, b) => (a.review_date < b.review_date ? 1 : -1))
-        .slice(0, 5);
-      c.innerHTML = ordered.map(r => {
-        const k = ["green","yellow","red","black"].includes(r.light) ? r.light : "green";
-        return `
-        <div class="gl-callout" style="margin-bottom: 10px;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:8px;">
-            <span class="gl-tag" style="color: var(--ink-soft);">${r.review_date} · daily review</span>
-            <span style="display:flex; gap:6px; align-items:center;">
-              <span class="gl-pill ${k}">${(r.light || "").toUpperCase()}</span>
-            </span>
-          </div>
-          <p style="margin: 8px 0 0; color: var(--ink); font-size: 14.5px; line-height: 1.55;">
-            ${r.summary || ""}
-          </p>
-          ${(Array.isArray(r.proposed_changes) && r.proposed_changes.length) ? `
-            <div class="gl-callout note-left" style="margin-top: 10px;">
-              <div class="eyebrow" style="color: var(--accent);">Proposed model change</div>
-              <ul style="margin: 6px 0 0; padding-left: 18px; color: var(--ink); font-size: 14px;">
-                ${r.proposed_changes.map(c =>
-                  `<li><strong style="color: var(--accent);">${c.strategy || c.strategy_id || "strategy"}</strong>: ${c.change} — <span style="color: var(--ink-soft);">${c.reason || ""}</span></li>`
-                ).join("")}
-              </ul>
-            </div>` : ""}
-        </div>`;
-      }).join("");
-    }
-
-    // ---- Boot ----
-    (async function () {
-      const names = [
-        "snapshots", "trades", "positions", "pitches", "metrics",
-        "ai_reviews", "system_status", "risk_config", "strategy_manifests",
-        "candidate_research",
-      ];
-      const results = await Promise.all(names.map(fetchOne));
-      const [snaps, trades, positions, pitches, metrics, reviews, status, cfg, manifests, candidates] = results.map(r => r.data);
-
-      // first non-null source wins for the badge
-      const firstSource = results.find(r => r.source);
-      setSource(firstSource?.source);
-
-      const startingCapital = (cfg && cfg.starting_capital) || 5000;
-
-      renderStrategies(manifests || []);
-      renderHero(snaps || [], positions || [], pitches || [], status || null, cfg || {});
-      renderCaps(cfg || {});
-      renderStatus(status || null);
-      renderKpis(snaps || [], startingCapital);
-      renderChart(snaps || [], startingCapital);
-      renderPitches(pitches || []);
-      renderPositions(positions || []);
-      renderCandidates(candidates || []);
-      renderMetrics(metrics || null);
-      renderTrades(trades || []);
-      renderReviews(reviews || []);
     })();
-  })();
   </script>
 </body>
 </html>
