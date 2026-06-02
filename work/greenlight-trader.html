@@ -277,6 +277,39 @@
     .gl-link:hover { border-color: var(--accent); color: var(--accent); }
     .gl-chart-shell { height: 330px; min-height: 260px; }
     .gl-chart-shell.large { height: 460px; }
+    .gl-architecture-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 820px) {
+      .gl-architecture-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .gl-architecture-card {
+      min-height: 190px;
+      padding: 16px 14px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-sm);
+      background: var(--paper);
+    }
+    .gl-architecture-card span {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .14em;
+      color: var(--accent);
+    }
+    .gl-architecture-card h3 {
+      margin: 18px 0 8px;
+      font-family: var(--display);
+      font-size: 16px;
+      line-height: 1.25;
+    }
+    .gl-architecture-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
     body.gl-modal-open { overflow: hidden; }
     .gl-chart-modal {
       position: fixed;
@@ -402,7 +435,7 @@
     <section class="container wide" style="padding-top: 48px;">
       <div class="topic-head">
         <div class="eyebrow">Dashboard excerpt</div>
-        <h2>Result, allocation, benchmark verdict, and logs.</h2>
+        <h2>Result, allocation, benchmark curves, and logs.</h2>
         <p class="blurb">
           This page hydrates from the Greenlight Trader repository when the latest data is
           available. If the data endpoint is not reachable, it keeps showing the audited
@@ -423,10 +456,10 @@
             <div class="gl-heading">
               <div class="gl-section-title">Benchmark comparison</div>
               <h3>Replay equity curves</h3>
-              <p class="gl-section-subtitle">Greenlight, SPY, QQQ, VIX, 200DMA, ETF rotation, and agent track plotted from repository snapshots.</p>
+              <p class="gl-section-subtitle">Daily Greenlight replay data with comparison strategies densified onto the same trading-date axis.</p>
             </div>
             <div class="gl-chart-actions">
-              <span class="gl-pill">2022-2026 replay</span>
+              <span class="gl-pill" id="gl-plot-count">daily replay</span>
               <button class="gl-chart-button" type="button" data-gl-expand-chart="gl-equity">Expand</button>
             </div>
           </div>
@@ -434,27 +467,15 @@
         </div>
       </div>
 
-      <div class="gl-split two">
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-heading" style="margin-bottom: 12px;">
-              <div class="gl-section-title">Benchmark verdict</div>
-              <h3>Pass/fail checks</h3>
-              <p class="gl-section-subtitle">Simple strategy comparisons stay visible beside the plotted results.</p>
-            </div>
-            <div class="gl-kpi three" id="gl-verdict-kpis"></div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-section-head">
-              <div class="gl-heading">
+      <div class="panel">
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-heading">
               <div class="gl-section-title">Benchmark metrics</div>
               <h3>Greenlight vs alternatives</h3>
               <p class="gl-section-subtitle">Return, drawdown, and alpha summary for each comparison strategy.</p>
             </div>
-            <span class="gl-pill">simple strategies visible</span>
+            <span class="gl-pill">metrics table</span>
           </div>
           <div class="gl-table-wrap">
             <table class="gl">
@@ -471,7 +492,6 @@
             </table>
           </div>
         </div>
-      </div>
       </div>
 
       <div class="panel">
@@ -501,33 +521,38 @@
       </div>
     </section>
 
-    <section class="container" style="padding-top: 48px;">
-      <div class="gl-split two">
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-section-head">
+    <section class="container wide" style="padding-top: 48px;">
+      <div class="panel">
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-heading">
               <div class="gl-section-title">Architecture</div>
-              <span class="gl-pill">deterministic production</span>
+              <h3>Daily deterministic replay loop</h3>
+              <p class="gl-section-subtitle">The replay path mirrors daily paper mode: each trading day rebuilds data, scores, allocations, execution decisions, benchmark curves, logs, and watermarked review output.</p>
             </div>
-            <div class="gl-code">market data -> universe -> features -> scores
-scores + regime -> dynamic ETFs -> target weights
-target + portfolio -> risk gate -> sparse execution
-decision -> ledger -> benchmarks -> watermarked review</div>
+            <span class="gl-pill">production path</span>
           </div>
-        </div>
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-section-head">
-              <div class="gl-section-title">Guardrails</div>
-              <span class="gl-pill green">paper only</span>
-            </div>
-            <div class="gl-callout note-left">
-              <p style="margin: 0; color: var(--ink); font-size: 14.5px; line-height: 1.6;">
-                No broker connection. No permanent sector winner. VIX is sourced from Yahoo
-                when Massive/Polygon does not provide it. DeepSeek v4 Pro reviews are
-                watermarked and experimental; they cannot mutate logic or approve trades.
-              </p>
-            </div>
+          <div class="gl-architecture-grid">
+            <article class="gl-architecture-card">
+              <span>01</span>
+              <h3>Market data and universe</h3>
+              <p>Massive and tagged secondary data feed anchors, dynamic ETFs, current holdings, movers, relative-strength names, and liquid stock candidates.</p>
+            </article>
+            <article class="gl-architecture-card">
+              <span>02</span>
+              <h3>Features and learning</h3>
+              <p>Daily features are sliced no-lookahead. Rolling windows refresh stock and ETF score weights before each replay decision.</p>
+            </article>
+            <article class="gl-architecture-card">
+              <span>03</span>
+              <h3>Selection and allocation</h3>
+              <p>Regime, ETF discovery, candidate scores, volatility, caps, and sleeve budgets produce target weights rather than trade instructions.</p>
+            </article>
+            <article class="gl-architecture-card">
+              <span>04</span>
+              <h3>Execution and records</h3>
+              <p>Sparse execution checks drift, persistence, interval, turnover, and trade size, then writes portfolio state, benchmarks, and decision logs.</p>
+            </article>
           </div>
         </div>
       </div>
@@ -762,7 +787,7 @@ decision -> ledger -> benchmarks -> watermarked review</div>
           renderTile("Max drawdown", fmtPct(green.max_drawdown), "absolute", "num-neg"),
           renderTile("SPY return", fmtPct(spy.total_return, 2, true), "buy and hold", cls(spy.total_return)),
           renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
-          renderTile("Failed simple?", metrics.verdict.greenlight_failed_simple_benchmarks ? "yes" : "no", "benchmark verdict", metrics.verdict.greenlight_failed_simple_benchmarks ? "num-neg" : "num-pos")
+          renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY))
         ].join("");
         document.getElementById("gl-loop-kpis").innerHTML = [
           renderTile("Initial train", `${backtest.train_start} to ${backtest.initial_train_end}`, "pre-replay"),
@@ -789,21 +814,6 @@ decision -> ledger -> benchmarks -> watermarked review</div>
             <div class="gl-section-title">regime · ${esc(log.market_regime || "n/a")}</div>
             <div class="gl-section-title" style="margin-top:4px;">as of ${esc(log.date || "n/a")}</div>
           </div>`;
-      }
-
-      function renderVerdict(metrics) {
-        const v = metrics.verdict || {};
-        const rows = [
-          ["Beat SPY", v.beat_SPY],
-          ["Beat QQQ", v.beat_QQQ],
-          ["Beat VIX", v.beat_VIX_strategy],
-          ["Beat 200DMA", v.beat_200DMA],
-          ["Learned beat fixed", v.learned_beat_fixed],
-          ["Agent added value", v.agent_led_add_value]
-        ];
-        document.getElementById("gl-verdict-kpis").innerHTML = rows.map(([label, pass]) =>
-          renderTile(label, pass ? "yes" : "no", pass ? "passed" : "watch", pass ? "num-pos" : "num-neg")
-        ).join("");
       }
 
       function renderBenchmarks(metrics) {
@@ -837,9 +847,10 @@ decision -> ledger -> benchmarks -> watermarked review</div>
 
       function renderChart(backtest, metrics, benchmarkSnapshots) {
         const snapshots = benchmarkSnapshots?.snapshots || buildFallbackSnapshots(backtest, metrics).snapshots;
-        const greenKey = snapshots.learned_weight_Greenlight ? "learned_weight_Greenlight" : "fixed_weight_Greenlight";
+        const local = (backtest.equity_curve || fallback.backtest.equity_curve || [])
+          .map((row) => ({ date: row.date, equity: Number(row.equity || 0) }));
+        const labels = local.map((row) => row.date);
         const keys = [
-          [greenKey, "Greenlight", "#1f3a5f", 2.6],
           ["SPY_buy_hold", "SPY", "#767a82", 1.5, [6, 5]],
           ["QQQ_buy_hold", "QQQ", "#b45309", 1.5],
           ["VIX_20_15_strategy", "VIX 20/15", "#9b2c1f", 1.4, [3, 5]],
@@ -847,14 +858,18 @@ decision -> ledger -> benchmarks -> watermarked review</div>
           ["dynamic_ETF_momentum_rotation", "ETF rotation", "#256f8f", 1.6],
           ["agent_led_experimental", "Agent track", "#5f4b8b", 1.3, [8, 5]]
         ].filter(([key]) => snapshots[key]?.length);
-        const labels = benchmarkLabels(snapshots, keys.map(([key]) => key));
-        const series = keys.map(([key, label, color, width, dash]) => ({
-          label,
-          color,
-          width,
-          dash,
-          values: alignSeries(labels, snapshots[key] || [])
-        }));
+        const series = [
+          { label: "Greenlight", color: "#1f3a5f", width: 2.7, values: denseSeries(labels, local) },
+          ...keys.map(([key, label, color, width, dash]) => ({
+            label,
+            color,
+            width,
+            dash,
+            values: denseSeries(labels, snapshots[key] || [])
+          })),
+        ];
+        const count = document.getElementById("gl-plot-count");
+        if (count) count.textContent = `${labels.length.toLocaleString("en-US")} daily points`;
         glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
         drawChartCanvas(document.getElementById("gl-equity"), labels, series);
         setupGlChartModal();
@@ -945,16 +960,26 @@ decision -> ledger -> benchmarks -> watermarked review</div>
         });
       }
 
-      function benchmarkLabels(snapshots, keys) {
-        const longest = keys
-          .map((key) => snapshots[key] || [])
-          .sort((a, b) => b.length - a.length)[0] || [];
-        return longest.map((row) => row.date);
-      }
-
-      function alignSeries(labels, rows) {
-        const map = new Map(rows.map((row) => [row.date, Number(row.equity || 0)]));
-        return labels.map((date) => map.get(date) ?? null);
+      function denseSeries(labels, rows) {
+        const points = (rows || [])
+          .map((row) => ({ date: row.date, time: Date.parse(`${row.date}T00:00:00Z`), value: Number(row.equity || 0) }))
+          .filter((row) => row.date && Number.isFinite(row.time) && Number.isFinite(row.value))
+          .sort((a, b) => a.time - b.time);
+        if (!points.length) return labels.map(() => null);
+        const exact = new Map(points.map((row) => [row.date, row.value]));
+        let idx = 0;
+        return labels.map((label) => {
+          if (exact.has(label)) return exact.get(label);
+          const time = Date.parse(`${label}T00:00:00Z`);
+          if (!Number.isFinite(time) || time < points[0].time) return null;
+          while (idx < points.length - 2 && points[idx + 1].time < time) idx += 1;
+          const prev = points[idx];
+          const next = points[idx + 1];
+          if (!next || time >= next.time) return prev.value;
+          const span = Math.max(next.time - prev.time, 1);
+          const t = (time - prev.time) / span;
+          return prev.value + (next.value - prev.value) * t;
+        });
       }
 
       function setupGlChartModal() {
@@ -1012,7 +1037,6 @@ decision -> ledger -> benchmarks -> watermarked review</div>
         renderAllocation(log);
         renderKpis(backtest, metrics);
         renderStatus(log);
-        renderVerdict(metrics);
         renderBenchmarks(metrics);
         renderLogs(logs);
         renderChart(backtest, metrics, snapshots);
