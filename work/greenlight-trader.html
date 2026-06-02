@@ -88,6 +88,7 @@
     }
     @media (min-width: 760px) {
       .gl-kpi.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .gl-kpi.summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .gl-kpi.six { grid-template-columns: repeat(6, minmax(0, 1fr)); }
     }
     .gl-tile {
@@ -277,6 +278,48 @@
     .gl-link:hover { border-color: var(--accent); color: var(--accent); }
     .gl-chart-shell { height: 330px; min-height: 260px; }
     .gl-chart-shell.large { height: 460px; }
+    .gl-chart-tooltip {
+      position: fixed;
+      z-index: 120;
+      display: none;
+      min-width: 190px;
+      max-width: 280px;
+      padding: 10px 12px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 14px 36px rgba(20, 22, 26, .16);
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+    .gl-chart-tooltip strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+    .gl-chart-tooltip div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .gl-chart-tooltip span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gl-chart-tooltip i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
     .gl-architecture-grid {
       display: grid;
       gap: 14px;
@@ -416,18 +459,17 @@
     </section>
 
     <section class="container" style="padding-top: 36px;">
-      <div class="gl-split two">
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-section-title">Replay result</div>
-            <div class="gl-kpi three" id="gl-result-kpis" style="margin-top: 14px;"></div>
+      <div class="panel">
+        <div class="gl-section">
+          <div class="gl-section-head">
+            <div class="gl-heading">
+              <div class="gl-section-title">Summary</div>
+              <h3>Replay result and learning window</h3>
+              <p class="gl-section-subtitle">Train through 2021, invest from 2022, and replay the same daily feedback loop used by paper mode.</p>
+            </div>
+            <span class="gl-pill">rolling 3-year window</span>
           </div>
-        </div>
-        <div class="panel">
-          <div class="gl-section">
-            <div class="gl-section-title">Learning loop</div>
-            <div class="gl-kpi three" id="gl-loop-kpis" style="margin-top: 14px;"></div>
-          </div>
+          <div class="gl-kpi summary" id="gl-summary-kpis"></div>
         </div>
       </div>
     </section>
@@ -781,21 +823,16 @@
         const green = greenMetric(metrics);
         const spy = metrics.metrics.SPY_buy_hold || {};
         const qqq = metrics.metrics.QQQ_buy_hold || {};
-        document.getElementById("gl-result-kpis").innerHTML = [
+        document.getElementById("gl-summary-kpis").innerHTML = [
           renderTile("CAGR", fmtPct(green.CAGR, 2, true), `SPY ${fmtPct(spy.CAGR, 2, true)}`, cls(green.CAGR)),
           renderTile("Sharpe", fmtNum(green.Sharpe), `QQQ ${fmtNum(qqq.Sharpe)}`),
           renderTile("Max drawdown", fmtPct(green.max_drawdown), "absolute", "num-neg"),
           renderTile("SPY return", fmtPct(spy.total_return, 2, true), "buy and hold", cls(spy.total_return)),
           renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
-          renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY))
-        ].join("");
-        document.getElementById("gl-loop-kpis").innerHTML = [
+          renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
           renderTile("Initial train", `${backtest.train_start} to ${backtest.initial_train_end}`, "pre-replay"),
           renderTile("Rolling window", `${backtest.rolling_training?.window_years || 3} years`, `${backtest.rolling_training?.updates || 0} updates`),
-          renderTile("Learning rows", fmtNum(backtest.learning_row_pool?.total, 0), "matured labels only"),
-          renderTile("DeepSeek calls", String(backtest.ai_provider_call_count || 0), `${backtest.ai_memo_frequency || "monthly"} review`),
-          renderTile("AI reviews", fmtNum(backtest.ai_review_count, 0), "watermarked"),
-          renderTile("No lookahead", "enforced", "labels mature before replay", "num-pos")
+          renderTile("Replay start", backtest.invest_start || "n/a", "daily loop begins")
         ].join("");
       }
 
@@ -871,12 +908,15 @@
         const count = document.getElementById("gl-plot-count");
         if (count) count.textContent = `${labels.length.toLocaleString("en-US")} daily points`;
         glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
-        drawChartCanvas(document.getElementById("gl-equity"), labels, series);
+        const canvas = document.getElementById("gl-equity");
+        drawChartCanvas(canvas, labels, series);
+        attachGlChartHover(canvas);
         setupGlChartModal();
       }
 
       function drawChartCanvas(canvas, labels, series) {
         if (!canvas || !labels.length) return;
+        canvas.__glChartData = { labels, series };
         const shell = canvas.parentElement;
         const width = Math.max(shell.clientWidth, 320);
         const height = Math.max(shell.clientHeight, 220);
@@ -890,16 +930,21 @@
         ctx.clearRect(0, 0, width, height);
 
         const all = series.flatMap((item) => item.values).filter((value) => Number.isFinite(value));
-        if (!all.length) return;
+        if (!all.length) {
+          canvas.__glChartLayout = null;
+          return;
+        }
         const min = Math.min(...all);
         const max = Math.max(...all);
+        const span = Math.max(max - min, 1);
         const pad = { top: 16, right: 16, bottom: 72, left: 64 };
         const plotW = width - pad.left - pad.right;
         const plotH = height - pad.top - pad.bottom;
-        const yMin = min - (max - min) * .08;
-        const yMax = max + (max - min) * .08;
+        const yMin = min - span * .08;
+        const yMax = max + span * .08;
         const x = (i) => pad.left + (i / Math.max(labels.length - 1, 1)) * plotW;
         const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+        canvas.__glChartLayout = { pad, plotW, plotH, width, height };
 
         ctx.strokeStyle = "#e6e1d3";
         ctx.lineWidth = 1;
@@ -960,6 +1005,72 @@
         });
       }
 
+      function attachGlChartHover(canvas) {
+        if (!canvas || canvas.dataset.glChartHoverReady === "true") return;
+        canvas.dataset.glChartHoverReady = "true";
+        canvas.addEventListener("mousemove", (event) => showGlChartTooltip(canvas, event));
+        canvas.addEventListener("mouseleave", hideGlChartTooltip);
+      }
+
+      function getGlChartTooltip() {
+        let tooltip = document.querySelector(".gl-chart-tooltip");
+        if (!tooltip) {
+          tooltip = document.createElement("div");
+          tooltip.className = "gl-chart-tooltip";
+          document.body.appendChild(tooltip);
+        }
+        return tooltip;
+      }
+
+      function showGlChartTooltip(canvas, event) {
+        const chart = canvas.__glChartData;
+        const layout = canvas.__glChartLayout;
+        if (!chart?.labels?.length || !layout) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const localX = Math.min(Math.max(event.clientX - rect.left, layout.pad.left), layout.width - layout.pad.right);
+        const ratio = (localX - layout.pad.left) / Math.max(layout.plotW, 1);
+        const idx = Math.min(chart.labels.length - 1, Math.max(0, Math.round(ratio * (chart.labels.length - 1))));
+        const rows = chart.series
+          .map((item) => ({ label: item.label, color: item.color, value: item.values?.[idx] }))
+          .filter((row) => Number.isFinite(row.value));
+
+        if (!rows.length) {
+          hideGlChartTooltip();
+          return;
+        }
+
+        const tooltip = getGlChartTooltip();
+        tooltip.innerHTML = `
+          <strong>${esc(chart.labels[idx])}</strong>
+          ${rows
+            .map(
+              (row) => `<div><span><i style="background:${row.color}"></i>${esc(row.label)}</span><span>${fmtUsd(row.value, 0)}</span></div>`
+            )
+            .join("")}
+        `;
+        tooltip.style.display = "block";
+        positionGlChartTooltip(tooltip, event);
+      }
+
+      function positionGlChartTooltip(tooltip, event) {
+        const margin = 12;
+        let left = event.clientX + 14;
+        let top = event.clientY + 14;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+        const box = tooltip.getBoundingClientRect();
+        if (box.right > window.innerWidth - margin) left = event.clientX - box.width - 14;
+        if (box.bottom > window.innerHeight - margin) top = event.clientY - box.height - 14;
+        tooltip.style.left = `${Math.max(margin, left)}px`;
+        tooltip.style.top = `${Math.max(margin, top)}px`;
+      }
+
+      function hideGlChartTooltip() {
+        const tooltip = document.querySelector(".gl-chart-tooltip");
+        if (tooltip) tooltip.style.display = "none";
+      }
+
       function denseSeries(labels, rows) {
         const points = (rows || [])
           .map((row) => ({ date: row.date, time: Date.parse(`${row.date}T00:00:00Z`), value: Number(row.equity || 0) }))
@@ -990,16 +1101,21 @@
         const modalCanvas = document.getElementById("gl-chart-modal-canvas");
         const modalTitle = document.getElementById("gl-chart-modal-title");
         if (!modal || !close || !modalCanvas || !modalTitle) return;
+        let openChart = null;
 
         document.querySelectorAll("[data-gl-expand-chart]").forEach((button) => {
           button.addEventListener("click", () => {
             const chart = glChartStore.get(button.getAttribute("data-gl-expand-chart"));
             if (!chart) return;
+            openChart = chart;
             modalTitle.textContent = chart.title;
             modal.classList.add("is-open");
             modal.setAttribute("aria-hidden", "false");
             document.body.classList.add("gl-modal-open");
-            requestAnimationFrame(() => drawChartCanvas(modalCanvas, chart.labels, chart.series));
+            requestAnimationFrame(() => {
+              drawChartCanvas(modalCanvas, chart.labels, chart.series);
+              attachGlChartHover(modalCanvas);
+            });
           });
         });
 
@@ -1007,6 +1123,7 @@
           modal.classList.remove("is-open");
           modal.setAttribute("aria-hidden", "true");
           document.body.classList.remove("gl-modal-open");
+          hideGlChartTooltip();
         };
         close.addEventListener("click", closeModal);
         modal.addEventListener("click", (event) => {
@@ -1024,8 +1141,7 @@
               drawChartCanvas(document.getElementById(canvasId), chart.labels, chart.series);
             });
             if (modal.classList.contains("is-open")) {
-              const chart = glChartStore.get("gl-equity");
-              if (chart) drawChartCanvas(modalCanvas, chart.labels, chart.series);
+              if (openChart) drawChartCanvas(modalCanvas, openChart.labels, openChart.series);
             }
           }, 120);
         });
