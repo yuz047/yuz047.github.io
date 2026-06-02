@@ -18,10 +18,15 @@
     .gl-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
     .gl-section-head {
       display: flex;
-      align-items: baseline;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 12px;
+    }
+    .gl-heading {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
     }
     .gl-section-title {
       font-family: var(--mono);
@@ -29,6 +34,26 @@
       letter-spacing: .14em;
       text-transform: uppercase;
       color: var(--accent);
+    }
+    .gl-heading h3 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .gl-section-subtitle {
+      margin: 0;
+      max-width: 62ch;
+      color: var(--ink-soft);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+    .gl-section-head .gl-pill {
+      flex-shrink: 0;
+      margin-top: 2px;
+      text-align: right;
     }
     .gl-split { display: grid; gap: 18px; }
     @media (min-width: 920px) {
@@ -228,7 +253,11 @@
       color: var(--ink);
     }
     .gl-link:hover { border-color: var(--accent); color: var(--accent); }
-    .gl-chart-shell { height: 260px; }
+    .gl-chart-shell { height: 330px; }
+    @media (max-width: 680px) {
+      .gl-section-head { display: grid; }
+      .gl-section-head .gl-pill { text-align: left; }
+    }
   </style>
 </head>
 <body class="gl-page">
@@ -321,11 +350,19 @@
           <div id="gl-status" class="gl-status"></div>
           <div class="gl-split two" style="margin-top: 18px;">
             <div>
-              <div class="gl-section-title" style="margin-bottom: 12px;">Performance curve</div>
+              <div class="gl-heading" style="margin-bottom: 12px;">
+                <div class="gl-section-title">Benchmark comparison</div>
+                <h3>Replay equity curves</h3>
+                <p class="gl-section-subtitle">Greenlight, SPY, QQQ, VIX, 200DMA, ETF rotation, and agent track plotted from the repository snapshots.</p>
+              </div>
               <div class="gl-chart-shell"><canvas id="gl-equity"></canvas></div>
             </div>
             <div>
-              <div class="gl-section-title" style="margin-bottom: 12px;">Benchmark verdict</div>
+              <div class="gl-heading" style="margin-bottom: 12px;">
+                <div class="gl-section-title">Benchmark verdict</div>
+                <h3>Pass/fail checks</h3>
+                <p class="gl-section-subtitle">Simple strategy comparisons stay visible beside the plotted results.</p>
+              </div>
               <div class="gl-kpi three" id="gl-verdict-kpis"></div>
             </div>
           </div>
@@ -335,7 +372,11 @@
       <div class="panel" style="margin-top: 14px;">
         <div class="gl-section">
           <div class="gl-section-head">
-            <div class="gl-section-title">Benchmark metrics</div>
+            <div class="gl-heading">
+              <div class="gl-section-title">Benchmark metrics</div>
+              <h3>Greenlight vs alternatives</h3>
+              <p class="gl-section-subtitle">Return, drawdown, and alpha summary for each comparison strategy.</p>
+            </div>
             <span class="gl-pill">simple strategies visible</span>
           </div>
           <div class="gl-table-wrap">
@@ -545,17 +586,39 @@ decision -> ledger -> benchmarks -> watermarked review</div>
       async function loadData() {
         try {
           const base = await resolveSource();
-          const [backtest, metrics, logs] = await Promise.all([
+          const [backtest, metrics, logs, snapshots] = await Promise.all([
             fetchJson(base, "backtest_results"),
             fetchJson(base, "benchmark_metrics"),
-            fetchJson(base, "backtest_decision_logs")
+            fetchJson(base, "backtest_decision_logs"),
+            fetchJson(base, "benchmark_snapshots")
           ]);
           document.getElementById("gl-source-pill").textContent = "data current";
-          return { backtest, metrics, logs };
+          return { backtest, metrics, logs, snapshots };
         } catch (error) {
           document.getElementById("gl-source-pill").textContent = "embedded result";
-          return { backtest: fallback.backtest, metrics: fallback.metrics, logs: fallback.logs };
+          return {
+            backtest: fallback.backtest,
+            metrics: fallback.metrics,
+            logs: fallback.logs,
+            snapshots: buildFallbackSnapshots(fallback.backtest, fallback.metrics)
+          };
         }
+      }
+
+      function buildFallbackSnapshots(backtest, metrics) {
+        const curve = backtest.equity_curve || [];
+        const len = Math.max(curve.length - 1, 1);
+        const snapshots = {};
+        Object.entries(metrics.metrics || {}).forEach(([name, row]) => {
+          snapshots[name] = curve.map((point, idx) => ({
+            date: point.date,
+            equity: 5000 * (1 + Number(row.total_return || 0) * (idx / len))
+          }));
+        });
+        snapshots.learned_weight_Greenlight = curve.map((point) => ({ date: point.date, equity: point.equity }));
+        snapshots.fixed_weight_Greenlight = snapshots.fixed_weight_Greenlight || snapshots.learned_weight_Greenlight;
+        snapshots.agent_led_experimental = snapshots.agent_led_experimental || snapshots.learned_weight_Greenlight;
+        return { snapshots };
       }
 
       function greenMetric(metrics) {
@@ -678,7 +741,7 @@ decision -> ledger -> benchmarks -> watermarked review</div>
           </tr>`).join("");
       }
 
-      function renderChart(backtest, metrics) {
+      function renderChart(backtest, metrics, benchmarkSnapshots) {
         const canvas = document.getElementById("gl-equity");
         const shell = canvas.parentElement;
         const width = Math.max(shell.clientWidth, 320);
@@ -692,21 +755,35 @@ decision -> ledger -> benchmarks -> watermarked review</div>
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, width, height);
 
-        const curve = backtest.equity_curve || fallback.backtest.equity_curve;
-        const spyReturn = metrics.metrics?.SPY_buy_hold?.total_return || 0.588579;
-        const spy = curve.map((point, idx) => ({
-          date: point.date,
-          equity: 5000 * (1 + spyReturn * (idx / Math.max(curve.length - 1, 1)))
+        const snapshots = benchmarkSnapshots?.snapshots || buildFallbackSnapshots(backtest, metrics).snapshots;
+        const greenKey = snapshots.learned_weight_Greenlight ? "learned_weight_Greenlight" : "fixed_weight_Greenlight";
+        const keys = [
+          [greenKey, "Greenlight", "#1f3a5f", 2.6],
+          ["SPY_buy_hold", "SPY", "#767a82", 1.5, [6, 5]],
+          ["QQQ_buy_hold", "QQQ", "#b45309", 1.5],
+          ["VIX_20_15_strategy", "VIX 20/15", "#9b2c1f", 1.4, [3, 5]],
+          ["SPY_200DMA_trend", "SPY 200DMA", "#2f6a4a", 1.5],
+          ["dynamic_ETF_momentum_rotation", "ETF rotation", "#256f8f", 1.6],
+          ["agent_led_experimental", "Agent track", "#5f4b8b", 1.3, [8, 5]]
+        ].filter(([key]) => snapshots[key]?.length);
+        const labels = benchmarkLabels(snapshots, keys.map(([key]) => key));
+        const series = keys.map(([key, label, color, width, dash]) => ({
+          label,
+          color,
+          width,
+          dash,
+          values: alignSeries(labels, snapshots[key] || [])
         }));
-        const all = curve.concat(spy).map(x => x.equity);
+        const all = series.flatMap((item) => item.values).filter((value) => Number.isFinite(value));
+        if (!all.length) return;
         const min = Math.min(...all);
         const max = Math.max(...all);
-        const pad = { top: 16, right: 16, bottom: 42, left: 64 };
+        const pad = { top: 16, right: 16, bottom: 72, left: 64 };
         const plotW = width - pad.left - pad.right;
         const plotH = height - pad.top - pad.bottom;
         const yMin = min - (max - min) * .08;
         const yMax = max + (max - min) * .08;
-        const x = (i) => pad.left + (i / Math.max(curve.length - 1, 1)) * plotW;
+        const x = (i) => pad.left + (i / Math.max(labels.length - 1, 1)) * plotW;
         const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin)) * plotH;
 
         ctx.strokeStyle = "#e6e1d3";
@@ -723,27 +800,64 @@ decision -> ledger -> benchmarks -> watermarked review</div>
           ctx.fillText(fmtUsd(value, 0), 8, py + 4);
         }
 
-        function line(rows, color, dash) {
+        for (let i = 0; i < 5; i += 1) {
+          const idx = Math.round((labels.length - 1) * (i / 4));
+          ctx.fillText(String(labels[idx] || "").slice(0, 7), x(idx) - 22, height - pad.bottom + 28);
+        }
+
+        function line(values, color, width, dash) {
           ctx.beginPath();
           ctx.strokeStyle = color;
-          ctx.lineWidth = 2;
+          ctx.lineWidth = width;
           ctx.setLineDash(dash || []);
-          rows.forEach((point, i) => {
-            if (i === 0) ctx.moveTo(x(i), y(point.equity));
-            else ctx.lineTo(x(i), y(point.equity));
+          let started = false;
+          values.forEach((value, i) => {
+            if (!Number.isFinite(value)) return;
+            if (!started) {
+              ctx.moveTo(x(i), y(value));
+              started = true;
+            } else {
+              ctx.lineTo(x(i), y(value));
+            }
           });
           ctx.stroke();
           ctx.setLineDash([]);
         }
-        line(spy, "#767a82", [6, 5]);
-        line(curve, "#1f3a5f");
+        series.forEach((item) => line(item.values, item.color, item.width, item.dash));
 
-        ctx.fillStyle = "#45494f";
-        ctx.fillText("Greenlight", pad.left, height - 12);
-        ctx.fillText("SPY", pad.left + 120, height - 12);
+        let legendX = pad.left;
+        let legendY = height - 34;
+        series.forEach((item) => {
+          const itemWidth = Math.max(96, ctx.measureText(item.label).width + 34);
+          if (legendX + itemWidth > width - pad.right && legendX > pad.left) {
+            legendX = pad.left;
+            legendY += 17;
+          }
+          ctx.strokeStyle = item.color;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(legendX, legendY);
+          ctx.lineTo(legendX + 20, legendY);
+          ctx.stroke();
+          ctx.fillStyle = "#45494f";
+          ctx.fillText(item.label, legendX + 26, legendY + 4);
+          legendX += itemWidth + 12;
+        });
       }
 
-      loadData().then(({ backtest, metrics, logs }) => {
+      function benchmarkLabels(snapshots, keys) {
+        const longest = keys
+          .map((key) => snapshots[key] || [])
+          .sort((a, b) => b.length - a.length)[0] || [];
+        return longest.map((row) => row.date);
+      }
+
+      function alignSeries(labels, rows) {
+        const map = new Map(rows.map((row) => [row.date, Number(row.equity || 0)]));
+        return labels.map((date) => map.get(date) ?? null);
+      }
+
+      loadData().then(({ backtest, metrics, logs, snapshots }) => {
         const log = latestLog(logs);
         renderReadout(backtest, metrics, log);
         renderAllocation(log);
@@ -752,7 +866,7 @@ decision -> ledger -> benchmarks -> watermarked review</div>
         renderVerdict(metrics);
         renderBenchmarks(metrics);
         renderLogs(logs);
-        renderChart(backtest, metrics);
+        renderChart(backtest, metrics, snapshots);
       });
     })();
   </script>
