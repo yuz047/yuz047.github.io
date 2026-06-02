@@ -14,10 +14,12 @@
   <style>
     .gl-page .container.wide { max-width: var(--container-wide); }
     .gl-page .panel { padding: 22px 24px; }
+    .gl-panel-stack { display: grid; gap: 14px; margin-top: 14px; }
     .gl-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--rule); }
     .gl-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
     .gl-section-head {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: flex-start;
       justify-content: space-between;
       gap: 16px;
@@ -55,6 +57,26 @@
       margin-top: 2px;
       text-align: right;
     }
+    .gl-chart-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .gl-chart-button {
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .gl-chart-button:hover { border-color: var(--accent); color: var(--accent); }
     .gl-split { display: grid; gap: 18px; }
     @media (min-width: 920px) {
       .gl-split.two { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
@@ -253,10 +275,53 @@
       color: var(--ink);
     }
     .gl-link:hover { border-color: var(--accent); color: var(--accent); }
-    .gl-chart-shell { height: 330px; }
+    .gl-chart-shell { height: 330px; min-height: 260px; }
+    .gl-chart-shell.large { height: 460px; }
+    body.gl-modal-open { overflow: hidden; }
+    .gl-chart-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      padding: 28px;
+      background: rgba(20, 22, 26, .58);
+    }
+    .gl-chart-modal.is-open {
+      display: grid;
+      place-items: center;
+    }
+    .gl-chart-modal-panel {
+      width: min(1180px, 100%);
+      max-height: calc(100vh - 56px);
+      overflow: hidden;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-md);
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(20, 22, 26, .24);
+    }
+    .gl-chart-modal-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 16px;
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .gl-chart-modal-head h2 {
+      margin: 4px 0 0;
+      font-family: var(--display);
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    .gl-chart-shell.modal { height: min(72vh, 720px); padding: 4px 10px 12px; }
     @media (max-width: 680px) {
-      .gl-section-head { display: grid; }
+      .gl-section-head { grid-template-columns: 1fr; }
       .gl-section-head .gl-pill { text-align: left; }
+      .gl-chart-actions { justify-content: flex-start; flex-wrap: wrap; }
+      .gl-chart-shell,
+      .gl-chart-shell.large { height: 320px; }
+      .gl-chart-modal { padding: 12px; }
+      .gl-chart-shell.modal { height: 68vh; }
     }
   </style>
 </head>
@@ -345,34 +410,46 @@
         </p>
       </div>
 
-      <div class="panel" style="margin-top: 14px;">
+      <div class="gl-panel-stack">
+      <div class="panel">
         <div class="gl-section">
           <div id="gl-status" class="gl-status"></div>
-          <div class="gl-split two" style="margin-top: 18px;">
-            <div>
-              <div class="gl-heading" style="margin-bottom: 12px;">
-                <div class="gl-section-title">Benchmark comparison</div>
-                <h3>Replay equity curves</h3>
-                <p class="gl-section-subtitle">Greenlight, SPY, QQQ, VIX, 200DMA, ETF rotation, and agent track plotted from the repository snapshots.</p>
-              </div>
-              <div class="gl-chart-shell"><canvas id="gl-equity"></canvas></div>
-            </div>
-            <div>
-              <div class="gl-heading" style="margin-bottom: 12px;">
-                <div class="gl-section-title">Benchmark verdict</div>
-                <h3>Pass/fail checks</h3>
-                <p class="gl-section-subtitle">Simple strategy comparisons stay visible beside the plotted results.</p>
-              </div>
-              <div class="gl-kpi three" id="gl-verdict-kpis"></div>
-            </div>
-          </div>
         </div>
       </div>
 
-      <div class="panel" style="margin-top: 14px;">
+      <div class="panel">
         <div class="gl-section">
           <div class="gl-section-head">
             <div class="gl-heading">
+              <div class="gl-section-title">Benchmark comparison</div>
+              <h3>Replay equity curves</h3>
+              <p class="gl-section-subtitle">Greenlight, SPY, QQQ, VIX, 200DMA, ETF rotation, and agent track plotted from repository snapshots.</p>
+            </div>
+            <div class="gl-chart-actions">
+              <span class="gl-pill">2022-2026 replay</span>
+              <button class="gl-chart-button" type="button" data-gl-expand-chart="gl-equity">Expand</button>
+            </div>
+          </div>
+          <div class="gl-chart-shell large"><canvas id="gl-equity"></canvas></div>
+        </div>
+      </div>
+
+      <div class="gl-split two">
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-heading" style="margin-bottom: 12px;">
+              <div class="gl-section-title">Benchmark verdict</div>
+              <h3>Pass/fail checks</h3>
+              <p class="gl-section-subtitle">Simple strategy comparisons stay visible beside the plotted results.</p>
+            </div>
+            <div class="gl-kpi three" id="gl-verdict-kpis"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="gl-section">
+            <div class="gl-section-head">
+              <div class="gl-heading">
               <div class="gl-section-title">Benchmark metrics</div>
               <h3>Greenlight vs alternatives</h3>
               <p class="gl-section-subtitle">Return, drawdown, and alpha summary for each comparison strategy.</p>
@@ -395,8 +472,9 @@
           </div>
         </div>
       </div>
+      </div>
 
-      <div class="panel" style="margin-top: 14px;">
+      <div class="panel">
         <div class="gl-section">
           <div class="gl-section-head">
             <div class="gl-section-title">Recent decision logs</div>
@@ -419,6 +497,7 @@
             </table>
           </div>
         </div>
+      </div>
       </div>
     </section>
 
@@ -481,11 +560,26 @@ decision -> ledger -> benchmarks -> watermarked review</div>
     </div>
   </footer>
 
+  <div class="gl-chart-modal" id="gl-chart-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gl-chart-modal-title">
+    <div class="gl-chart-modal-panel">
+      <div class="gl-chart-modal-head">
+        <div>
+          <div class="gl-section-title">Expanded plot</div>
+          <h2 id="gl-chart-modal-title">Chart</h2>
+        </div>
+        <button class="gl-chart-button" type="button" id="gl-chart-modal-close">Close</button>
+      </div>
+      <div class="gl-chart-shell modal"><canvas id="gl-chart-modal-canvas"></canvas></div>
+    </div>
+  </div>
+
   <script>
     (function () {
       const REPO_API = "https://api.github.com/repos/yuz047/greenlight-trader/commits/main";
       const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader";
       const colors = ["#1f3a5f", "#256f8f", "#2f6a4a", "#8b6f2f", "#9b2c1f", "#5f4b8b", "#767a82", "#b45309", "#0f766e"];
+      const glChartStore = new Map();
+      let glChartModalReady = false;
 
       const fallback = {
         backtest: {
@@ -742,19 +836,6 @@ decision -> ledger -> benchmarks -> watermarked review</div>
       }
 
       function renderChart(backtest, metrics, benchmarkSnapshots) {
-        const canvas = document.getElementById("gl-equity");
-        const shell = canvas.parentElement;
-        const width = Math.max(shell.clientWidth, 320);
-        const height = Math.max(shell.clientHeight, 220);
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        canvas.style.width = `${width}px`;
-        canvas.style.height = `${height}px`;
-        const ctx = canvas.getContext("2d");
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, width, height);
-
         const snapshots = benchmarkSnapshots?.snapshots || buildFallbackSnapshots(backtest, metrics).snapshots;
         const greenKey = snapshots.learned_weight_Greenlight ? "learned_weight_Greenlight" : "fixed_weight_Greenlight";
         const keys = [
@@ -774,6 +855,25 @@ decision -> ledger -> benchmarks -> watermarked review</div>
           dash,
           values: alignSeries(labels, snapshots[key] || [])
         }));
+        glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
+        drawChartCanvas(document.getElementById("gl-equity"), labels, series);
+        setupGlChartModal();
+      }
+
+      function drawChartCanvas(canvas, labels, series) {
+        if (!canvas || !labels.length) return;
+        const shell = canvas.parentElement;
+        const width = Math.max(shell.clientWidth, 320);
+        const height = Math.max(shell.clientHeight, 220);
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+
         const all = series.flatMap((item) => item.values).filter((value) => Number.isFinite(value));
         if (!all.length) return;
         const min = Math.min(...all);
@@ -855,6 +955,55 @@ decision -> ledger -> benchmarks -> watermarked review</div>
       function alignSeries(labels, rows) {
         const map = new Map(rows.map((row) => [row.date, Number(row.equity || 0)]));
         return labels.map((date) => map.get(date) ?? null);
+      }
+
+      function setupGlChartModal() {
+        if (glChartModalReady) return;
+        glChartModalReady = true;
+        const modal = document.getElementById("gl-chart-modal");
+        const close = document.getElementById("gl-chart-modal-close");
+        const modalCanvas = document.getElementById("gl-chart-modal-canvas");
+        const modalTitle = document.getElementById("gl-chart-modal-title");
+        if (!modal || !close || !modalCanvas || !modalTitle) return;
+
+        document.querySelectorAll("[data-gl-expand-chart]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const chart = glChartStore.get(button.getAttribute("data-gl-expand-chart"));
+            if (!chart) return;
+            modalTitle.textContent = chart.title;
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("gl-modal-open");
+            requestAnimationFrame(() => drawChartCanvas(modalCanvas, chart.labels, chart.series));
+          });
+        });
+
+        const closeModal = () => {
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("gl-modal-open");
+        };
+        close.addEventListener("click", closeModal);
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeModal();
+        });
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+        });
+
+        let resizeTimer;
+        window.addEventListener("resize", () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(() => {
+            glChartStore.forEach((chart, canvasId) => {
+              drawChartCanvas(document.getElementById(canvasId), chart.labels, chart.series);
+            });
+            if (modal.classList.contains("is-open")) {
+              const chart = glChartStore.get("gl-equity");
+              if (chart) drawChartCanvas(modalCanvas, chart.labels, chart.series);
+            }
+          }, 120);
+        });
       }
 
       loadData().then(({ backtest, metrics, logs, snapshots }) => {
