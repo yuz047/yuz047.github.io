@@ -14,6 +14,7 @@
   <style>
     .gl-page .container.wide { max-width: var(--container-wide); }
     .gl-page .panel { padding: 22px 24px; }
+    .gl-page main > .container.wide > .topic-head { padding: 0 24px; }
     .gl-panel-stack { display: grid; gap: 14px; margin-top: 14px; }
     .gl-section { padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--rule); }
     .gl-section:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
@@ -226,6 +227,31 @@
       padding: 10px 14px;
       border-bottom: 1px solid var(--rule);
     }
+    table.gl th.right { text-align: right; }
+    table.gl th.right .gl-sort-button { justify-content: flex-end; text-align: right; }
+    .gl-sort-button {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      text-align: left;
+      text-transform: inherit;
+      cursor: pointer;
+    }
+    .gl-sort-button:hover { color: var(--accent); }
+    .gl-sort-indicator {
+      min-width: 10px;
+      color: var(--accent);
+      font-size: 9px;
+      line-height: 1;
+    }
     table.gl td {
       padding: 11px 14px;
       border-bottom: 1px solid var(--rule);
@@ -280,8 +306,41 @@
       color: var(--ink);
     }
     .gl-link:hover { border-color: var(--accent); color: var(--accent); }
-    .gl-chart-shell { height: 330px; min-height: 260px; }
+    .gl-chart-shell { position: relative; height: 330px; min-height: 260px; }
     .gl-chart-shell.large { height: 460px; }
+    .gl-chart-legend {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px 12px;
+      flex-wrap: wrap;
+      pointer-events: auto;
+    }
+    .gl-chart-legend-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 18px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .gl-chart-legend-button:hover { color: var(--accent); }
+    .gl-chart-legend-button.is-hidden { color: var(--ink-mute); opacity: .45; }
+    .gl-chart-legend-line {
+      width: 20px;
+      height: 2px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
     .gl-chart-tooltip {
       position: fixed;
       z-index: 120;
@@ -454,7 +513,7 @@
       </div>
     </section>
 
-    <section class="container" style="padding-top: 36px;">
+    <section class="container wide" style="padding-top: 36px;">
       <div class="topic-head">
         <div class="eyebrow">Core idea</div>
         <h2>A trading agent that does less, but records more.</h2>
@@ -468,7 +527,7 @@
       </div>
     </section>
 
-    <section class="container" style="padding-top: 36px;">
+    <section class="container wide" style="padding-top: 36px;">
       <div class="panel">
         <div class="gl-section">
           <div class="gl-section-head">
@@ -610,7 +669,7 @@
       </div>
     </section>
 
-    <section class="container" style="padding-top: 48px; padding-bottom: 36px;">
+    <section class="container wide" style="padding-top: 48px; padding-bottom: 36px;">
       <div class="topic-head">
         <div class="eyebrow">Disclosure</div>
         <h2>Research dashboard, not investment advice.</h2>
@@ -805,6 +864,65 @@
         return `<div class="gl-tile"><div class="l">${esc(label)}</div><div class="v ${valueClass || ""}">${esc(value)}</div><div class="s">${esc(sub || "")}</div></div>`;
       }
 
+      function enhanceGlTables() {
+        document.querySelectorAll("table.gl").forEach((table) => {
+          const headers = [...(table.tHead?.rows[0]?.cells || [])];
+          headers.forEach((th, idx) => {
+            const rows = [...(table.tBodies[0]?.rows || [])].filter((row) => row.cells.length > 1);
+            const cells = rows.map((row) => row.cells[idx]).filter(Boolean);
+            const rightAligned = cells.length > 0 && cells.every((cell) => cell.classList.contains("right"));
+            th.classList.toggle("right", rightAligned || th.classList.contains("right"));
+            if (!th.dataset.label) th.dataset.label = th.textContent.trim();
+            th.innerHTML = `<button class="gl-sort-button" type="button"><span>${esc(th.dataset.label)}</span><span class="gl-sort-indicator" aria-hidden="true"></span></button>`;
+            th.querySelector(".gl-sort-button").addEventListener("click", () => sortGlTable(table, idx));
+          });
+        });
+      }
+
+      function sortGlTable(table, columnIdx) {
+        const tbody = table.tBodies[0];
+        const rows = [...(tbody?.rows || [])].filter((row) => row.cells.length > 1);
+        if (!tbody || rows.length < 2) return;
+        const previousColumn = table.dataset.sortColumn;
+        const previousDirection = table.dataset.sortDirection || "asc";
+        const nextDirection = previousColumn === String(columnIdx) && previousDirection === "asc" ? "desc" : "asc";
+        table.dataset.sortColumn = String(columnIdx);
+        table.dataset.sortDirection = nextDirection;
+
+        rows
+          .map((row, originalIdx) => ({ row, originalIdx, value: sortableGlValue(row.cells[columnIdx]) }))
+          .sort((a, b) => compareGlValues(a, b, nextDirection))
+          .forEach(({ row }) => tbody.appendChild(row));
+
+        [...table.tHead.rows[0].cells].forEach((th, idx) => {
+          const active = idx === columnIdx;
+          th.setAttribute("aria-sort", active ? (nextDirection === "asc" ? "ascending" : "descending") : "none");
+          const indicator = th.querySelector(".gl-sort-indicator");
+          if (indicator) indicator.textContent = active ? (nextDirection === "asc" ? "▲" : "▼") : "";
+        });
+      }
+
+      function sortableGlValue(cell) {
+        const raw = (cell?.textContent || "").trim();
+        if (!raw) return { type: "empty", value: "" };
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return { type: "number", value: Date.parse(`${raw}T00:00:00Z`) };
+        const numeric = Number(raw.replace(/[$,%+,]/g, ""));
+        if (Number.isFinite(numeric) && /[0-9]/.test(raw)) return { type: "number", value: numeric };
+        return { type: "text", value: raw.toLowerCase() };
+      }
+
+      function compareGlValues(a, b, direction) {
+        const dir = direction === "asc" ? 1 : -1;
+        if (a.value.type === "empty" && b.value.type !== "empty") return 1;
+        if (b.value.type === "empty" && a.value.type !== "empty") return -1;
+        if (a.value.type === "number" && b.value.type === "number") {
+          const diff = a.value.value - b.value.value;
+          return diff === 0 ? a.originalIdx - b.originalIdx : diff * dir;
+        }
+        const diff = String(a.value.value).localeCompare(String(b.value.value));
+        return diff === 0 ? a.originalIdx - b.originalIdx : diff * dir;
+      }
+
       function renderReadout(backtest, metrics, log) {
         const green = greenMetric(metrics);
         const finalEquity = (backtest.equity_curve || []).at(-1)?.equity || 0;
@@ -840,7 +958,7 @@
           renderTile("SPY return", fmtPct(spy.total_return, 2, true), "buy and hold", cls(spy.total_return)),
           renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
           renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
-          renderTile("Initial train", `${backtest.train_start} to ${backtest.initial_train_end}`, "pre-replay"),
+          renderTile("Initial train", `${backtest.train_start} ~ ${backtest.initial_train_end}`, "pre-replay"),
           renderTile("Rolling window", `${backtest.rolling_training?.window_years || 3} years`, `${backtest.rolling_training?.updates || 0} updates`),
           renderTile("Replay start", backtest.invest_start || "n/a", "daily loop begins")
         ].join("");
@@ -920,6 +1038,7 @@
         glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
         const canvas = document.getElementById("gl-equity");
         drawChartCanvas(canvas, labels, series);
+        renderGlChartLegendControls(canvas, glChartStore.get("gl-equity"));
         attachGlChartHover(canvas);
         setupGlChartModal();
       }
@@ -939,7 +1058,8 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, width, height);
 
-        const all = series.flatMap((item) => item.values).filter((value) => Number.isFinite(value));
+        const visibleSeries = activeGlSeries(series);
+        const all = visibleSeries.flatMap((item) => item.values).filter((value) => Number.isFinite(value));
         if (!all.length) {
           canvas.__glChartLayout = null;
           return;
@@ -993,33 +1113,23 @@
           ctx.stroke();
           ctx.setLineDash([]);
         }
-        series.forEach((item) => line(item.values, item.color, item.width, item.dash));
+        visibleSeries.forEach((item) => line(item.values, item.color, item.width, item.dash));
+        canvas.__glChartLegendItems = [];
+      }
 
-        let legendX = pad.left;
-        let legendY = height - 34;
-        series.forEach((item) => {
-          const itemWidth = Math.max(96, ctx.measureText(item.label).width + 34);
-          if (legendX + itemWidth > width - pad.right && legendX > pad.left) {
-            legendX = pad.left;
-            legendY += 17;
-          }
-          ctx.strokeStyle = item.color;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(legendX, legendY);
-          ctx.lineTo(legendX + 20, legendY);
-          ctx.stroke();
-          ctx.fillStyle = "#45494f";
-          ctx.fillText(item.label, legendX + 26, legendY + 4);
-          legendX += itemWidth + 12;
-        });
+      function activeGlSeries(series) {
+        const visible = series.filter((item) => !item.hidden);
+        return visible.length ? visible : series;
       }
 
       function attachGlChartHover(canvas) {
         if (!canvas || canvas.dataset.glChartHoverReady === "true") return;
         canvas.dataset.glChartHoverReady = "true";
         canvas.addEventListener("mousemove", (event) => showGlChartTooltip(canvas, event));
-        canvas.addEventListener("mouseleave", hideGlChartTooltip);
+        canvas.addEventListener("mouseleave", () => {
+          canvas.style.cursor = "default";
+          hideGlChartTooltip();
+        });
       }
 
       function getGlChartTooltip() {
@@ -1036,12 +1146,14 @@
         const chart = canvas.__glChartData;
         const layout = canvas.__glChartLayout;
         if (!chart?.labels?.length || !layout) return;
+        canvas.style.cursor = "default";
 
         const rect = canvas.getBoundingClientRect();
         const localX = Math.min(Math.max(event.clientX - rect.left, layout.pad.left), layout.width - layout.pad.right);
         const ratio = (localX - layout.pad.left) / Math.max(layout.plotW, 1);
         const idx = Math.min(chart.labels.length - 1, Math.max(0, Math.round(ratio * (chart.labels.length - 1))));
         const rows = chart.series
+          .filter((item) => !item.hidden)
           .map((item) => ({ label: item.label, color: item.color, value: item.values?.[idx] }))
           .filter((row) => Number.isFinite(row.value));
 
@@ -1079,6 +1191,54 @@
       function hideGlChartTooltip() {
         const tooltip = document.querySelector(".gl-chart-tooltip");
         if (tooltip) tooltip.style.display = "none";
+      }
+
+      function renderGlChartLegendControls(canvas, chart) {
+        if (!canvas?.parentElement || !chart?.series?.length) return;
+        let legend = canvas.parentElement.querySelector(".gl-chart-legend");
+        if (!legend) {
+          legend = document.createElement("div");
+          legend.className = "gl-chart-legend";
+          canvas.parentElement.appendChild(legend);
+        }
+        legend.innerHTML = chart.series
+          .map((item, idx) => `
+            <button class="gl-chart-legend-button ${item.hidden ? "is-hidden" : ""}" type="button" data-series-idx="${idx}" aria-pressed="${item.hidden ? "false" : "true"}">
+              <span class="gl-chart-legend-line" style="background:${item.color}"></span>
+              <span>${esc(item.label)}</span>
+            </button>
+          `)
+          .join("");
+        legend.querySelectorAll(".gl-chart-legend-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            const item = chart.series[Number(button.dataset.seriesIdx)];
+            toggleGlChartSeries(chart, item, canvas);
+          });
+        });
+      }
+
+      function toggleGlChartSeries(chart, item, activeCanvas) {
+        if (!chart || !item) return;
+        const visibleCount = chart.series.filter((item) => !item.hidden).length;
+        if (!item.hidden && visibleCount <= 1) return;
+        item.hidden = !item.hidden;
+        hideGlChartTooltip();
+        redrawRelatedGlCharts(chart, activeCanvas);
+      }
+
+      function redrawRelatedGlCharts(chart, activeCanvas) {
+        glChartStore.forEach((stored, canvasId) => {
+          if (stored.series !== chart.series) return;
+          const canvas = document.getElementById(canvasId);
+          drawChartCanvas(canvas, stored.labels, stored.series);
+          renderGlChartLegendControls(canvas, stored);
+          attachGlChartHover(canvas);
+        });
+        if (!activeCanvas.id || !glChartStore.has(activeCanvas.id)) {
+          drawChartCanvas(activeCanvas, chart.labels, chart.series);
+          renderGlChartLegendControls(activeCanvas, chart);
+          attachGlChartHover(activeCanvas);
+        }
       }
 
       function denseSeries(labels, rows) {
@@ -1124,6 +1284,7 @@
             document.body.classList.add("gl-modal-open");
             requestAnimationFrame(() => {
               drawChartCanvas(modalCanvas, chart.labels, chart.series);
+              renderGlChartLegendControls(modalCanvas, chart);
               attachGlChartHover(modalCanvas);
             });
           });
@@ -1151,7 +1312,10 @@
               drawChartCanvas(document.getElementById(canvasId), chart.labels, chart.series);
             });
             if (modal.classList.contains("is-open")) {
-              if (openChart) drawChartCanvas(modalCanvas, openChart.labels, openChart.series);
+              if (openChart) {
+                drawChartCanvas(modalCanvas, openChart.labels, openChart.series);
+                renderGlChartLegendControls(modalCanvas, openChart);
+              }
             }
           }, 120);
         });
@@ -1165,6 +1329,7 @@
         renderStatus(log);
         renderBenchmarks(metrics);
         renderLogs(logs);
+        enhanceGlTables();
         renderChart(backtest, metrics, snapshots);
       });
     })();
