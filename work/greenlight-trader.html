@@ -507,7 +507,7 @@
       <div class="gl-allocation">
         <div class="gl-allocation-head">
           <div class="gl-section-title">Latest replay target</div>
-          <span class="gl-pill" id="gl-allocation-date">2026-06-02</span>
+          <span class="gl-pill" id="gl-allocation-date">2026-06-05</span>
         </div>
         <div id="gl-allocation"></div>
       </div>
@@ -711,8 +711,7 @@
 
   <script>
     (function () {
-      const REPO_API = "https://api.github.com/repos/yuz047/greenlight-trader/commits/main";
-      const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader";
+      const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data";
       const colors = ["#1f3a5f", "#256f8f", "#2f6a4a", "#8b6f2f", "#9b2c1f", "#5f4b8b", "#767a82", "#b45309", "#0f766e"];
       const glChartStore = new Map();
       let glChartModalReady = false;
@@ -723,20 +722,20 @@
           train_start: "2009-01-01",
           initial_train_end: "2021-12-31",
           invest_start: "2022-01-01",
-          end_date: "2026-06-02",
+          end_date: "2026-06-05",
           ai_memo_mode: "deepseek",
           ai_memo_frequency: "monthly",
-          ai_provider_call_count: 54,
-          ai_review_count: 1152,
+          ai_provider_call_count: 53,
+          ai_review_count: 1155,
           rolling_training: {
             enabled: true,
             window_years: 3,
-            updates: 1152,
-            final_window: ["2023-06-01", "2026-06-01"]
+            updates: 1155,
+            final_window: ["2023-06-04", "2026-06-04"]
           },
-          learning_row_pool: { total: 18100, stock: 4242, etf: 13858 },
+          learning_row_pool: { total: 90520, stock: 20850, etf: 69670 },
           latest_learned_weights: {
-            stock: { leadership: 0.671816, timing: 0.328184, information: 0 },
+            stock: { leadership: 0, timing: 1, information: 0 },
             etf: { regime_fit: 1, leadership: 0, diversification: 0, timing: 0 }
           },
           equity_curve: [
@@ -744,7 +743,7 @@
             { date: "2023-01-03", equity: 5390 },
             { date: "2024-01-02", equity: 6600 },
             { date: "2025-01-02", equity: 7850 },
-            { date: "2026-06-02", equity: 9757.3829 }
+            { date: "2026-06-05", equity: 9360.28 }
           ]
         },
         metrics: {
@@ -758,7 +757,7 @@
             greenlight_failed_simple_benchmarks: false
           },
           metrics: {
-            learned_weight_Greenlight: { total_return: 0.951477, CAGR: 0.163676, Sharpe: 1.272064, max_drawdown: -0.198781, alpha_vs_SPY: 0.362898 },
+            learned_weight_Greenlight: { total_return: 0.87243, CAGR: 0.152513, Sharpe: 0.521152, max_drawdown: -0.219835, alpha_vs_SPY: 0.328502 },
             SPY_buy_hold: { total_return: 0.588579, CAGR: 0.11064, Sharpe: 0.62698, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
             QQQ_buy_hold: { total_return: 0.852271, CAGR: 0.149991, Sharpe: 0.647125, max_drawdown: -0.35247, alpha_vs_SPY: 0.263692 },
             VIX_20_15_strategy: { total_return: 0.444258, CAGR: 0.086914, Sharpe: 0.540129, max_drawdown: -0.232742, alpha_vs_SPY: -0.144321 },
@@ -769,14 +768,14 @@
         logs: {
           logs: [
             {
-              date: "2026-06-02",
+              date: "2026-06-05",
               market_regime: "RISK_ON",
-              risk_light: "GREEN",
-              execution_decision: "NO_TRADE",
-              execution_reason: "Max drift 3.85% is below threshold 5.00%.",
-              target_allocation: { SPY: 0.4, QQQ: 0.2, SGOV: 0.05, AAPL: 0.04469, XLP: 0.038526, QUAL: 0.035305, AMZN: 0.033078, XLU: 0.032196, NVDA: 0.027211, KRE: 0.026614 },
-              selected_etfs: [{ symbol: "XLP" }, { symbol: "XLU" }, { symbol: "XBI" }, { symbol: "KRE" }, { symbol: "QUAL" }],
-              top_stock_candidates: [{ symbol: "NVDA" }, { symbol: "AMZN" }, { symbol: "AAPL" }, { symbol: "GOOGL" }, { symbol: "ETN" }]
+              risk_light: "RED",
+              execution_decision: "RISK_REDUCE",
+              execution_reason: "Risk light RED: only de-risking rebalance is allowed.",
+              target_allocation: { SPY: 0.4, QQQ: 0.2, SGOV: 0.05, XLC: 0.038223, COST: 0.037737, XLV: 0.035197, MA: 0.033957, XLU: 0.032302, AAPL: 0.029969, XLY: 0.027235 },
+              selected_etfs: [{ symbol: "XLC" }, { symbol: "XLU" }, { symbol: "XLV" }, { symbol: "XLY" }, { symbol: "XBI" }],
+              top_stock_candidates: [{ symbol: "MA" }, { symbol: "META" }, { symbol: "COST" }, { symbol: "AMZN" }, { symbol: "ISRG" }]
             },
             {
               date: "2026-06-01",
@@ -801,10 +800,7 @@
       const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
 
       async function resolveSource() {
-        const response = await fetch(`${REPO_API}?v=${Date.now()}`, { cache: "no-store" });
-        if (!response.ok) throw new Error("GitHub commit lookup failed");
-        const commit = await response.json();
-        return `${RAW_BASE}/${commit.sha}/data`;
+        return RAW_BASE;
       }
 
       async function fetchJson(base, name) {
@@ -937,7 +933,7 @@
       function renderAllocation(log) {
         const target = log.target_allocation || fallback.logs.logs[0].target_allocation;
         const rows = Object.entries(target).map(([symbol, weight]) => ({ symbol, weight: Number(weight || 0) })).sort((a, b) => b.weight - a.weight);
-        document.getElementById("gl-allocation-date").textContent = log.date || "2026-06-02";
+        document.getElementById("gl-allocation-date").textContent = log.date || "2026-06-05";
         document.getElementById("gl-allocation").innerHTML = `
           <div class="gl-track">
             ${rows.map((row, idx) => `<div class="gl-segment" style="width:${Math.max(row.weight * 100, 1.5)}%; background:${colors[idx % colors.length]};"></div>`).join("")}
