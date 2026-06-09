@@ -647,7 +647,7 @@
             <article class="gl-architecture-card">
               <span>01</span>
               <h3>Market data and universe</h3>
-              <p>Massive and tagged secondary data feed anchors, dynamic ETFs, current holdings, movers, relative-strength names, and liquid stock candidates.</p>
+              <p>Massive/Polygon is the primary market feed; Yahoo is used only as a tagged fallback for VIX and secondary price gaps.</p>
             </article>
             <article class="gl-architecture-card">
               <span>02</span>
@@ -711,6 +711,7 @@
 
   <script>
     (function () {
+      const LOCAL_DATA_BASE = "../data";
       const RAW_BASE = "https://raw.githubusercontent.com/yuz047/greenlight-trader/main/data";
       const colors = ["#1f3a5f", "#256f8f", "#2f6a4a", "#8b6f2f", "#9b2c1f", "#5f4b8b", "#767a82", "#b45309", "#0f766e"];
       const glChartStore = new Map();
@@ -809,7 +810,17 @@
         return response.json();
       }
 
+      async function fetchJsonPath(path) {
+        const response = await fetch(`${path}?v=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`${path} unavailable`);
+        return response.json();
+      }
+
       async function loadData() {
+        let plotData = null;
+        try {
+          plotData = await fetchJsonPath(`${LOCAL_DATA_BASE}/greenlight_plot_data.json`);
+        } catch {}
         try {
           const base = await resolveSource();
           const [backtest, metrics, logs, snapshots] = await Promise.all([
@@ -819,14 +830,15 @@
             fetchJson(base, "benchmark_snapshots")
           ]);
           document.getElementById("gl-source-pill").textContent = "data current";
-          return { backtest, metrics, logs, snapshots };
+          return { backtest, metrics, logs, snapshots, plotData };
         } catch (error) {
-          document.getElementById("gl-source-pill").textContent = "embedded result";
+          document.getElementById("gl-source-pill").textContent = plotData ? "plot data current" : "embedded result";
           return {
             backtest: fallback.backtest,
             metrics: fallback.metrics,
             logs: fallback.logs,
-            snapshots: buildFallbackSnapshots(fallback.backtest, fallback.metrics)
+            snapshots: buildFallbackSnapshots(fallback.backtest, fallback.metrics),
+            plotData
           };
         }
       }
@@ -923,7 +935,7 @@
         const green = greenMetric(metrics);
         const finalEquity = (backtest.equity_curve || []).at(-1)?.equity || 0;
         document.getElementById("gl-readout").innerHTML = [
-          renderTile("Final equity", fmtUsd(finalEquity), `${backtest.invest_start} to ${backtest.end_date}`),
+          renderTile("Final equity", fmtUsd(finalEquity), `${backtest.invest_start} ~ ${backtest.end_date}`),
           renderTile("Total return", fmtPct(green.total_return, 2, true), "paper replay", cls(green.total_return)),
           renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
           renderTile("Execution", log.execution_decision || "n/a", log.market_regime || "n/a")
@@ -1006,7 +1018,20 @@
           </tr>`).join("");
       }
 
-      function renderChart(backtest, metrics, benchmarkSnapshots) {
+      function renderChart(backtest, metrics, benchmarkSnapshots, plotData) {
+        if (plotData?.labels?.length && plotData?.series?.length) {
+          const labels = plotData.labels;
+          const series = normalizePlotSeries(plotData.series);
+          const count = document.getElementById("gl-plot-count");
+          if (count) count.textContent = `${labels.length.toLocaleString("en-US")} daily points`;
+          glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
+          const canvas = document.getElementById("gl-equity");
+          drawChartCanvas(canvas, labels, series);
+          renderGlChartLegendControls(canvas, glChartStore.get("gl-equity"));
+          attachGlChartHover(canvas);
+          setupGlChartModal();
+          return;
+        }
         const snapshots = benchmarkSnapshots?.snapshots || buildFallbackSnapshots(backtest, metrics).snapshots;
         const local = (backtest.equity_curve || fallback.backtest.equity_curve || [])
           .map((row) => ({ date: row.date, equity: Number(row.equity || 0) }));
@@ -1037,6 +1062,16 @@
         renderGlChartLegendControls(canvas, glChartStore.get("gl-equity"));
         attachGlChartHover(canvas);
         setupGlChartModal();
+      }
+
+      function normalizePlotSeries(series) {
+        return (series || []).map((item, idx) => ({
+          label: item.label || item.key || `Series ${idx + 1}`,
+          color: item.color || colors[idx % colors.length],
+          width: Number(item.width || 1.5),
+          dash: item.dash,
+          values: (item.values || []).map((value) => value == null ? null : Number(value))
+        }));
       }
 
       function drawChartCanvas(canvas, labels, series) {
@@ -1317,7 +1352,7 @@
         });
       }
 
-      loadData().then(({ backtest, metrics, logs, snapshots }) => {
+      loadData().then(({ backtest, metrics, logs, snapshots, plotData }) => {
         const log = latestLog(logs);
         renderReadout(backtest, metrics, log);
         renderAllocation(log);
@@ -1326,7 +1361,7 @@
         renderBenchmarks(metrics);
         renderLogs(logs);
         enhanceGlTables();
-        renderChart(backtest, metrics, snapshots);
+        renderChart(backtest, metrics, snapshots, plotData);
       });
     })();
   </script>
