@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Greenlight Trader 2.0 | Systematic AI Trading Agent</title>
-  <meta name="description" content="Greenlight Trader 2.0 is a Massive-first, systematic paper-trading allocator with rolling training, deterministic allocation, sparse execution, benchmark comparison, and watermarked AI review logs." />
+  <title>Greenlight Trader | Systematic Paper Portfolio</title>
+  <meta name="description" content="Greenlight Trader is a Massive-first, systematic paper portfolio with deterministic 40/20 anchor allocation, benchmark comparison, and static production reporting." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -487,20 +487,19 @@
 
   <main>
     <section class="container page-head">
-      <div class="eyebrow">AI trading agent · paper portfolio</div>
-      <h1>Greenlight Trader 2.0</h1>
+      <div class="eyebrow">systematic paper portfolio</div>
+      <h1>Greenlight Trader</h1>
       <p class="lede">
-        A Massive-first systematic PM agent for a $5,000 paper portfolio. It trains on
-        historical market data, replays the same daily loop used for live paper trading,
-        learns constrained score weights, rotates ETFs dynamically, compares against
-        simple benchmarks, and watermarks every generated output.
+        A Massive-first systematic PM view for a $5,000 paper portfolio. The public
+        production curve uses a fixed 40/20 anchor mix, compares against simple
+        benchmarks, and publishes static watermarked outputs.
       </p>
       <div class="contact-strip">
         <span class="gl-pill">paper only</span>
         <span class="gl-pill">train through 2021</span>
         <span class="gl-pill">invest from 2022</span>
-        <span class="gl-pill">3-year rolling window</span>
-        <span class="gl-pill">monthly DeepSeek review</span>
+        <span class="gl-pill">production 40/20</span>
+        <span class="gl-pill">no broker execution</span>
         <span class="gl-pill" id="gl-source-pill">embedded result</span>
       </div>
       <div class="gl-readout" id="gl-readout"></div>
@@ -518,11 +517,9 @@
         <div class="eyebrow">Core idea</div>
         <h2>A trading agent that does less, but records more.</h2>
         <p class="blurb">
-          Greenlight is not a free-form agent that invents trades. The production track is
-          deterministic: build a daily universe, compute features, score stocks and ETFs,
-          select dynamic ETF exposure, allocate target weights, run risk gates, and trade
-          only when drift, persistence, interval, turnover, and minimum-size rules agree.
-          The AI layer reviews and explains; it cannot execute or override risk.
+          Greenlight is not a free-form agent that invents trades. The public production
+          track is deterministic: SPY and QQQ anchors, dynamic ETF rotation, a top-score
+          sleeve, defensive cash, benchmark comparison, and watermarked static outputs.
         </p>
       </div>
     </section>
@@ -533,10 +530,10 @@
           <div class="gl-section-head">
             <div class="gl-heading">
               <div class="gl-section-title">Summary</div>
-              <h3>Replay result and learning window</h3>
-              <p class="gl-section-subtitle">Train through 2021, invest from 2022, and replay the same daily feedback loop used by paper mode.</p>
+              <h3>Production result</h3>
+              <p class="gl-section-subtitle">Fixed 40/20 anchor composite, measured daily from 2022 through the latest available market date.</p>
             </div>
-            <span class="gl-pill">rolling 3-year window</span>
+            <span class="gl-pill">production 40/20</span>
           </div>
           <div class="gl-kpi summary" id="gl-summary-kpis"></div>
         </div>
@@ -651,8 +648,8 @@
             </article>
             <article class="gl-architecture-card">
               <span>02</span>
-              <h3>Features and learning</h3>
-              <p>Daily features are sliced no-lookahead. Rolling windows refresh stock and ETF score weights before each replay decision.</p>
+              <h3>Production sleeves</h3>
+              <p>The public curve combines SPY, QQQ, ETF rotation, top-score sleeve, and defensive cash with fixed production weights.</p>
             </article>
             <article class="gl-architecture-card">
               <span>03</span>
@@ -691,7 +688,7 @@
     <div class="container">
       <div class="row">
         <span>&copy; 2026 Yunhan &ldquo;Sirius&rdquo; Zhang</span>
-        <span>Trading &middot; Risk &middot; AI &middot; Data</span>
+        <span>Trading &middot; Risk &middot; Data</span>
       </div>
     </div>
   </footer>
@@ -724,46 +721,40 @@
           initial_train_end: "2021-12-31",
           invest_start: "2022-01-01",
           end_date: "2026-06-05",
-          ai_memo_mode: "deepseek",
-          ai_memo_frequency: "monthly",
-          ai_provider_call_count: 53,
-          ai_review_count: 1155,
+          ai_memo_mode: "off",
+          ai_memo_frequency: "off",
+          ai_provider_call_count: 0,
+          ai_review_count: 0,
           rolling_training: {
-            enabled: true,
-            window_years: 3,
-            updates: 1155,
-            final_window: ["2023-06-04", "2026-06-04"]
+            enabled: false,
+            public_production: true
           },
-          learning_row_pool: { total: 90520, stock: 20850, etf: 69670 },
-          latest_learned_weights: {
-            stock: { leadership: 0, timing: 1, information: 0 },
-            etf: { regime_fit: 1, leadership: 0, diversification: 0, timing: 0 }
-          },
+          learning_row_pool: { total: 0, stock: 0, etf: 0 },
+          production_weights: { SPY_buy_hold: 0.40, QQQ_buy_hold: 0.20, dynamic_ETF_momentum_rotation: 0.15, equal_weight_top_score: 0.20, cash_defensive: 0.05 },
           equity_curve: [
             { date: "2022-01-03", equity: 5000 },
-            { date: "2023-01-03", equity: 5390 },
-            { date: "2024-01-02", equity: 6600 },
-            { date: "2025-01-02", equity: 7850 },
-            { date: "2026-06-05", equity: 9360.28 }
+            { date: "2023-01-03", equity: 4260 },
+            { date: "2024-01-02", equity: 5335 },
+            { date: "2025-01-02", equity: 6140 },
+            { date: "2026-06-05", equity: 8102.95 }
           ]
         },
         metrics: {
           verdict: {
             beat_SPY: true,
-            beat_QQQ: true,
+            beat_QQQ: false,
             beat_VIX_strategy: true,
             beat_200DMA: true,
-            learned_beat_fixed: false,
-            agent_led_add_value: false,
-            greenlight_failed_simple_benchmarks: false
+            public_curve: "production_Greenlight"
           },
           metrics: {
-            learned_weight_Greenlight: { total_return: 0.87243, CAGR: 0.152513, Sharpe: 0.521152, max_drawdown: -0.219835, alpha_vs_SPY: 0.328502 },
-            SPY_buy_hold: { total_return: 0.588579, CAGR: 0.11064, Sharpe: 0.62698, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
-            QQQ_buy_hold: { total_return: 0.852271, CAGR: 0.149991, Sharpe: 0.647125, max_drawdown: -0.35247, alpha_vs_SPY: 0.263692 },
-            VIX_20_15_strategy: { total_return: 0.444258, CAGR: 0.086914, Sharpe: 0.540129, max_drawdown: -0.232742, alpha_vs_SPY: -0.144321 },
-            SPY_200DMA_trend: { total_return: 0.443669, CAGR: 0.086813, Sharpe: 0.811048, max_drawdown: -0.165074, alpha_vs_SPY: -0.144909 },
-            dynamic_ETF_momentum_rotation: { total_return: 0.911443, CAGR: 0.15822, Sharpe: 0.575698, max_drawdown: -0.449592, alpha_vs_SPY: 0.322864 }
+            production_Greenlight: { total_return: 0.620591, CAGR: 0.115448, Sharpe: 0.642981, max_drawdown: -0.27796, alpha_vs_SPY: 0.076663 },
+            SPY_buy_hold: { total_return: 0.543928, CAGR: 0.103282, Sharpe: 0.584459, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
+            QQQ_buy_hold: { total_return: 0.755278, CAGR: 0.135784, Sharpe: 0.583634, max_drawdown: -0.35247, alpha_vs_SPY: 0.21135 },
+            VIX_20_15_strategy: { total_return: 0.403664, CAGR: 0.079756, Sharpe: 0.494686, max_drawdown: -0.232742, alpha_vs_SPY: -0.140265 },
+            SPY_200DMA_trend: { total_return: 0.403092, CAGR: 0.079657, Sharpe: 0.739696, max_drawdown: -0.165074, alpha_vs_SPY: -0.140836 },
+            dynamic_ETF_momentum_rotation: { total_return: 0.739615, CAGR: 0.133483, Sharpe: 0.479395, max_drawdown: -0.449592, alpha_vs_SPY: 0.195687 },
+            equal_weight_top_score: { total_return: 0.705108, CAGR: 0.128355, Sharpe: 0.628657, max_drawdown: -0.295821, alpha_vs_SPY: 0.16118 }
           }
         },
         logs: {
@@ -853,14 +844,12 @@
             equity: 5000 * (1 + Number(row.total_return || 0) * (idx / len))
           }));
         });
-        snapshots.learned_weight_Greenlight = curve.map((point) => ({ date: point.date, equity: point.equity }));
-        snapshots.fixed_weight_Greenlight = snapshots.fixed_weight_Greenlight || snapshots.learned_weight_Greenlight;
-        snapshots.agent_led_experimental = snapshots.agent_led_experimental || snapshots.learned_weight_Greenlight;
+        snapshots.production_Greenlight = curve.map((point) => ({ date: point.date, equity: point.equity }));
         return { snapshots };
       }
 
       function greenMetric(metrics) {
-        return metrics.metrics.learned_weight_Greenlight || metrics.metrics.fixed_weight_Greenlight || {};
+        return metrics.metrics.production_Greenlight || {};
       }
 
       function latestLog(logs) {
@@ -967,8 +956,8 @@
           renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
           renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
           renderTile("Initial train", `${backtest.train_start} ~ ${backtest.initial_train_end}`, "pre-replay"),
-          renderTile("Rolling window", `${backtest.rolling_training?.window_years || 3} years`, `${backtest.rolling_training?.updates || 0} updates`),
-          renderTile("Replay start", backtest.invest_start || "n/a", "daily loop begins")
+          renderTile("Production mix", "40 / 20 anchor", "fixed public curve"),
+          renderTile("Replay start", backtest.invest_start || "n/a", "daily curve begins")
         ].join("");
       }
 
@@ -1042,7 +1031,7 @@
           ["VIX_20_15_strategy", "VIX 20/15", "#9b2c1f", 1.4, [3, 5]],
           ["SPY_200DMA_trend", "SPY 200DMA", "#2f6a4a", 1.5],
           ["dynamic_ETF_momentum_rotation", "ETF rotation", "#256f8f", 1.6],
-          ["agent_led_experimental", "Agent track", "#5f4b8b", 1.3, [8, 5]]
+          ["equal_weight_top_score", "Top-score sleeve", "#2f6a4a", 1.5]
         ].filter(([key]) => snapshots[key]?.length);
         const series = [
           { label: "Greenlight", color: "#1f3a5f", width: 2.7, values: denseSeries(labels, local) },
