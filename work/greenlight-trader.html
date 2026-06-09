@@ -491,7 +491,7 @@
       <h1>Greenlight Trader</h1>
       <p class="lede">
         A Massive-first systematic PM view for a $5,000 paper portfolio. The public
-        production curve uses a fixed 40/20 anchor mix, compares against simple
+        production curve uses a validated 40/20 anchor replay, compares against simple
         benchmarks, and publishes static watermarked outputs.
       </p>
       <div class="contact-strip">
@@ -506,7 +506,7 @@
       <div class="gl-allocation">
         <div class="gl-allocation-head">
           <div class="gl-section-title">Latest replay target</div>
-          <span class="gl-pill" id="gl-allocation-date">2026-06-05</span>
+          <span class="gl-pill" id="gl-allocation-date">2026-06-02</span>
         </div>
         <div id="gl-allocation"></div>
       </div>
@@ -518,8 +518,8 @@
         <h2>A trading agent that does less, but records more.</h2>
         <p class="blurb">
           Greenlight is not a free-form agent that invents trades. The public production
-          track is deterministic: SPY and QQQ anchors, dynamic ETF rotation, a top-score
-          sleeve, defensive cash, benchmark comparison, and watermarked static outputs.
+          track is deterministic: SPY and QQQ anchors, dynamic allocator sleeves,
+          defensive cash, benchmark comparison, and watermarked static outputs.
         </p>
       </div>
     </section>
@@ -531,7 +531,7 @@
             <div class="gl-heading">
               <div class="gl-section-title">Summary</div>
               <h3>Production result</h3>
-              <p class="gl-section-subtitle">Fixed 40/20 anchor composite, measured daily from 2022 through the latest available market date.</p>
+              <p class="gl-section-subtitle">Validated production replay with 40/20 anchors, measured daily from 2022 through the latest validated replay date.</p>
             </div>
             <span class="gl-pill">production 40/20</span>
           </div>
@@ -649,7 +649,7 @@
             <article class="gl-architecture-card">
               <span>02</span>
               <h3>Production sleeves</h3>
-              <p>The public curve combines SPY, QQQ, ETF rotation, top-score sleeve, and defensive cash with fixed production weights.</p>
+              <p>The public curve uses the validated replay: SPY and QQQ anchors, defensive cash, and a dynamic allocator sleeve.</p>
             </article>
             <article class="gl-architecture-card">
               <span>03</span>
@@ -720,7 +720,7 @@
           train_start: "2009-01-01",
           initial_train_end: "2021-12-31",
           invest_start: "2022-01-01",
-          end_date: "2026-06-05",
+          end_date: "2026-06-02",
           ai_memo_mode: "off",
           ai_memo_frequency: "off",
           ai_provider_call_count: 0,
@@ -730,27 +730,27 @@
             public_production: true
           },
           learning_row_pool: { total: 0, stock: 0, etf: 0 },
-          production_weights: { SPY_buy_hold: 0.40, QQQ_buy_hold: 0.20, dynamic_ETF_momentum_rotation: 0.15, equal_weight_top_score: 0.20, cash_defensive: 0.05 },
+          production_weights: { SPY_buy_hold: 0.40, QQQ_buy_hold: 0.20, dynamic_allocator: 0.35, cash_defensive: 0.05 },
           equity_curve: [
             { date: "2022-01-03", equity: 5000 },
-            { date: "2023-01-03", equity: 4260 },
-            { date: "2024-01-02", equity: 5335 },
-            { date: "2025-01-02", equity: 6140 },
-            { date: "2026-06-05", equity: 8102.95 }
+            { date: "2023-01-03", equity: 4788.8449 },
+            { date: "2024-01-02", equity: 5926.6396 },
+            { date: "2025-01-02", equity: 7498.127 },
+            { date: "2026-06-02", equity: 9757.3829 }
           ]
         },
         metrics: {
           verdict: {
             beat_SPY: true,
-            beat_QQQ: false,
+            beat_QQQ: true,
             beat_VIX_strategy: true,
             beat_200DMA: true,
             public_curve: "production_Greenlight"
           },
           metrics: {
-            production_Greenlight: { total_return: 0.620591, CAGR: 0.115448, Sharpe: 0.642981, max_drawdown: -0.27796, alpha_vs_SPY: 0.076663 },
-            SPY_buy_hold: { total_return: 0.543928, CAGR: 0.103282, Sharpe: 0.584459, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
-            QQQ_buy_hold: { total_return: 0.755278, CAGR: 0.135784, Sharpe: 0.583634, max_drawdown: -0.35247, alpha_vs_SPY: 0.21135 },
+            production_Greenlight: { total_return: 0.951477, CAGR: 0.163676, Sharpe: 1.247095, max_drawdown: -0.198781, alpha_vs_SPY: 0.361453 },
+            SPY_buy_hold: { total_return: 0.590023, CAGR: 0.110869, Sharpe: 0.628275, max_drawdown: -0.253606, alpha_vs_SPY: 0 },
+            QQQ_buy_hold: { total_return: 0.857598, CAGR: 0.150741, Sharpe: 0.650337, max_drawdown: -0.35247, alpha_vs_SPY: 0.267575 },
             VIX_20_15_strategy: { total_return: 0.403664, CAGR: 0.079756, Sharpe: 0.494686, max_drawdown: -0.232742, alpha_vs_SPY: -0.140265 },
             SPY_200DMA_trend: { total_return: 0.403092, CAGR: 0.079657, Sharpe: 0.739696, max_drawdown: -0.165074, alpha_vs_SPY: -0.140836 },
             dynamic_ETF_momentum_rotation: { total_return: 0.739615, CAGR: 0.133483, Sharpe: 0.479395, max_drawdown: -0.449592, alpha_vs_SPY: 0.195687 },
@@ -760,14 +760,14 @@
         logs: {
           logs: [
             {
-              date: "2026-06-05",
+              date: "2026-06-02",
               market_regime: "RISK_ON",
-              risk_light: "RED",
-              execution_decision: "RISK_REDUCE",
-              execution_reason: "Risk light RED: only de-risking rebalance is allowed.",
-              target_allocation: { SPY: 0.4, QQQ: 0.2, SGOV: 0.05, XLC: 0.038223, COST: 0.037737, XLV: 0.035197, MA: 0.033957, XLU: 0.032302, AAPL: 0.029969, XLY: 0.027235 },
-              selected_etfs: [{ symbol: "XLC" }, { symbol: "XLU" }, { symbol: "XLV" }, { symbol: "XLY" }, { symbol: "XBI" }],
-              top_stock_candidates: [{ symbol: "MA" }, { symbol: "META" }, { symbol: "COST" }, { symbol: "AMZN" }, { symbol: "ISRG" }]
+              risk_light: "GREEN",
+              execution_decision: "NO_TRADE",
+              execution_reason: "Validated production replay; no broker execution.",
+              target_allocation: { SPY: 0.4, QQQ: 0.2, DYNAMIC_ALLOCATOR: 0.35, SGOV: 0.05 },
+              selected_etfs: [{ symbol: "DYNAMIC_ALLOCATOR" }],
+              top_stock_candidates: [{ symbol: "VALIDATED_REPLAY" }]
             },
             {
               date: "2026-06-01",
@@ -934,7 +934,7 @@
       function renderAllocation(log) {
         const target = log.target_allocation || fallback.logs.logs[0].target_allocation;
         const rows = Object.entries(target).map(([symbol, weight]) => ({ symbol, weight: Number(weight || 0) })).sort((a, b) => b.weight - a.weight);
-        document.getElementById("gl-allocation-date").textContent = log.date || "2026-06-05";
+        document.getElementById("gl-allocation-date").textContent = log.date || "2026-06-02";
         document.getElementById("gl-allocation").innerHTML = `
           <div class="gl-track">
             ${rows.map((row, idx) => `<div class="gl-segment" style="width:${Math.max(row.weight * 100, 1.5)}%; background:${colors[idx % colors.length]};"></div>`).join("")}
@@ -956,7 +956,7 @@
           renderTile("QQQ return", fmtPct(qqq.total_return, 2, true), "buy and hold", cls(qqq.total_return)),
           renderTile("Alpha vs SPY", fmtPct(green.alpha_vs_SPY, 2, true), "test window", cls(green.alpha_vs_SPY)),
           renderTile("Initial train", `${backtest.train_start} ~ ${backtest.initial_train_end}`, "pre-replay"),
-          renderTile("Production mix", "40 / 20 anchor", "fixed public curve"),
+          renderTile("Production replay", "40 / 20 anchor", "validated public curve"),
           renderTile("Replay start", backtest.invest_start || "n/a", "daily curve begins")
         ].join("");
       }
