@@ -1026,12 +1026,18 @@
           </tr>`).join("");
       }
 
+      function renderPlotCount(labels) {
+        const lastDate = labels.at(-1);
+        const suffix = lastDate ? ` through ${lastDate}` : "";
+        return `${labels.length.toLocaleString("en-US")} daily points${suffix}`;
+      }
+
       function renderChart(backtest, metrics, benchmarkSnapshots, plotData) {
         if (plotData?.labels?.length && plotData?.series?.length) {
           const labels = plotData.labels;
           const series = normalizePlotSeries(plotData.series);
           const count = document.getElementById("gl-plot-count");
-          if (count) count.textContent = `${labels.length.toLocaleString("en-US")} daily points`;
+          if (count) count.textContent = renderPlotCount(labels);
           glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
           const canvas = document.getElementById("gl-equity");
           drawChartCanvas(canvas, labels, series);
@@ -1063,7 +1069,7 @@
           })),
         ];
         const count = document.getElementById("gl-plot-count");
-        if (count) count.textContent = `${labels.length.toLocaleString("en-US")} daily points`;
+        if (count) count.textContent = renderPlotCount(labels);
         glChartStore.set("gl-equity", { title: "Replay equity curves", labels, series });
         const canvas = document.getElementById("gl-equity");
         drawChartCanvas(canvas, labels, series);
@@ -1131,8 +1137,11 @@
 
         for (let i = 0; i < 5; i += 1) {
           const idx = Math.round((labels.length - 1) * (i / 4));
-          ctx.fillText(String(labels[idx] || "").slice(0, 7), x(idx) - 22, height - pad.bottom + 28);
+          const label = i === 4 ? String(labels[idx] || "") : String(labels[idx] || "").slice(0, 7);
+          ctx.textAlign = i === 0 ? "left" : i === 4 ? "right" : "center";
+          ctx.fillText(label, x(idx), height - pad.bottom + 28);
         }
+        ctx.textAlign = "left";
 
         function line(values, color, width, dash) {
           ctx.beginPath();
