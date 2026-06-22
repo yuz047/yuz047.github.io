@@ -808,22 +808,40 @@
         return response.json();
       }
 
+      function latestPlotDate(plotData) {
+        const labels = Array.isArray(plotData?.labels) ? plotData.labels : [];
+        return [plotData?.end_date, labels.at(-1)].filter(Boolean).sort().at(-1) || "";
+      }
+
+      function plotCoversBacktest(plotData, backtest) {
+        if (!plotData?.labels?.length || !plotData?.series?.length) return false;
+        const expectedDate = backtest?.end_date || "";
+        return !expectedDate || latestPlotDate(plotData) >= expectedDate;
+      }
+
+      function currentPlotDataFor(backtest, remotePlotData, localPlotData) {
+        return [remotePlotData, localPlotData].find((plotData) => plotCoversBacktest(plotData, backtest)) || null;
+      }
+
       async function loadData() {
-        let plotData = null;
+        let localPlotData = null;
         try {
-          plotData = await fetchJsonPath(`${LOCAL_DATA_BASE}/greenlight_plot_data.json`);
+          localPlotData = await fetchJsonPath(`${LOCAL_DATA_BASE}/greenlight_plot_data.json`);
         } catch {}
         try {
           const base = await resolveSource();
-          const [backtest, metrics, logs, snapshots] = await Promise.all([
+          const [backtest, metrics, logs, snapshots, remotePlotData] = await Promise.all([
             fetchJson(base, "backtest_results"),
             fetchJson(base, "benchmark_metrics"),
             fetchJson(base, "backtest_decision_logs"),
-            fetchJson(base, "benchmark_snapshots")
+            fetchJson(base, "benchmark_snapshots"),
+            fetchJson(base, "greenlight_plot_data").catch(() => null)
           ]);
+          const plotData = currentPlotDataFor(backtest, remotePlotData, localPlotData);
           document.getElementById("gl-source-pill").textContent = "data current";
           return { backtest, metrics, logs, snapshots, plotData };
         } catch (error) {
+          const plotData = currentPlotDataFor(fallback.backtest, null, localPlotData);
           document.getElementById("gl-source-pill").textContent = plotData ? "plot data current" : "embedded result";
           return {
             backtest: fallback.backtest,
